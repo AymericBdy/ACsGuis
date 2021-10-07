@@ -5,6 +5,9 @@ import fr.nico.sqript.blocks.ScriptBlock;
 import fr.nico.sqript.blocks.ScriptFunctionalBlock;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.blocks.ScriptBlockEvent;
+import fr.nico.sqript.events.EvtBlock;
+import fr.nico.sqript.events.EvtOnScriptLoad;
+import fr.nico.sqript.events.EvtPlayer;
 import fr.nico.sqript.events.ScriptEvent;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.types.primitive.TypeBoolean;
@@ -42,9 +45,12 @@ public class ScriptInstance {
         //System.out.println("Calling event : "+event.getClass());
         try {
             ScriptContext returnContext = callEventAndGetContext(context, event);
+            if(event.getClass() == EvtBlock.EvtOnBlockClick.class)
+                //System.out.println("Return context after call : "+returnContext.getReturnValue());
             return (boolean) returnContext.getReturnValue().element.getObject();
         } catch (Exception e) {
             ScriptManager.log.error("Error while calling event : " + event.getClass().getSimpleName());
+            e.printStackTrace();
             if (e instanceof ScriptException.ScriptWrappedException) {
                 Throwable ex = ((ScriptException.ScriptWrappedException) (e)).getWrapped();
                 ScriptManager.log.error(((ScriptException.ScriptWrappedException) (e)).getLine() + " : " + ex.getMessage());
@@ -83,7 +89,7 @@ public class ScriptInstance {
             if (t.eventType == event.getClass() && event.check(t.getParameters(), t.getMarks()) && t.side.isEffectivelyValid()) {
                 //System.out.println("Calling event : "+event.getClass().getSimpleName());
                 ScriptClock clock = new ScriptClock(context);
-                context.wrap(event.accessors);
+                context.wrap(event.getAccessors());
                 clock.start(t);
 
                 ////System.out.println("Finished ! It took : " + (System.currentTimeMillis() - t1) + " ms");

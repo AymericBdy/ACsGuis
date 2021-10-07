@@ -1,6 +1,7 @@
 package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.forge.SqriptForge;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.types.TypeConsole;
 import fr.nico.sqript.types.TypePlayer;
 import fr.nico.sqript.ScriptManager;
@@ -26,42 +27,105 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-@Block(name = "command",
-        description = "Command blocks",
-        examples = "command /randomplayer:\n" +
-                "    usage: /randomplayer\n" +
-                "    description: returns a random player\n" +
-                "    send a random element of all players to sender",
-        regex = "^command /.*",
+@Block(
+        feature = @Feature(name = "Command",
+                description = "Define a new command that can be executed and have some action.",
+                examples = "command /randomplayer:\n" +
+                        "    usage: /randomplayer\n" +
+                        "    description: returns a random player\n" +
+                        "    send a random element of all players to sender",
+                regex = "^command /.*"),
         fields = {
-        "side","description","usage","aliases"
+                @Feature(name = "side"),
+                @Feature(name = "description"),
+                @Feature(name = "usage"),
+                @Feature(name = "aliases")
         }
 )
 public class ScriptBlockCommand extends ScriptBlock implements ICommand {
 
-    ScriptParameterDefinition[] argumentsDefinitions;
+    ScriptParameterDefinition[][] argumentsDefinitions;
     private final String name;
 
 
     public ScriptBlockCommand(ScriptToken head) {
+        Feature[] features = new Feature[]{new Feature(){
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return null;
+            }
+
+            @Override
+            public String name() {
+                return null;
+            }
+
+            @Override
+            public String description() {
+                return null;
+            }
+
+            @Override
+            public String[] examples() {
+                return new String[0];
+            }
+
+            @Override
+            public String pattern() {
+                return null;
+            }
+
+            @Override
+            public String regex() {
+                return null;
+            }
+
+            @Override
+            public String type() {
+                return null;
+            }
+
+            @Override
+            public boolean settable() {
+                return false;
+            }
+
+            @Override
+            public fr.nico.sqript.structures.Side side() {
+                return null;
+            }
+
+            @Override
+            public int priority() {
+                return 0;
+            }
+        }};
+
+        //System.out.println("Loading block command:"+head);
         final String def = ScriptDecoder.splitAtDoubleDot(head.getText().replaceFirst("command\\s+/", ""))[0];
-        final String[] args = def.split(" ");
-        final List<ScriptParameterDefinition> parameterDefinitions = new ArrayList<>();
-        for (int i = 1; i < args.length; i++) {
+        Matcher m = Pattern.compile("<(.*?)>").matcher(def);
+        final List<ScriptParameterDefinition[]> parameterDefinitions = new ArrayList<>();
+        while (m.find()) {
             try {
-                parameterDefinitions.add(ScriptDecoder.transformPattern(args[i]).getTypes()[0]);
+                //System.out.println("Adding argument : "+m.group(1));
+                Collections.addAll(parameterDefinitions, Arrays.stream(m.group(1).split("\\|")).map(ScriptDecoder::parseType).map(ScriptParameterDefinition::new).toArray(ScriptParameterDefinition[]::new));
+                //System.out.println("Now : "+parameterDefinitions);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        this.name = args[0];
-        this.argumentsDefinitions = parameterDefinitions.toArray(new ScriptParameterDefinition[0]);
+        this.name = def.split("<(.*?)>")[0].trim();
+        this.argumentsDefinitions = parameterDefinitions.toArray(new ScriptParameterDefinition[0][0]);
     }
-
 
     @Override
     protected void load() throws Exception {
@@ -69,12 +133,12 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         if (fieldDefined("side"))
             this.setSide(fr.nico.sqript.structures.Side.from(getSubBlock("side").getRawContent()));
 
-        ScriptCompileGroup compileGroup = new ScriptCompileGroup();
+        ScriptCompilationContext compileGroup = new ScriptCompilationContext();
         //Adding the "arg" expression to the compile group to prevent false-positive errors
         for (int j = 0; j < argumentsDefinitions.length; j++) {
-            compileGroup.add("arg[ument] " + (j + 1));
+            compileGroup.add("arg[ument] " + (j + 1), ScriptElement.class);
         }
-        compileGroup.add("(sender|player|console|server)");
+        compileGroup.add("(sender|player|console|server)", ScriptElement.class);
 
 
         this.setRoot(getMainField().compile(compileGroup));
@@ -171,7 +235,8 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         //Adding arguments to the context
         //Arguments can only be numbers, strings or player.
         for (int i = 0; i < argumentsDefinitions.length && i < strings.length; i++) {
-            Class p = argumentsDefinitions[i].getTypeClass();
+            //Todo : Dynamic command parameters type check
+            Class p = argumentsDefinitions[i][0].getTypeClass();
             if(i== argumentsDefinitions.length-1 && p== TypeString.class){
                 String r = "";
                 for(int j = i;j<strings.length;j++){
@@ -197,7 +262,6 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         //System.out.println("ICOMMANDSENDER NULL : "+(iCommandSender==null));
         if(iCommandSender instanceof EntityPlayer){
             c.put(new ScriptTypeAccessor(new TypePlayer((EntityPlayer) iCommandSender), "(sender|player)","(sender|player|console|server)".hashCode()));
-
         }else if(iCommandSender instanceof MinecraftServer){
             c.put(new ScriptTypeAccessor(new TypeConsole((MinecraftServer) iCommandSender), "(sender|console|server)","(sender|player|console|server)".hashCode()));
         }
@@ -236,7 +300,7 @@ public class ScriptBlockCommand extends ScriptBlock implements ICommand {
         return false;
     }
 
-    public ScriptParameterDefinition[] getArgumentsDefinitions() {
+    public ScriptParameterDefinition[][] getArgumentsDefinitions() {
         return argumentsDefinitions;
     }
 

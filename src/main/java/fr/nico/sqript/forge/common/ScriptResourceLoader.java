@@ -57,6 +57,7 @@ public class ScriptResourceLoader implements IResourcePack
 		return fileRequested.isFile();
 	}
 
+
 	@Override
 	public Set getResourceDomains()
 	{

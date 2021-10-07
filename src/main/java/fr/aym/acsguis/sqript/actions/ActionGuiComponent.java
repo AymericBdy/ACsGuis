@@ -8,7 +8,8 @@ import fr.aym.acsguis.sqript.component.ComponentUtils;
 import fr.aym.acsguis.sqript.component.ParseableComponent;
 import fr.aym.acsguis.sqript.expressions.TypeComponent;
 import fr.nico.sqript.actions.ScriptAction;
-import fr.nico.sqript.compiling.ScriptCompileGroup;
+import fr.nico.sqript.compiling.ScriptCompilationContext;
+import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Action;
@@ -134,11 +135,14 @@ public class ActionGuiComponent extends ScriptAction {
     private int tabLevel;
 
     @Override
-    public void build(ScriptToken line, ScriptCompileGroup compileGroup, List<String> parameters, int matchedIndex, int marks, int tabLevel) throws Exception {
-        super.build(line, compileGroup, parameters, matchedIndex, marks, tabLevel);
+    public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
+        super.build(line, compileGroup, parameters, matchedIndex, marks);
         this.name = line.getText().trim().replaceFirst("(^|\\s+)add css component\\s+", "");
         //System.out.println("TABS LEVELS " + ScriptDecoder.getTabLevel(line.getText())+" AND "+ScriptDecoder.getTabLevel(getLine().getText()));
-        this.tabLevel = tabLevel;
+        this.tabLevel = ScriptDecoder.getTabLevel(line.getText());
+//TODO TEST FROM MAJ
+       // this.tabLevel = tabLevel;
+
         //System.out.println("FILL " + text + " WITH TAB " + this.tabLevel);
         //System.out.println("Long name is " + name);
     }

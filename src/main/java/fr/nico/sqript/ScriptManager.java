@@ -63,36 +63,36 @@ public class ScriptManager {
     public static List<ScriptBlockCommand> serverCommands = new ArrayList<>();
 
     //Operations between types
-    public static HashMap<ScriptOperator, HashMap<Class, HashMap<Class, IOperation>>> binaryOperations = new HashMap<>();
-    public static HashMap<ScriptOperator, HashMap<Class, IOperation>> unaryOperations = new HashMap<>();
+    public static HashMap<ScriptOperator, HashMap<Class, HashMap<Class, OperatorDefinition>>> binaryOperations = new HashMap<>();
+    public static HashMap<ScriptOperator, HashMap<Class, OperatorDefinition>> unaryOperations = new HashMap<>();
     public static List<ScriptOperator> operators = new ArrayList<>();
 
     public static boolean RELOADING = false;
-    
-    public static void registerBinaryOperation(ScriptOperator o, Class a, Class b, IOperation operation) {
+
+    public static void registerBinaryOperation(ScriptOperator o, Class a, Class b, Class<? extends ScriptElement<?>> returnType, IOperation operation) {
         binaryOperations.computeIfAbsent(o, k -> new HashMap<>());
         binaryOperations.get(o).computeIfAbsent(a, k -> new HashMap<>());
-        binaryOperations.get(o).get(a).put(b, operation);
+        binaryOperations.get(o).get(a).put(b, new OperatorDefinition(operation, returnType));
     }
 
-    public static void registerUnaryOperation(ScriptOperator o, Class a, IOperation operation) {
+    public static void registerUnaryOperation(ScriptOperator o, Class<? extends ScriptElement<?>> a, Class<? extends ScriptElement<?>> returnType, IOperation operation) {
         unaryOperations.computeIfAbsent(o, k -> new HashMap<>());
-        unaryOperations.get(o).put(a, operation);
+        unaryOperations.get(o).put(a, new OperatorDefinition(operation, returnType));
     }
 
-    public static IOperation getBinaryOperation(Class<? extends ScriptType> a, Class<? extends ScriptType> b, ScriptOperator o) {
-        if (binaryOperations.get(o).get(ScriptType.class) != null) {
-            final IOperation op;
-            if ((op = binaryOperations.get(o).get(ScriptType.class).get(b)) != null)
+    public static OperatorDefinition getBinaryOperation(Class<? extends ScriptType> a, Class<? extends ScriptType> b, ScriptOperator o) {
+        if (binaryOperations.get(o).get(ScriptElement.class) != null) {
+            final OperatorDefinition op;
+            if ((op = binaryOperations.get(o).get(ScriptElement.class).get(b)) != null)
                 return op;
         }
         if (binaryOperations.get(o).get(a) != null) {
-            final IOperation op;
-            if ((op = binaryOperations.get(o).get(a).get(ScriptType.class)) != null)
+            final OperatorDefinition op;
+            if ((op = binaryOperations.get(o).get(a).get(ScriptElement.class)) != null)
                 return op;
         }
         if (binaryOperations.get(o).get(a) != null) {
-            final IOperation op;
+            final OperatorDefinition op;
             if ((op = binaryOperations.get(o).get(a).get(b)) != null)
                 return op;
         }
@@ -106,7 +106,7 @@ public class ScriptManager {
         return null;
     }
 
-    public static IOperation getUnaryOperation(Class a, ScriptOperator o) {
+    public static OperatorDefinition getUnaryOperation(Class a, ScriptOperator o) {
         try {
             return unaryOperations.get(o).get(a);
         } catch (NullPointerException e) {
@@ -116,10 +116,25 @@ public class ScriptManager {
     }
 
 
+    public static ActionDefinition getDefinitionFromAction(Class<? extends ScriptAction> cls){
+        for(ActionDefinition actionDefinition : actions){
+            if(actionDefinition.getActionClass() == cls)
+                return actionDefinition;
+        }
+        return null;
+    }
+
+    public static ExpressionDefinition getDefinitionFromExpression(Class<? extends ScriptExpression> cls){
+        for(ExpressionDefinition expressionDefinition : expressions){
+            if(expressionDefinition.getExpressionClass() == cls)
+                return expressionDefinition;
+        }
+        return null;
+    }
 
     public static final boolean FULL_DEBUG = true;
 
-    public static void registerExpression(Class<? extends ScriptExpression> exp, String name, int priority, Feature... features) {
+    public static void registerExpression(Class<? extends ScriptExpression> exp, String name, int priority, Feature... features) throws Exception {
         expressions.add(new ExpressionDefinition(name, exp, priority, features));
         expressions.sort((a,b)->b.getPriority()-a.getPriority());
         log.debug("Registering expression : " + name + " (" + exp.getSimpleName() + ")");
@@ -148,7 +163,7 @@ public class ScriptManager {
     public static void registerPrimitive(Class<? extends PrimitiveType<?>> type, String name, String... patterns) {
         log.debug("Registering primitive : " + name + " (" + type.getSimpleName() + ")");
         TypeDefinition primitiveDefinition = new TypeDefinition(name, new String[0], new String[]{""}, type);
-        primitiveDefinition.transformedPattern = new TransformedPattern(patterns[0],0,0, new ScriptParameterDefinition[]{new ScriptParameterDefinition(type,false)});
+        primitiveDefinition.transformedPattern = new TransformedPattern(patterns[0],0,0, new ScriptParameterDefinition[][]{{new ScriptParameterDefinition(type,false)}});
         primitives.put(type, primitiveDefinition);
     }
 
@@ -160,19 +175,19 @@ public class ScriptManager {
 
     }
 
-    public static void registerEvent(Class<? extends ScriptEvent> cls, String name, String[] description, String[] example, String[] patterns, Side side,String... accessors) {
-        log.debug("Registering event : " + name + " (" + cls.getSimpleName() + ")");
-        events.add(new EventDefinition(name, description, example, cls, side, patterns).setAccessors(accessors));
+    public static void registerEvent(Class<? extends ScriptEvent> cls, Feature feature, Feature[] accesors) throws Exception {
+        log.debug("Registering event : " + feature.name() + " (" + cls.getSimpleName() + ")");
+        events.add(new EventDefinition(cls, feature, accesors));
     }
 
-    public static void registerAction(Class<? extends ScriptAction> cls, String name, int priority, Feature... features) {
+    public static void registerAction(Class<? extends ScriptAction> cls, String name, int priority, Feature... features) throws Exception {
         log.debug("Registering action : " + name + " (" + cls.getSimpleName() + ")");
         actions.add(new ActionDefinition(name, cls, priority, features));
     }
 
-    public static void registerBlock(Class<? extends ScriptBlock> cls, String name, String description, String[] examples, String regex, Side side, boolean reloadable) {
-        log.debug("Registering block : " + name + " (" + cls.getSimpleName() + ")");
-        blocks.add(new BlockDefinition(name, description, examples, cls, regex, side, reloadable));
+    public static void registerBlock(Class<? extends ScriptBlock> cls, Feature feature, Feature[] fields,boolean reloadable) {
+        log.debug("Registering block : " + feature.name() + " (" + cls.getSimpleName() + ")");
+        blocks.add(new BlockDefinition(cls, feature, fields, reloadable));
     }
 
 
@@ -357,7 +372,7 @@ public class ScriptManager {
         EventDefinition eventDefinition = null;
         if(optional.isPresent())
             eventDefinition = optional.get();
-        if( eventDefinition!=null && eventDefinition.getSide().isStrictlyValid()) {
+        if( eventDefinition!=null && eventDefinition.getFeature().side().isStrictlyValid()) {
             ScriptContext context = new ScriptContext(GLOBAL_CONTEXT);
             if(RELOADING)
                 return false;
@@ -365,6 +380,7 @@ public class ScriptManager {
                 if (RELOADING)
                     return false;
                 if (script.callEvent(context, event)) {
+                    //System.out.println("Returning true");
                     return true;
                 }
             }

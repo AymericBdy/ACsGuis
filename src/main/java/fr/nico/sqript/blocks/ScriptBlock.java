@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public abstract class ScriptBlock extends IScript {
 
@@ -107,7 +108,7 @@ public abstract class ScriptBlock extends IScript {
             }
             //System.out.println("this fields : "+Arrays.asList(this.getClass().getAnnotation(Block.class).fields()));
             Matcher m = getLabel.matcher(next.getText());
-            if (m.find() && Arrays.asList(this.getClass().getAnnotation(Block.class).fields()).contains(currentLabel = m.group(1))) {
+            if (m.find() && Arrays.asList(this.getClass().getAnnotation(Block.class).fields()).stream().map(a->a.name()).collect(Collectors.toList()).contains(currentLabel = m.group(1))) {
                 //Found the description of a sub-block
 
                 List<ScriptToken> content = new ArrayList<>();
@@ -236,8 +237,8 @@ public abstract class ScriptBlock extends IScript {
             return (Integer) evaluate().getObject();
         }
 
-        public ScriptType evaluate(ScriptCompileGroup group, ScriptContext context) throws Exception {
-            return ScriptDecoder.parseExpression(content.get(0), group).get(context);
+        public ScriptType evaluate(ScriptCompilationContext group, ScriptContext context) throws Exception {
+            return ScriptDecoder.parse(content.get(0), group).get(context);
         }
 
         public String getRawContent() {
@@ -245,16 +246,16 @@ public abstract class ScriptBlock extends IScript {
         }
 
         public ScriptType evaluate() throws Exception {
-            return evaluate(new ScriptCompileGroup(), new ScriptContext());
+            return evaluate(new ScriptCompilationContext(), new ScriptContext());
         }
 
 
         public IScript compile() throws Exception {
-            return compile(new ScriptCompileGroup());
+            return compile(new ScriptCompilationContext());
         }
 
-        public IScript compile(ScriptCompileGroup compileGroup) throws Exception {
-            //System.out.println(content);
+        public IScript compile(ScriptCompilationContext compileGroup) throws Exception {
+            //System.out.println("Compiling content : "+content);
             return ScriptDecoder.group(null, content, compileGroup);
         }
     }

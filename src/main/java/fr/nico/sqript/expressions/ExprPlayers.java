@@ -4,6 +4,7 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.types.*;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeBoolean;
 import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
@@ -52,6 +53,7 @@ public class ExprPlayers extends ScriptExpression {
                 TypeString s = (TypeString) parameters[0];
                 return new TypePlayer(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(s.getObject()));
             case 2:
+                //System.out.println(parameters[0]);
                 EntityPlayer player = (EntityPlayer) parameters[0].getObject();
                 return new TypeString(player.getName());
             case 3:

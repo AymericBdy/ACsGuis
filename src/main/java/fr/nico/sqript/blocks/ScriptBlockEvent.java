@@ -1,23 +1,28 @@
 package fr.nico.sqript.blocks;
 
 import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.SqriptUtils;
 import fr.nico.sqript.events.ScriptEvent;
 import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.meta.Event;
 import fr.nico.sqript.compiling.*;
 import fr.nico.sqript.meta.EventDefinition;
+import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.TypeNull;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
-@Block(name = "event",
-        description = "Event blocks",
-        examples = "on script load:\n" +
-                "    print \"Hello world !\"",
-        regex = "^on .*",
-        fields = {"side"}
+@Block(
+        feature = @Feature(name = "Event",
+                description = "Run code when a specific event is triggered.",
+                examples = "on script load:\n" +
+                        "    print \"Hello world !\"",
+                regex = "^(on|when) .*"),
+        fields = {@Feature(name = "side")}
 )
 public class ScriptBlockEvent extends ScriptBlock {
 
@@ -30,38 +35,51 @@ public class ScriptBlockEvent extends ScriptBlock {
 
     public ScriptBlockEvent(ScriptToken head) throws ScriptException {
         super(head);
-        getHead().setText(head.getText().trim().replaceFirst("(^|\\s+)on\\s+", "")); //Extracting the event parameters
+        getHead().setText(head.getText().trim().replaceFirst("(^|\\s+)(on|when)\\s+", "")); //Extracting the event parameters
         getHead().setText(head.getText().substring(0,head.getText().length()-1)); //Removing the last ":"
     }
 
     @Override
     public void init(ScriptLineBlock block) throws Exception {
-        this.eventType = getEvent(getHead());
+        this.eventType = parseEvent(getHead());
         if(eventType == null)
             throw new ScriptException.ScriptUnknownEventException(getHead());
-        this.side = eventType.getAnnotation(Event.class).side();
+        this.side = eventType.getAnnotation(Event.class).feature().side();
         super.init(block);
     }
 
-    public Class<? extends ScriptEvent> getEvent(ScriptToken line) {
+    public Class<? extends ScriptEvent> parseEvent(ScriptToken line) {
+        //System.out.println("Parsing event for : "+line);
+        line = line.with(line.getText().trim());
         for (EventDefinition eventDefinition : ScriptManager.events) {
-            //System.out.println("Checking for : "+line+" with "+eventDefinition.eventClass);
+            //System.out.println("Checking for : "+eventDefinition.getEventClass());
             int matchedPatternIndex = -1;
             if ((matchedPatternIndex = eventDefinition.getMatchedPatternIndex(line.getText())) != -1) {
-                //System.out.println(matchedPatternIndex);
                 //Parsing the arguments
                 String[] arguments = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllArguments(line.getText());
-                //System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length);
-                parameters = new ScriptType[arguments.length];
-                marks = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllMarks(line.getText());
+                //System.out.println(eventDefinition.eventClass.getSimpleName()+" "+arguments.length+" "+Arrays.toString(arguments));
+                ScriptType[] parameters = new ScriptType[arguments.length];
+                int marks = eventDefinition.getTransformedPatterns()[matchedPatternIndex].getAllMarks(line.getText());
                 for (int i = 0; i < arguments.length; i++) {
                     try {
-                        parameters[i] = ScriptDecoder.parseExpression(line.with(arguments[i]),new ScriptCompileGroup()).get(ScriptContext.fromGlobal());
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        if(arguments[i] != null)
+                            parameters[i] = ScriptDecoder.parse(line.with(arguments[i]),new ScriptCompilationContext()).get(ScriptContext.fromGlobal());
+                        else parameters[i] = new TypeNull();
+                    } catch (Exception ignored) {
                     }
                 }
-                return eventDefinition.getEventClass();
+                try {
+                    ScriptEvent event = SqriptUtils.rawInstantiation(ScriptEvent.class, eventDefinition.getEventClass());
+                    if (event.validate(parameters, marks)) {
+                        this.marks = marks;
+                        this.parameters = parameters;
+                        //System.out.println("Validated");
+                        return eventDefinition.getEventClass();
+                    }else{
+                        //System.out.println("Not validated");
+                    }
+                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ignored) {
+                }
             }
         }
         return null;
@@ -75,7 +93,7 @@ public class ScriptBlockEvent extends ScriptBlock {
         if(side!=null && !side.isStrictlyValid())
             return;
 
-        ScriptCompileGroup group = new ScriptCompileGroup();
+        ScriptCompilationContext group = new ScriptCompilationContext();
         group.addArray(Arrays.asList(eventType.getAnnotation(Event.class).accessors()));
         setRoot(getMainField().compile(group));
         getScriptInstance().registerBlock(this);
@@ -93,4 +111,5 @@ public class ScriptBlockEvent extends ScriptBlock {
     public int getMarks() {
         return marks;
     }
+
 }

@@ -1,6 +1,7 @@
 package fr.nico.sqript.compiling;
 
 import fr.nico.sqript.ScriptManager;
+import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.blocks.ScriptBlock;
 import fr.nico.sqript.meta.BlockDefinition;
 import fr.nico.sqript.structures.IScript;
@@ -30,7 +31,7 @@ public class ScriptLoader
     public static void dispScriptTree(IScript s, int i) {
         String tab = "";
         for (int j = 0; j < i; j++) tab += "|    ";
-        ScriptManager.log.info(tab + (s.parent != null ? s.parent.getClass().getSimpleName() + " >> " : "") + s.getClass().getSimpleName() + " -> " + ((s.next != null ? s.next.getClass().getSimpleName(): "[null]")));
+        ScriptManager.log.info(tab + (s.parent != null ? s.parent.getClass().getSimpleName() + " >> " : "") + s.getClass().getSimpleName() + (s instanceof ScriptAction ? (s.toString().isEmpty() ? "("+((ScriptAction)s).getParameters() +")": s.toString()) : "") + " -> " + ((s.next != null ? s.next.getClass().getSimpleName(): "[null]")));
         if (s instanceof ScriptLoop) {
             ScriptLoop sl = (ScriptLoop) s;
             if (sl.getWrapped() != null)
@@ -116,7 +117,7 @@ public class ScriptLoader
             BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
             if(blockDefinition==null)
                 throw new ScriptException.ScriptUnknownTokenException(head);
-            if(blockDefinition.getSide().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())){
+            if(blockDefinition.getFeature().side().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())){
                 Class scriptBlockClass = blockDefinition.getBlockClass();
                 //^2
                 ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptToken.class).newInstance(head);

@@ -3,37 +3,44 @@ package fr.aym.acsguis.sqript.block;
 import fr.aym.acsguis.api.ACsGuiApi;
 import fr.aym.acsguis.component.layout.GuiScaler;
 import fr.aym.acsguis.component.panel.GuiFrame;
-import fr.aym.acsguis.sqript.component.ComponentUtils;
 import fr.aym.acsguis.sqript.component.ComponentProperties;
-import fr.nico.sqript.ScriptManager;
+import fr.aym.acsguis.sqript.component.ComponentUtils;
+import fr.aym.acsguis.sqript.expressions.TypeComponent;
 import fr.nico.sqript.blocks.ScriptBlock;
-import fr.nico.sqript.compiling.ScriptCompileGroup;
-import fr.nico.sqript.compiling.ScriptDecoder;
+import fr.nico.sqript.compiling.ScriptCompilationContext;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
-import fr.nico.sqript.meta.BlockDefinition;
-import fr.nico.sqript.structures.*;
+import fr.nico.sqript.meta.Feature;
+import fr.nico.sqript.structures.IScript;
+import fr.nico.sqript.structures.ScriptClock;
+import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.Side;
+import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Block(name = "Define gui frame block",
+@Block(
+        feature = @Feature(
+        name = "Define gui frame block",
         description = "Defines a new gui frame",
         examples = "define gui frame my_frame:",
         regex = "^define gui frame .*:",
-        side = Side.CLIENT,
-        fields = {"css_class","css_id","css_code","css_sheets"}
+        side = Side.CLIENT),
+        fields = { @Feature(name = "css_class"), //TODO DOC BETTER
+                @Feature(name = "css_id"),
+                @Feature(name = "css_code"),
+                @Feature(name = "css_sheets")}
 )
 public class ScriptBlockGuiFrame extends ScriptBlock
 {
     private final String name;
 
-    public static ScriptBlock loadBlock(ScriptInstance instance, List<ScriptToken> block, ScriptToken line, ScriptToken head) throws Exception {
+    /*public static ScriptBlock loadBlock(ScriptInstance instance, List<ScriptToken> block, ScriptToken line, ScriptToken head) throws Exception {
         BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
         if(blockDefinition==null)
             throw new ScriptException.ScriptUnknownTokenException(head);
@@ -50,7 +57,7 @@ public class ScriptBlockGuiFrame extends ScriptBlock
             }
         }
         return null;
-    }
+    }*/
 
     public ScriptBlockGuiFrame(ScriptToken head) throws ScriptException {
         super(head);
@@ -72,10 +79,10 @@ public class ScriptBlockGuiFrame extends ScriptBlock
             throw new ScriptException.ScriptMissingFieldException(this.getLine(),"define gui frame","css_sheets");
 
         //System.out.println("Loading sub blocks");
-        ScriptCompileGroup group = new ScriptCompileGroup();
-        group.add("this_component");
+        ScriptCompilationContext group = new ScriptCompilationContext();
+        group.add("this_component", TypeComponent.class);
         for(ComponentProperties<?, ?> property : ComponentProperties.getProperties()) {
-            group.add(property.getName());
+            group.add(property.getName(), ScriptType.class);
         }
         IScript script = getMainField().compile(group);
         setRoot(script);

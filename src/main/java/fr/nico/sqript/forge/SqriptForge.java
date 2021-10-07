@@ -11,6 +11,7 @@ import fr.nico.sqript.forge.common.SqriptCommand;
 import fr.nico.sqript.forge.common.item.ScriptItem;
 import fr.nico.sqript.network.ScriptMessage;
 import fr.nico.sqript.network.ScriptNetworkManager;
+import fr.nico.sqript.network.ScriptReloadMessage;
 import fr.nico.sqript.network.ScriptSyncDataMessage;
 import fr.nico.sqript.meta.*;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -202,7 +203,7 @@ public class SqriptForge {
             try {
                 Class toRegister = Class.forName(c.getClassName());
                 Event e = (Event) toRegister.getAnnotation(Event.class);
-                ScriptManager.registerEvent(toRegister, e.name(), e.description(), e.examples(), e.patterns(), e.side(), e.accessors());
+                ScriptManager.registerEvent(toRegister, e.feature(), e.accessors());
             } catch (Exception e) {
                 ScriptManager.log.error("Error trying to load ScriptEvent : " + c.getClassName());
                 if (ScriptManager.FULL_DEBUG) e.printStackTrace();
@@ -229,7 +230,7 @@ public class SqriptForge {
             try {
                 Class toRegister = Class.forName(c.getClassName());
                 Block e = (Block) toRegister.getAnnotation(Block.class);
-                ScriptManager.registerBlock(toRegister, e.name(), e.description(), e.examples(), e.regex(), e.side(), e.reloadable());
+                ScriptManager.registerBlock(toRegister, e.feature(), e.fields(), e.reloadable());
             } catch (Exception e) {
                 if (ScriptManager.FULL_DEBUG) e.printStackTrace();
             }
@@ -277,6 +278,9 @@ public class SqriptForge {
 
         channel.registerMessage(ScriptMessage.ScriptMessageHandler.class, ScriptMessage.class, 1, Side.CLIENT);
         channel.registerMessage(ScriptMessage.ScriptMessageHandler.class, ScriptMessage.class, 1, Side.SERVER);
+
+        channel.registerMessage(ScriptReloadMessage.ScriptMessageHandler.class, ScriptReloadMessage.class, 2, Side.CLIENT);
+        channel.registerMessage(ScriptReloadMessage.ScriptMessageHandler.class, ScriptReloadMessage.class, 2, Side.SERVER);
 
         ScriptNetworkManager.init();
 

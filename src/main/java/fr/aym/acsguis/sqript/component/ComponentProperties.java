@@ -47,10 +47,16 @@ public class ComponentProperties<A, B> {
 
     public static final ComponentProperties<GuiEntityRender, Entity> ENTITY_TO_RENDER = new ComponentProperties<>("entity_to_render", c -> new TypeEntity(c.getEntity()), (c, s) -> c.setEntity((EntityLivingBase) s));
 
-    public static final ComponentProperties<GuiComboBox, ArrayList<ScriptType>> COMBO_CHOICES = new ComponentProperties<>("combo_choices", c -> new TypeArray((ArrayList<?>) c.getEntries()), (c, s) -> {
+    public static final ComponentProperties<GuiComboBox, ArrayList<ScriptType<?>>> COMBO_CHOICES = new ComponentProperties<>("combo_choices", c -> {
+        ArrayList<ScriptType<?>> entries = new ArrayList<>();
+        for (String s : c.getEntries()) {
+            entries.add(new TypeString(s));
+        }
+        return new TypeArray(entries);
+    }, (c, s) -> {
         List<String> entries = new ArrayList<>();
-        for (ScriptType<String> t : s) {
-            entries.add(t.getObject());
+        for (ScriptType<?> t : s) {
+            entries.add((String) t.getObject());
         }
         c.setEntries(entries);
     });

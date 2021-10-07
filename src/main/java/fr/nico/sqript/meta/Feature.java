@@ -20,22 +20,32 @@ public @interface Feature {
     /**
      * @return The description of this feature.
      */
-    String description();
+    String description() default "";
 
     /**
      * @return A list of examples of this feature.
      */
-    String[] examples();
+    String[] examples() default "";
 
     /**
      * @return The pattern of this feature.
      */
-    String pattern();
+    String pattern() default "";
+
+    /**
+     * @return The regex of this feature.
+     */
+    String regex() default "";
 
     /**
      * @return If an expression, the return type of this expression.
      */
     String type() default "element";
+
+    /**
+     * @return If an expression, whether is can be set to another value using the set() method.
+     */
+    boolean settable() default true;
 
     /**
      * @return The running side of this feature.
