@@ -121,6 +121,11 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	 */
 	public boolean needsCssReload() { return false; }
 
+	/**
+	 * @return True to enable show debug option by 'K' on the keyboard while hovering a component
+	 */
+	public boolean allowDebugInGui() { return false; }
+
 	@Override
 	public boolean isFocused() {
 		return true;
@@ -330,7 +335,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 		@Override
 		protected void keyTyped(char typedChar, int keyCode)
 		{
-			if(Keyboard.isKeyDown(Keyboard.KEY_K))
+			if(allowDebugInGui() && Keyboard.isKeyDown(Keyboard.KEY_K))
 			{
 				hasDebugInfo = false;
 			}
