@@ -18,7 +18,8 @@ import java.util.ArrayList;
                 name = "Define a grid gui layout",
                 description = "Defines a new grid layout to add to a gui panel",
                 examples = "new grid layout with size [-1,25] spacing 5 direction \"horizontal\" elements per line 1",
-                pattern = "new grid layout with size {array} spacing {number} direction {string} elements per line {number}:panel_layout",
+                pattern = "new grid layout with size {array} spacing {number} direction {string} elements per line {number}",
+                type = "panel_layout",
                 side = Side.CLIENT)
 )
 public class ExprGuiLayout extends ScriptExpression {

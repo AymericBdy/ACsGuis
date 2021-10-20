@@ -9,7 +9,10 @@ import fr.aym.acsguis.sqript.expressions.TypeComponent;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Loop;
-import fr.nico.sqript.structures.*;
+import fr.nico.sqript.structures.IScript;
+import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.ScriptLoop;
+import fr.nico.sqript.structures.Side;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,12 +45,12 @@ public class ScriptBlockGuiComponent extends ScriptLoop {
         Pattern pattern = Pattern.compile("^([a-z_]*)?( with)?( id \"([a-z0-9_-]*)?\")?( and)?( class \"([a-z0-9_-]*)?\")?( and)?( text \"([a-zA-Z0-9 :/_-]*)?\")?$");
         String name = this.name.trim();
         Matcher matcher = pattern.matcher(name);
-        if(!matcher.matches()) {
-            throw new ScriptException(getLine(), "Line doesn't match required component definition : matching : "+name);
+        if (!matcher.matches()) {
+            throw new ScriptException(getLine(), "Line doesn't match required component definition : matching : " + name);
         }
         String type = matcher.group(1);
-        if(type.isEmpty()) {
-            throw new ScriptException(getLine(), "No component found for type: "+type);
+        if (type.isEmpty()) {
+            throw new ScriptException(getLine(), "No component found for type: " + type);
         }
         //System.out.println("My type is " + type);
         ParseableComponent componentType = ParseableComponent.find(type);
@@ -55,23 +58,23 @@ public class ScriptBlockGuiComponent extends ScriptLoop {
 
         String id = matcher.group(4);
         //System.out.println("The id is "+id);
-        if(id != null && !id.isEmpty()) {
+        if (id != null && !id.isEmpty()) {
             component.setCssId(id);
         }
 
         String clazz = matcher.group(7);
         //System.out.println("The class is "+clazz);
-        if(clazz != null && !clazz.isEmpty()) {
+        if (clazz != null && !clazz.isEmpty()) {
             component.setCssClass(clazz);
         }
 
         String text = matcher.group(10);
         //System.out.println("The text is "+text);
-        if(text != null) {
-            if(component instanceof TextComponent) {
+        if (text != null) {
+            if (component instanceof TextComponent) {
                 ((TextComponent) component).setText(text);
             } else {
-                throw new ScriptException(getLine(), "Component "+component+" cannot contain text !");
+                throw new ScriptException(getLine(), "Component " + component + " cannot contain text !");
             }
         }
 
@@ -93,7 +96,7 @@ public class ScriptBlockGuiComponent extends ScriptLoop {
         //System.out.println("HUAWEI To: "+((TypeComponent) context.getVariable("this_component")).getObject()+" adding: "+component);
         ((GuiPanel) ((TypeComponent) context.getAccessor("this_component").element).getObject()).add(component);
         if (getWrapped() == null) {
-            System.out.println("WTF no wrapped for "+getLine());
+            System.out.println("WTF no wrapped for " + getLine());
         } else {
             ComponentUtils.pushComponentVariables(component, context);
         }
@@ -144,8 +147,7 @@ public class ScriptBlockGuiComponent extends ScriptLoop {
         String text = getLine().getText().trim().replaceFirst("(^|\\s+)add css component\\s+", ""); //Extracting the event parameters
         text = text.substring(0, text.length() - 1); //Removing the last ":"
         this.name = text;
-        int tabLevel = ScriptDecoder.getTabLevel(getLine().getText());
-        this.tabLevel = tabLevel;
+        this.tabLevel = ScriptDecoder.getTabLevel(getLine().getText());
         //System.out.println("FILL "+text+" WITH TAB "+tabLevel);
         //System.out.println("Long name is " + name);
         super.wrap(wrapped);

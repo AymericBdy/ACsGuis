@@ -135,11 +135,12 @@ public class ActionGuiComponent extends ScriptAction {
     private int tabLevel;
 
     @Override
-    public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
-        super.build(line, compileGroup, parameters, matchedIndex, marks);
+    public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks, int tabLevel) throws Exception {
+        super.build(line, compileGroup, parameters, matchedIndex, marks, tabLevel);
         this.name = line.getText().trim().replaceFirst("(^|\\s+)add css component\\s+", "");
         //System.out.println("TABS LEVELS " + ScriptDecoder.getTabLevel(line.getText())+" AND "+ScriptDecoder.getTabLevel(getLine().getText()));
-        this.tabLevel = ScriptDecoder.getTabLevel(line.getText());
+        this.tabLevel = tabLevel;
+        //System.out.println("23 Tab level "+ this.tabLevel);
 //TODO TEST FROM MAJ
        // this.tabLevel = tabLevel;
 

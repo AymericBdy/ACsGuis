@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.*;
 import fr.nico.sqript.expressions.ExprCompiledExpression;
-import fr.nico.sqript.expressions.ExprReference;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.meta.Feature;
@@ -52,7 +51,7 @@ public class ActDefinition extends ScriptAction {
     }
 
     @Override
-    public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
+    public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks, int tabLevel) throws Exception {
         //If accessing a global variable,
         //we parse the argument as a string to make the action
         //able to register the new variable in the context
@@ -83,7 +82,7 @@ public class ActDefinition extends ScriptAction {
             this.setMatchedIndex(matchedIndex);
             this.setMarks(marks);
         } else {
-            super.build(line, compileGroup, parameters, matchedIndex, marks);
+            super.build(line, compileGroup, parameters, matchedIndex, marks, tabLevel);
         }
 
     }
