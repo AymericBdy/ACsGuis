@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ScriptExpressionParser implements INodeParser {
 
@@ -43,8 +44,7 @@ public class ScriptExpressionParser implements INodeParser {
                     //System.out.println("Types are not valid : " + node.getReturnType() + " " + Arrays.toString(validTypes));
                     continue;
                 }
-                //System.out.println("Returning valid parsed");
-                //System.out.println(debugOffset() +"Returning : "+node);
+                //System.out.println("Returning valid parturning : "+node);
                 return node;
             }
         }
@@ -107,9 +107,9 @@ public class ScriptExpressionParser implements INodeParser {
                                         if (isComaSeparated(argument)) {
                                             //System.out.println("Is coma separated : " + argument);
                                             //System.out.println("Split is : " + Arrays.asList(ScriptDecoder.splitAtComa(argument)));
-                                            parameters.addAll(Arrays.asList(ScriptDecoder.splitAtComa(argument)));
+                                            parameters.addAll(Arrays.stream(ScriptDecoder.splitAtComa(argument)).map(ScriptDecoder::trim).collect(Collectors.toList()));
                                         } else {
-                                            parameters.add(argument);
+                                            parameters.add(ScriptDecoder.trim(argument));
                                         }
                                     else parameters.add(null);
                                 }
@@ -192,9 +192,11 @@ public class ScriptExpressionParser implements INodeParser {
                 //System.out.println(debugOffset()+"Returning : "+validTrees.get(0));
                 return validTrees.get(0);
             } else {
-                Node result = new NodeSwitch(validTrees.toArray(new Node[0]));
+                if(validTypes.length == 1 && validTypes[0] == ScriptElement.class)
+                    return validTrees.get(0);
+
                 //System.out.println(debugOffset()+"Returning : "+result);
-                return result;
+                return new NodeSwitch(validTrees.toArray(new Node[0]));
             }
         }
 
@@ -217,8 +219,8 @@ public class ScriptExpressionParser implements INodeParser {
             /*
              * Now we extract each operand from the string, split at each operator.
              */
-            OperatorSplitResult operatorSplitResult = ScriptDecoder.splitAtOperators(operatorsBuildString);
-            List<ExpressionToken> tokens = Arrays.asList(operatorSplitResult.getExpressionTokens());
+            ExpressionToken[] operatorSplitResult = ScriptDecoder.splitAtOperators(operatorsBuildString);
+            List<ExpressionToken> tokens = Arrays.asList(operatorSplitResult);
             List<Node> nodes = new ArrayList<>();
             int addedOperators = 0;
             //System.out.println("Tokens are : "+tokens);
@@ -229,7 +231,7 @@ public class ScriptExpressionParser implements INodeParser {
                     } else if (token.getType() == EnumTokenType.RIGHT_PARENTHESIS) {
                         nodes.add(new NodeParenthesis(EnumTokenType.RIGHT_PARENTHESIS));
                     } else if (token.getType() == EnumTokenType.EXPRESSION) {
-                        Node node = parse(line.with(token.getExpressionString()), compilationContext, new Class[]{ScriptElement.class});
+                        Node node = parse(line.with(token.getExpressionString().trim()), compilationContext, new Class[]{ScriptElement.class});
                         if (node == null) {
                             return null;
                         }
@@ -244,7 +246,10 @@ public class ScriptExpressionParser implements INodeParser {
                 return null;
             else{
                 try {
+                    //System.out.println("Nodes are : "+nodes);
+                    //System.out.println();
                     Node finalTree = ExprCompiledExpression.rpnToAST(ExprCompiledExpression.infixToRPN(nodes));
+                    //System.out.println("Final tree : "+finalTree);
                     if (validTypes != null && isTypeValid(finalTree.getReturnType(), validTypes)) {
                         //System.out.println("Returning compiled : " + finalTree);
                         return finalTree;
