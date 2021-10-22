@@ -71,11 +71,12 @@ public class ScriptExpressionParser implements INodeParser {
                             if (matchResult.getMatchedIndex() == parent.getMatchedIndex()
                                     && expressionDefinition.getExpressionClass() == parent.getClass()
                                     && line.equals(parent.getLine())) {
-                                //System.out.println("Not valid because identical to parent for " + expressionString);
-
+                                if (line.getText().contains("new grid"))
+                                    System.out.println("Not valid because identical to parent for " + expressionString);
                             }
                             if (validTypes != null && !isTypeValid(expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getReturnType(), validTypes)) {
-                                //System.out.println("Not valid because bad return type for " + expressionString + " as a " + Arrays.toString(validTypes) + " not assignable from " + expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getReturnType());
+                                if (line.getText().contains("new grid"))
+                                    System.out.println("Not valid because bad return type for " + expressionString + " as a " + Arrays.toString(validTypes) + " not assignable from " + expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()].getReturnType());
                                 continue;
                             }
 
@@ -87,9 +88,12 @@ public class ScriptExpressionParser implements INodeParser {
                             TransformedPattern transformedPattern = expressionDefinition.transformedPatterns[matchResult.getMatchedIndex()];
 
                             String[] arguments = transformedPattern.getAllArguments(expressionString);
-                            //System.out.println("Next found expression is : " + expression.toString() + " with arguments " + Arrays.toString(arguments));
 
-                            //System.out.println("Expression sub arguments are : " + Arrays.toString(arguments));
+                            if (line.getText().contains("new grid"))
+                                System.out.println("Next found expression is : " + expression.toString() + " with arguments " + Arrays.toString(arguments));
+
+                            if (line.getText().contains("new grid"))
+                                System.out.println("Expression sub arguments are : " + Arrays.toString(arguments));
 
                             /*
                              * We run the method validate() to check if all is ok before returning the final result.
@@ -105,8 +109,10 @@ public class ScriptExpressionParser implements INodeParser {
                                 for (String argument : arguments) {
                                     if (argument != null)
                                         if (isComaSeparated(argument)) {
-                                            //System.out.println("Is coma separated : " + argument);
-                                            //System.out.println("Split is : " + Arrays.asList(ScriptDecoder.splitAtComa(argument)));
+                                            if (line.getText().contains("new grid")) {
+                                                System.out.println("Is coma separated : " + argument);
+                                                System.out.println("Split is : " + Arrays.asList(ScriptDecoder.splitAtComa(argument)));
+                                            }
                                             parameters.addAll(Arrays.stream(ScriptDecoder.splitAtComa(argument)).map(ScriptDecoder::trim).collect(Collectors.toList()));
                                         } else {
                                             parameters.add(ScriptDecoder.trim(argument));
@@ -162,10 +168,12 @@ public class ScriptExpressionParser implements INodeParser {
                             }
                             */
                                 nodeExpression.setChildren(subExpressions);
-                                //System.out.println("Adding to switch : " + nodeExpression);
+                                if (line.getText().contains("new grid"))
+                                    System.out.println("Adding to switch : " + nodeExpression);
                                 validTrees.add(nodeExpression);
                             } else {
-                                //System.out.println(debugOffset() + "Not valid because not validated by expression.");
+                                if (line.getText().contains("new grid"))
+                                    System.out.println("Not valid because not validated by expression.");
                             }
                         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                             e.printStackTrace();
@@ -192,7 +200,7 @@ public class ScriptExpressionParser implements INodeParser {
                 //System.out.println(debugOffset()+"Returning : "+validTrees.get(0));
                 return validTrees.get(0);
             } else {
-                if(validTypes.length == 1 && validTypes[0] == ScriptElement.class)
+                if (validTypes.length == 1 && validTypes[0] == ScriptElement.class)
                     return validTrees.get(0);
 
                 //System.out.println(debugOffset()+"Returning : "+result);
@@ -224,7 +232,7 @@ public class ScriptExpressionParser implements INodeParser {
             List<Node> nodes = new ArrayList<>();
             int addedOperators = 0;
             //System.out.println("Tokens are : "+tokens);
-            if(tokens.size() > 1) {
+            if (tokens.size() > 1) {
                 for (ExpressionToken token : tokens) {
                     if (token.getType() == EnumTokenType.LEFT_PARENTHESIS) {
                         nodes.add(new NodeParenthesis(EnumTokenType.LEFT_PARENTHESIS));
@@ -242,9 +250,9 @@ public class ScriptExpressionParser implements INodeParser {
                     }
                 }
             }
-            if(nodes.isEmpty())
+            if (nodes.isEmpty())
                 return null;
-            else{
+            else {
                 try {
                     //System.out.println("Nodes are : "+nodes);
                     //System.out.println();
