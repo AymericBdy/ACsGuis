@@ -25,7 +25,7 @@ public enum ParseableComponent
     BUTTON(GuiButton.class, "button", () -> new GuiButton("not set"), ComponentProperties.SET_STYLE, ComponentProperties.TEXT),
     ENTITY_RENDER(GuiEntityRender.class, "entity_render", () -> new GuiEntityRender(null), ComponentProperties.SET_STYLE, ComponentProperties.ENTITY_TO_RENDER),
     COMBO_BOX(GuiComboBox.class, "combo_box", () -> new GuiComboBox("not set", null), ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.COMBO_CHOICES),
-    PROGRESS_BAR(GuiProgressBar.class, "progress_bar", GuiProgressBar::new, ComponentProperties.SET_STYLE, ComponentProperties.TEXT),
+    PROGRESS_BAR(GuiProgressBar.class, "progress_bar", GuiProgressBar::new, ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.PROGRESS),
     PROGRESS_BAR_VERTICAL(GuiProgressBar.class, "progress_bar_vertical", () -> new GuiProgressBar(false), ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.PROGRESS);
 
     //FIXME NOT SUPPORTED : GuiResizableButton, GuiSlider, GuiCameraView, GuiList, GuiKeyLabel, GuiSearchField, tabs of GuiTabbedPane

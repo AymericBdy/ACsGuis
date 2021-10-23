@@ -4,24 +4,57 @@ ACsGuis permet d'utiliser des feuilles de style CSS pour styliser les guis Minec
 
 Le gui peut être créé soit en utilisant du code java, avec une API basée sur celle de Reden, soit en utilisant Sqript.
 
-- Voir des exemples de guis codés en java (lien)
-- Tutoriel Sqript (lien)
+- Voir des exemples de guis codés en java [lien github](https://github.com/AymericBdy/ACsGuis/tree/master/src/main/java/fr/aym/acsguis/test).
+- [Tutoriel Sqript](sqript_doc.md)
 
 Pour ce qui est du style, les propriétés CSS les plus courantes sont supportées, avec toutefois beaucoup de différentes avec le CSS officiel. Ainsi le placement des composants se fait uniquement avec les propriétés "left, right, top et bottom", ou avec les layouts (lien).
 
-- Voir la liste des propriétés CSS supportées.
+-> Voir la liste des propriétés CSS supportées en bas de ce document.
+
+### Support des couleurs : 
+
+Toutes les couleurs css sont supportées ("red", "orange", "darkgreen"...), ainsi que le rgb (`rgb(red, green, blue)`), le rgba (rgba(red, green, blue, alpha)) et l'hexadécimal (#000000 à #FFFFFF).
+
+### Héritage des propriétés :
+
+Certaines propriétés sont automatiquement héritées par les éléments fils d'un composant : si on déclare color: red; sur un Panel, alors tous les Label de ce Panel seront rouges par défaut. Ces propriétés sont précisées dans le tableau plus bas.
+
+### Auto style :
+
+!!!warning
+	Disponible uniquement dans les guis java pour le moment. Une alternative est de modifier l'id ou la class de l'élément directement.
+
+Il est possible d'appliquer un style dynamique aux éléments css, pour modifier facilement la couleur d'un élément, par exemple, sans changer son id ou sa class. Tout se fait avec les AutoStyleHandler.
+
+<Partie non terminée, allez voir la javadoc>
+
+### Customisation des polices d'écriture :
+
+Il est possible d'utiliser des polices d'écritures custom, au format .ttf.
+
+Il faut pour cela créer un bloc @font-face :
+
+````css
+@font-face {
+    font-family: "dnx:test_font";
+    /*font-style: italic;*/
+    src: url("acsguis:css/font2.ttf");
+    font-size: 52px;
+}
+````
+
+| Nom         | Description                                                  |
+| ----------- | ------------------------------------------------------------ |
+| font-family | Nom de la police d'écriture                                  |
+| src         | Emplacement du fichier .ttf (ce doit être une resource location) |
+| font-style  | Style de la police d'écriture (seul 'italic' est supporté pour le moment) |
+| font-size   | Taille de la police d'écriture                               |
 
 
 
-@FontFace supportée
+### Liste des propritétés CSS supportées :
 
-Couleurs : ...
-
-Héritage...
-
-Auto style....
-
-CSS : Toutes celles non mentionnées ne seront pas reconnues.
+Voici la liste des propriétés CSS supportées par ACsGuis. Toutes les propriétés non mentionnées ne seront pas reconnues, mais n'hésitez pas à me faire des suggestions pour en supporter d'autres.
 
 | Nom                     | Description                                                  | Exemples                  |
 | ----------------------- | ------------------------------------------------------------ | ------------------------- |
@@ -32,7 +65,7 @@ CSS : Toutes celles non mentionnées ne seront pas reconnues.
 | visibility              | Visibilité de composant : "hidden" le cachera, sinon il sera toujours visible | visibility: hidden;       |
 | font-size               | Taille du texte                                              | font-size: 15px;          |
 | font-style              | Style du texte ('italic' ou 'normal')                        |                           |
-| font-family             | Police d'écriture, voir @FontFace                            |                           |
+| font-family             | Police d'écriture, voir l'utilisation de polices d'écriture custom |                           |
 | border-color            | Couleur des bordures                                         |                           |
 | border-width            | Largeur des bordures                                         | border-width: 2px;        |
 | border-position         | Position des bordures ('internal' ou 'external')             |                           |
