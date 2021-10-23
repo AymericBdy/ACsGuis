@@ -10,7 +10,6 @@ import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class ScriptAction extends IScript {
@@ -89,7 +88,7 @@ public abstract class ScriptAction extends IScript {
         return result;
     }
 
-    public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
+    public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks, int tabLevel) throws Exception {
         List<ScriptExpression> expressions = new ArrayList<>(parameters.size());
         //System.out.println("Building action for line : "+line+", parameters are :"+ Arrays.toString(parameters.toArray(new String[0])));
         //System.out.println("Marks are : "+Integer.toBinaryString(marks));
@@ -107,7 +106,7 @@ public abstract class ScriptAction extends IScript {
             //System.out.println(matchedIndex+" "+ i+" "+Arrays.toString(actionDefinition.transformedPatterns));
             //
             //System.out.println("Compile group : "+compileGroup.declaredVariables);
-            ScriptExpression e = ScriptDecoder.parse(line.with(parameter),compileGroup, actionDefinition.transformedPatterns[i].getValidTypes(i));
+            ScriptExpression e = ScriptDecoder.parse(line.with(parameter),compileGroup, actionDefinition.transformedPatterns[matchedIndex].getValidTypes(i));
             if (e != null)
                 expressions.add(e);
             else {

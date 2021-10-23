@@ -21,7 +21,7 @@ progress_bar
     progress-bar-full-color: green;
     progress-bar-text-color: white;
     text-align: center;
-    vertical-text-align: center;
+    text-align-vertical: center;
 }
 
 text_area,text_field

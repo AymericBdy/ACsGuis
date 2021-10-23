@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.*;
 import fr.nico.sqript.expressions.ExprCompiledExpression;
-import fr.nico.sqript.expressions.ExprReference;
 import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.meta.Feature;
@@ -19,7 +18,7 @@ import java.util.List;
 @Action(name = "Simple Operation Actions",
         features = {
                 @Feature(name = "Add an element to another", description = "Adds an element to another elements if the + operation can be applied on it.", examples = {"add \"d\" to [\"a\",\"b\",\"c\"]", "add 1 to {counter}"}, pattern = "add {element} to {element}"),
-                @Feature(name = "Remove an element from another", description = "Removes an element from another element if the - operation can be applied on it.", examples = {"remove \"c\" from [\"a\",\"b\",\"c\"]", "remove 1 from player's health"}, pattern = "remove {element} to {element}"),
+                @Feature(name = "Remove an element from another", description = "Removes an element from another element if the - operation can be applied on it.", examples = {"remove \"c\" from [\"a\",\"b\",\"c\"]", "remove 1 from player's health"}, pattern = "remove {element} from {element}"),
                 @Feature(name = "Set an element to another", description = "Defines the value of an element.", examples = {"set player's health to 20", "set {variable} to 8"}, pattern = "set {element} to {element}")
         }
 )
@@ -52,7 +51,7 @@ public class ActDefinition extends ScriptAction {
     }
 
     @Override
-    public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
+    public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks, int tabLevel) throws Exception {
         //If accessing a global variable,
         //we parse the argument as a string to make the action
         //able to register the new variable in the context
@@ -83,7 +82,7 @@ public class ActDefinition extends ScriptAction {
             this.setMatchedIndex(matchedIndex);
             this.setMarks(marks);
         } else {
-            super.build(line, compileGroup, parameters, matchedIndex, marks);
+            super.build(line, compileGroup, parameters, matchedIndex, marks, tabLevel);
         }
 
     }

@@ -4,7 +4,6 @@ import fr.nico.sqript.ScriptManager;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.expressions.ScriptExpression;
-import fr.nico.sqript.structures.ScriptParameterDefinition;
 import fr.nico.sqript.structures.TransformedPattern;
 
 import java.lang.reflect.InvocationTargetException;
@@ -52,13 +51,20 @@ public class ExpressionDefinition {
         for (int i = 0; i < transformedPatterns.length; i++) {
             TransformedPattern pattern = transformedPatterns[i];
             Matcher m = pattern.getPattern().matcher(line);
+            if (line.contains("new grid"))
+                System.out.println("Does " + line + " matches " + pattern.getPattern().pattern());
             if (m.matches()) {
-                //System.out.println(m.matches()+ " for pattern "+pattern.getPattern().pattern()+" matching "+line);
-                //System.out.println(getExpressionClass()+" "+i+" possibleTypes : "+possibleTypes+" returnType: "+pattern.getReturnType());
+                if (line.contains("new grid"))
+                    System.out.println(m.matches() + " for pattern " + pattern.getPattern().pattern() + " matching " + line);
                 for (String argument : pattern.getAllArguments(line)) {
-                    if (!ScriptDecoder.isParenthesageGood(argument))
+                    if (!ScriptDecoder.isParenthesageGood(argument)) {
+                        if (line.contains("new grid"))
+                            System.out.println("Bad p for "+argument);
                         continue t;
+                    }
                 }
+                if (line.contains("new grid"))
+                    System.out.println("Add result");
                 matchResults.add(new MatchResult(i, transformedPatterns[i].getAllMarks(line)));
             }
         }
