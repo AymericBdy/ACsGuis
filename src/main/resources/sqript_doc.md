@@ -183,6 +183,6 @@ Ensuite, pour afficher le gui utilisez simplement `display css gui "nomDuGui"` �
 !!!warning
 	Un gui ne peut-être affiché que sur un client (un joueur), le serveur, lui, ne sait même pas ce que c'est, alors faites attention à ce que `display css gui` ne soit jamais appelé côté serveur !
 
-## Code source :
+## Sqript source :
 
-Coming soon ;)
+Un sqript d'exemple est disponible [ici](https://github.com/AymericBdy/ACsGuis/blob/master/run/scripts/sample/test_gui.sq).
