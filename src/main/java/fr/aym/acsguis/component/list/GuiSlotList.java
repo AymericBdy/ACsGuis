@@ -8,6 +8,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.RELATIVE_INT;
+
 public class GuiSlotList extends GuiPanel {
 	
 	protected final GuiList list;
@@ -16,7 +18,7 @@ public class GuiSlotList extends GuiPanel {
 	public GuiSlotList(GuiList list) {
 		super(0, 0, 0, 0);
 		this.list = list;
-		style.getWidth().setRelative(1);
+		style.getWidth().setRelative(1, RELATIVE_INT);
 		style.setBackgroundColor(new Color(0,0,0,0).getRGB());
 	}
 	

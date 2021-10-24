@@ -9,6 +9,7 @@ import fr.aym.acsguis.component.textarea.GuiLabel;
 import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
+import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
 import fr.aym.acsguis.cssengine.style.CssPanelStyleManager;
 import fr.aym.acsguis.event.listeners.IKeyboardListener;
 import fr.aym.acsguis.component.layout.GridLayout;
@@ -83,8 +84,8 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	
 	public GuiFrame(GuiScaler scale) {
 		this(0,0, scale);
-		style.getWidth().setRelative(1);
-		style.getHeight().setRelative(1);
+		style.getWidth().setRelative(1, CssValue.Unit.RELATIVE_INT);
+		style.getHeight().setRelative(1, CssValue.Unit.RELATIVE_INT);
 	}
 
 	public GuiFrame(int width, int height, GuiScaler scale) {
@@ -188,8 +189,8 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 				int parentWidth = (int) (screenWidth/getGuiScreen().scaleX);
 				int parentHeight = (int) (screenHeight/getGuiScreen().scaleY);
 
-				computedX = getXPos().computeValue(parentWidth, getRenderWidth());
-				computedY = getYPos().computeValue(parentHeight, getRenderHeight());
+				computedX = getXPos().computeValue(screenWidth, screenHeight, parentWidth, getRenderWidth());
+				computedY = getYPos().computeValue(screenWidth, screenHeight, parentHeight, getRenderHeight());
 			}
 		};
 		s.addAutoStyleHandler(this);

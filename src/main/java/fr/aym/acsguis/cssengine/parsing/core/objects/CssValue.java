@@ -29,6 +29,8 @@ public interface CssValue
     {
         STRING,
         ABSOLUTE_INT,
-        RELATIVE_INT
+        RELATIVE_INT,
+        RELATIVE_TO_WINDOW_WIDTH,
+        RELATIVE_TO_WINDOW_HEIGHT
     }
 }

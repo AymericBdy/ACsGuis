@@ -1,5 +1,6 @@
 package fr.aym.acsguis.cssengine.positionning;
 
+import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
 import fr.aym.acsguis.utils.GuiConstants;
 
 /**
@@ -13,14 +14,17 @@ public class Size
 
     /**
      * Computes the value of this 1D size, respecting min and max sizes, and depending on the parent size
+     *TODO
      *
+     * @param screenWidth
+     * @param screenHeight
      * @param parentSize The size of the parent, in the same dimension (width or height)
      * @return The real value
      */
-    public int computeValue(int parentSize) {
-        int cVal = value.computeValue(parentSize);
-        int min = minValue.computeValue(parentSize);
-        int max = maxValue.computeValue(parentSize);
+    public int computeValue(int screenWidth, int screenHeight, int parentSize) {
+        int cVal = value.computeValue(screenWidth, screenHeight, parentSize);
+        int min = minValue.computeValue(screenWidth, screenHeight, parentSize);
+        int max = maxValue.computeValue(screenWidth, screenHeight, parentSize);
         if(min != -1)
             cVal = Math.max(min, cVal);
         if(max != -1)
@@ -50,8 +54,8 @@ public class Size
      * Sets this size to a relative size containing value
      * @param value relative pos (0-1)
      */
-    public void setRelative(float value) {
-        this.value.setRelative(value);
+    public void setRelative(float value, CssValue.Unit type) {
+        this.value.setRelative(value, type);
         setDirty(true);
     }
 
@@ -103,14 +107,21 @@ public class Size
         /**
          * Computes the value of this 1D size, depending on the parent size
          *
+         *
+         * @param screenWidth
+         * @param screenHeight
          * @param parentSize The size of the parent, in the same dimension (width or height)
          * @return The real value
          */
-        public int computeValue(int parentSize)
+        public int computeValue(int screenWidth, int screenHeight, int parentSize)
         {
             int computed = (int) value;
             if(type == GuiConstants.ENUM_SIZE.RELATIVE)
                 computed = (int) (value*parentSize);
+            else if(type == GuiConstants.ENUM_SIZE.RELATIVE_VW)
+                computed = (int) (value * screenWidth);
+            else if(type == GuiConstants.ENUM_SIZE.RELATIVE_VH)
+                computed = (int) (value * screenHeight);
             return computed;
         }
 
@@ -135,8 +146,18 @@ public class Size
          * Sets this size to a relative size containing value
          * @param value relative pos (0-1)
          */
-        public void setRelative(float value) {
-            setType(GuiConstants.ENUM_SIZE.RELATIVE);
+        public void setRelative(float value, CssValue.Unit type) {
+            switch (type) {
+                case RELATIVE_INT:
+                    setType(GuiConstants.ENUM_SIZE.RELATIVE);
+                    break;
+                case RELATIVE_TO_WINDOW_WIDTH:
+                    setType(GuiConstants.ENUM_SIZE.RELATIVE_VW);
+                    break;
+                case RELATIVE_TO_WINDOW_HEIGHT:
+                    setType(GuiConstants.ENUM_SIZE.RELATIVE_VH);
+                    break;
+            }
             this.value = value;
         }
 

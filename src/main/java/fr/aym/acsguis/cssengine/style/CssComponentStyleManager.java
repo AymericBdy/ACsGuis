@@ -211,10 +211,10 @@ public class CssComponentStyleManager implements ComponentStyleManager
     public void updateComponentSize(int screenWidth, int screenHeight)
     {
         int parentWidth = component.getParent() != null ? component.getParent().getWidth() : screenWidth;
-        computedWidth = width.computeValue(parentWidth);
+        computedWidth = width.computeValue(screenWidth, screenHeight, parentWidth);
 
         int parentHeight = component.getParent() != null ? component.getParent().getHeight() : screenHeight;
-        computedHeight = height.computeValue(parentHeight);
+        computedHeight = height.computeValue(screenWidth, screenHeight, parentHeight);
 
         if(relBorderSize != -1)
             this.borderSize = (int) (relBorderSize * getRenderWidth());
@@ -246,10 +246,10 @@ public class CssComponentStyleManager implements ComponentStyleManager
         int parentHeight = component.getParent() != null ? component.getParent().getHeight() : screenHeight;
 
         //.out.println("Compute "+getOwner()+" x and from "+computedX);
-        computedX = getXPos().computeValue(parentWidth, getRenderWidth());
+        computedX = getXPos().computeValue(screenWidth, screenHeight, parentWidth, getRenderWidth());
         //System.out.println("Got "+computedX);
         //System.out.println("Compute "+getOwner()+" y and from "+computedY);
-        computedY = getYPos().computeValue(parentHeight, getRenderHeight());
+        computedY = getYPos().computeValue(screenWidth, screenHeight, parentHeight, getRenderHeight());
         //System.out.println("Got "+computedY);
     }
 

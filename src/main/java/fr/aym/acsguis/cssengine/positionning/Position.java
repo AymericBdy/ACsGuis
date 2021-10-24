@@ -1,5 +1,6 @@
 package fr.aym.acsguis.cssengine.positionning;
 
+import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
 import fr.aym.acsguis.utils.GuiConstants;
 import net.minecraft.util.math.MathHelper;
 
@@ -27,16 +28,23 @@ public class Position
     /**
      * Computes the value of this 1D position depending on the element and parent sizes
      *
+     * @param screenWidth TODO
+     * @param screenHeight
      * @param parentSize The size of the parent, in the same dimension (width or height)
      * @param elementSize The side of this element, in the same dimension (width or height)
      * @return The real value
      */
-    public int computeValue(int parentSize, int elementSize)
+    public int computeValue(int screenWidth, int screenHeight, int parentSize, int elementSize)
     {
         //System.out.println("Compute pos from "+parentSize+" "+elementSize+" "+value+" "+relativePos+" "+type);
         int computed = (int) value;
         if(type == GuiConstants.ENUM_POSITION.RELATIVE)
             computed = (int) (value*parentSize);
+        else if(type == GuiConstants.ENUM_POSITION.RELATIVE_VW)
+            computed = (int) (value * screenWidth);
+        else if(type == GuiConstants.ENUM_POSITION.RELATIVE_VH)
+            computed = (int) (value * screenHeight);
+
         if(relativePos == GuiConstants.ENUM_RELATIVE_POS.END) {
             computed = parentSize - computed - elementSize;
         } else if(relativePos == GuiConstants.ENUM_RELATIVE_POS.CENTER) {
@@ -76,17 +84,23 @@ public class Position
 
     /**
      * Sets this position to a relative position containing value
+     * TODO
      * @param value relative pos (0-1)
      */
-    public void setRelative(float value) {
-        setRelative(value, GuiConstants.ENUM_RELATIVE_POS.START);
+    public void setRelative(float value, CssValue.Unit type) {
+        setRelative(value, type, GuiConstants.ENUM_RELATIVE_POS.START);
     }
+
     /**
      * Sets this position to a relative position containing value
      * @param pos The local origin of this position to set
      */
-    public void setRelative(float value, GuiConstants.ENUM_RELATIVE_POS pos) {
-        if(type() == GuiConstants.ENUM_POSITION.RELATIVE && relativePos() != pos && relativePos() != GuiConstants.ENUM_RELATIVE_POS.CENTER && pos != GuiConstants.ENUM_RELATIVE_POS.CENTER)
+    public void setRelative(float value, CssValue.Unit type, GuiConstants.ENUM_RELATIVE_POS pos) {
+        if(type == CssValue.Unit.RELATIVE_INT &&
+                type() == GuiConstants.ENUM_POSITION.RELATIVE &&
+                relativePos() != pos &&
+                relativePos() != GuiConstants.ENUM_RELATIVE_POS.CENTER &&
+                pos != GuiConstants.ENUM_RELATIVE_POS.CENTER)
         {
             //System.out.println("Centering X ! "+getOwner());
             setRelativeTo(GuiConstants.ENUM_RELATIVE_POS.CENTER);
@@ -96,7 +110,18 @@ public class Position
             //System.out.println("Rel x is "+this.relX+" "+getOwner());
         }
         else {
-            setType(GuiConstants.ENUM_POSITION.RELATIVE);
+            switch (type)
+            {
+                case RELATIVE_INT:
+                    setType(GuiConstants.ENUM_POSITION.RELATIVE);
+                    break;
+                case RELATIVE_TO_WINDOW_WIDTH:
+                    setType(GuiConstants.ENUM_POSITION.RELATIVE_VW);
+                    break;
+                case RELATIVE_TO_WINDOW_HEIGHT:
+                    setType(GuiConstants.ENUM_POSITION.RELATIVE_VH);
+                    break;
+            }
             setRelativeTo(pos);
             this.value = value;
             setDirty(true);

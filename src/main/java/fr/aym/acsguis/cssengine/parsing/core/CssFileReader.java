@@ -142,7 +142,11 @@ public class CssFileReader {
             if (!value.contains(" ") && (value.equals("0") || value.endsWith("px"))) {
                 cssValue = new CssIntValue(Integer.parseInt(value.replace("px", "")));
             } else if (!value.contains(" ") && value.endsWith("%")) {
-                cssValue = new CssRelativeValue(Integer.parseInt(value.replace("%", "")));
+                cssValue = new CssRelativeValue(Integer.parseInt(value.replace("%", "")), CssValue.Unit.RELATIVE_INT);
+            } else if (!value.contains(" ") && value.endsWith("vw")) {
+                cssValue = new CssRelativeValue(Integer.parseInt(value.replace("vw", "")), CssValue.Unit.RELATIVE_TO_WINDOW_WIDTH);
+            } else if (!value.contains(" ") && value.endsWith("vh")) {
+                cssValue = new CssRelativeValue(Integer.parseInt(value.replace("vh", "")), CssValue.Unit.RELATIVE_TO_WINDOW_HEIGHT);
             } else {
                 if(value.startsWith("\""))
                     value = value.substring(1);

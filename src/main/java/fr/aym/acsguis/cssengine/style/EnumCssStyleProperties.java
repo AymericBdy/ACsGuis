@@ -12,6 +12,7 @@ import org.newdawn.slick.font.effects.ShadowEffect;
 
 import java.awt.*;
 
+import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.ABSOLUTE_INT;
 import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.RELATIVE_INT;
 
 public enum EnumCssStyleProperties {
@@ -107,7 +108,7 @@ public enum EnumCssStyleProperties {
     Z_INDEX(CssHelper.INT, (ctx, p, c) -> c.setZLevel(p.getValue()), "z-index"),
     PADDING_LEFT(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (c instanceof TextComponentStyleManager) {
-            if (p.getValue().getUnit() == RELATIVE_INT) {
+            if (p.getValue().getUnit() != ABSOLUTE_INT) {
                 ((TextComponentStyleManager) c).setPaddingLeft((int) (p.getValue().intValue() * c.getRenderWidth() / 100f));
             } else {
                 ((TextComponentStyleManager) c).setPaddingLeft(p.getValue().intValue());
@@ -116,7 +117,7 @@ public enum EnumCssStyleProperties {
     }, "padding-left"),
     PADDING_TOP(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (c instanceof TextComponentStyleManager) {
-            if (p.getValue().getUnit() == RELATIVE_INT) {
+            if (p.getValue().getUnit() != ABSOLUTE_INT) {
                 ((TextComponentStyleManager) c).setPaddingTop((int) (p.getValue().intValue() * c.getRenderWidth() / 100f));
             } else { //FIXME IMPROVE RELATIVE THINGS
                 ((TextComponentStyleManager) c).setPaddingTop(p.getValue().intValue());
@@ -125,7 +126,7 @@ public enum EnumCssStyleProperties {
     }, "padding-top"),
     PADDING_RIGHT(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (c instanceof TextComponentStyleManager) {
-            if (p.getValue().getUnit() == RELATIVE_INT) {
+            if (p.getValue().getUnit() != ABSOLUTE_INT) {
                 ((TextComponentStyleManager) c).setPaddingRight((int) (p.getValue().intValue() * c.getRenderWidth() / 100f));
             } else {
                 ((TextComponentStyleManager) c).setPaddingRight(p.getValue().intValue());
@@ -134,7 +135,7 @@ public enum EnumCssStyleProperties {
     }, "padding-right"),
     PADDING_BOTTOM(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (c instanceof TextComponentStyleManager) {
-            if (p.getValue().getUnit() == RELATIVE_INT) {
+            if (p.getValue().getUnit() != ABSOLUTE_INT) {
                 ((TextComponentStyleManager) c).setPaddingBottom((int) (p.getValue().intValue() * c.getRenderWidth() / 100f));
             } else {
                 ((TextComponentStyleManager) c).setPaddingBottom(p.getValue().intValue());
@@ -193,7 +194,7 @@ public enum EnumCssStyleProperties {
                 default:
                     throw new IllegalArgumentException("Unknown vertical text align : " + p.getValue());
             }
-        } else if(c instanceof GuiProgressBar.ProgressBarStyleManager) {
+        } else if (c instanceof GuiProgressBar.ProgressBarStyleManager) {
             switch (p.getValue()) {
                 case "top":
                     ((GuiProgressBar.ProgressBarStyleManager) c).setVerticalTextAlignment(GuiConstants.VERTICAL_TEXT_ALIGNMENT.TOP);
@@ -217,83 +218,83 @@ public enum EnumCssStyleProperties {
     //NOTE : for the positioning, the order is important ! And other properties as padding must have been set before for labels
     WIDTH(CssHelper.CSS_INT, (ctx, p, c) -> {
         //System.out.println("Set width of "+c.getOwner()+" to "+p.getValue());
-        if (p.getValue().getUnit() == RELATIVE_INT) {
-            c.getWidth().setRelative(p.getValue().intValue() / 100f);
+        if (p.getValue().getUnit() != ABSOLUTE_INT) {
+            c.getWidth().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
         } else {
             c.getWidth().setAbsolute(p.getValue().intValue());
         }
     }, "width", true),
     MAX_WIDTH(CssHelper.CSS_INT, (ctx, p, c) -> {
-        if (p.getValue().getUnit() == RELATIVE_INT) {
-            c.getWidth().getMaxValue().setRelative(p.getValue().intValue() / 100f);
+        if (p.getValue().getUnit() != ABSOLUTE_INT) {
+            c.getWidth().getMaxValue().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
         } else {
             c.getWidth().getMaxValue().setAbsolute(p.getValue().intValue());
         }
     }, "max-width", false),
     MIN_WIDTH(CssHelper.CSS_INT, (ctx, p, c) -> {
-        if (p.getValue().getUnit() == RELATIVE_INT) {
-            c.getWidth().getMinValue().setRelative(p.getValue().intValue() / 100f);
+        if (p.getValue().getUnit() != ABSOLUTE_INT) {
+            c.getWidth().getMinValue().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
         } else {
             c.getWidth().getMinValue().setAbsolute(p.getValue().intValue());
         }
     }, "min-width", false),
     HEIGHT(CssHelper.CSS_INT, (ctx, p, c) -> {
-        if (p.getValue().getUnit() == RELATIVE_INT) {
-            c.getHeight().setRelative(p.getValue().intValue() / 100f);
+        if (p.getValue().getUnit() != ABSOLUTE_INT) {
+            c.getHeight().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
         } else {
             c.getHeight().setAbsolute(p.getValue().intValue());
         }
     }, "height", false),
     MAX_HEIGHT(CssHelper.CSS_INT, (ctx, p, c) -> {
-        if (p.getValue().getUnit() == RELATIVE_INT) {
-            c.getHeight().getMaxValue().setRelative(p.getValue().intValue() / 100f);
+        if (p.getValue().getUnit() != ABSOLUTE_INT) {
+            c.getHeight().getMaxValue().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
         } else {
             c.getHeight().getMaxValue().setAbsolute(p.getValue().intValue());
         }
     }, "max-height", false),
     MIN_HEIGHT(CssHelper.CSS_INT, (ctx, p, c) -> {
-        if (p.getValue().getUnit() == RELATIVE_INT) {
-            c.getHeight().getMinValue().setRelative(p.getValue().intValue() / 100f);
+        if (p.getValue().getUnit() != ABSOLUTE_INT) {
+            c.getHeight().getMinValue().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
         } else {
             c.getHeight().getMinValue().setAbsolute(p.getValue().intValue());
         }
     }, "min-height", false),
     LEFT(CssHelper.CSS_INT, (ctx, p, c) -> {
-        if (p.getValue().getUnit() == RELATIVE_INT) {
-            c.getXPos().setRelative(p.getValue().intValue() / 100f, GuiConstants.ENUM_RELATIVE_POS.START);
+        if (p.getValue().getUnit() != ABSOLUTE_INT) {
+            c.getXPos().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit(), GuiConstants.ENUM_RELATIVE_POS.START);
         } else {
             c.getXPos().setAbsolute(p.getValue().intValue(), GuiConstants.ENUM_RELATIVE_POS.START);
         }
     }, "left"),
     RIGHT(CssHelper.CSS_INT, (ctx, p, c) -> {
-        if (p.getValue().getUnit() == RELATIVE_INT) {
-            c.getXPos().setRelative(p.getValue().intValue() / 100f, GuiConstants.ENUM_RELATIVE_POS.END);
+        if (p.getValue().getUnit() != ABSOLUTE_INT) {
+            c.getXPos().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit(), GuiConstants.ENUM_RELATIVE_POS.END);
         } else {
             c.getXPos().setAbsolute(p.getValue().intValue(), GuiConstants.ENUM_RELATIVE_POS.END);
         }
     }, "right"),
     TOP(CssHelper.CSS_INT, (ctx, p, c) -> {
-        if (p.getValue().getUnit() == RELATIVE_INT) {
-            c.getYPos().setRelative(p.getValue().intValue() / 100f, GuiConstants.ENUM_RELATIVE_POS.START);
+        if (p.getValue().getUnit() != ABSOLUTE_INT) {
+            c.getYPos().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit(), GuiConstants.ENUM_RELATIVE_POS.START);
         } else {
             c.getYPos().setAbsolute(p.getValue().intValue(), GuiConstants.ENUM_RELATIVE_POS.START);
         }
     }, "top"),
     BOTTOM(CssHelper.CSS_INT, (ctx, p, c) -> {
-        if (p.getValue().getUnit() == RELATIVE_INT) {
-            c.getYPos().setRelative(p.getValue().intValue() / 100f, GuiConstants.ENUM_RELATIVE_POS.END);
+        if (p.getValue().getUnit() != ABSOLUTE_INT) {
+            c.getYPos().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit(), GuiConstants.ENUM_RELATIVE_POS.END);
         } else {
             c.getYPos().setAbsolute(p.getValue().intValue(), GuiConstants.ENUM_RELATIVE_POS.END);
         }
     }, "bottom"),
     HORIZONTAL_POSITION(CssHelper.STRING, (ctx, p, c) -> {
-        if(p.getValue().equals("center")) {
-            c.getXPos().setRelative(0, GuiConstants.ENUM_RELATIVE_POS.CENTER);
+        if (p.getValue().equals("center")) {
+            c.getXPos().setRelative(0, RELATIVE_INT, GuiConstants.ENUM_RELATIVE_POS.CENTER);
         }
     }, "horizontal-position"),
     VERTICAL_POSITION(CssHelper.STRING, (ctx, p, c) -> {
-        if(p.getValue().equals("center")) {
-            c.getYPos().setRelative(0, GuiConstants.ENUM_RELATIVE_POS.CENTER);
+        if (p.getValue().equals("center")) {
+            c.getYPos().setRelative(0, RELATIVE_INT, GuiConstants.ENUM_RELATIVE_POS.CENTER);
         }
     }, "vertical-position"),
     PROGRESS_FULL(CssHelper.TEXTURE_SPRITE, (ctx, p, c) -> {

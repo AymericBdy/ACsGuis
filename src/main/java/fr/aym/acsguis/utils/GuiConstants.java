@@ -5,7 +5,7 @@ public class GuiConstants
     /**
      * Absolute or relative position
      */
-    public enum ENUM_POSITION { ABSOLUTE, RELATIVE }
+    public enum ENUM_POSITION { ABSOLUTE, RELATIVE, RELATIVE_VW, RELATIVE_VH }
 
     /**
      * Relative position origins
@@ -15,7 +15,7 @@ public class GuiConstants
     /**
      * Absolute or relative size
      */
-    public enum ENUM_SIZE { ABSOLUTE, RELATIVE }
+    public enum ENUM_SIZE { ABSOLUTE, RELATIVE, RELATIVE_VW, RELATIVE_VH }
     
 	public enum ENUM_ICON_POSITION { CENTER, LEFT, RIGHT, TOP, BOTTOM }
 	

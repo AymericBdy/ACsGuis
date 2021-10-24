@@ -1,5 +1,6 @@
 package fr.aym.acsguis.component.panel;
 
+import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
 import fr.aym.acsguis.utils.GuiConstants;
 import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.button.GuiButton;
@@ -54,8 +55,8 @@ public class GuiComboBox extends GuiPanel {
 		
 		public GuiComboBoxButton(String defaultText) {
 			super(defaultText);
-			style.getWidth().setRelative(1);
-			style.getHeight().setRelative(1);
+			style.getWidth().setRelative(1, CssValue.Unit.RELATIVE_INT);
+			style.getHeight().setRelative(1, CssValue.Unit.RELATIVE_INT);
 			addFocusListener(this);
 		}
 		
@@ -83,12 +84,7 @@ public class GuiComboBox extends GuiPanel {
 	public boolean handleProperty(EnumCssStyleProperties property, EnumSelectorContext context, ComponentStyleManager target) {
 		if(property == EnumCssStyleProperties.HEIGHT && developed)
 		{
-			int comboBoxHeight;
-			if (guiComboBoxButton.getStyle().getHeight().getValue().type() == GuiConstants.ENUM_SIZE.RELATIVE) {
-				comboBoxHeight = (int) (guiComboBoxButton.getParent().getHeight() * guiComboBoxButton.getStyle().getHeight().getRawValue());
-			} else {
-				comboBoxHeight = guiComboBoxButton.getHeight();
-			}
+			int comboBoxHeight = guiComboBoxButton.getStyle().getHeight().computeValue(0, 0, guiComboBoxButton.getParent().getHeight());
 			style.getHeight().setAbsolute(comboBoxHeight + sumEntriesButtonHeight());
 			return true;
 		}
@@ -131,7 +127,7 @@ public class GuiComboBox extends GuiPanel {
 	{
 		if(isDeveloped()) {
 			//style.setHeight(getHeight() - sumEntriesButtonHeight());
-			guiComboBoxButton.getStyle().getHeight().setRelative(1);
+			guiComboBoxButton.getStyle().getHeight().setRelative(1, CssValue.Unit.RELATIVE_INT);
 			
 			for(GuiEntryButton entryButton : entriesButton) {
 				entryButton.setVisible(false);
@@ -185,7 +181,7 @@ public class GuiComboBox extends GuiPanel {
 		
 		for(String entry : entries) {
 			GuiEntryButton entryButton = getNewEntryButton(entries.indexOf(entry), entry);
-			entryButton.getStyle().getWidth().setRelative(1);
+			entryButton.getStyle().getWidth().setRelative(1, CssValue.Unit.RELATIVE_INT);
 			entriesButton.add(entryButton);
 			
 			if(!isDeveloped())
@@ -260,7 +256,7 @@ public class GuiComboBox extends GuiPanel {
 		
 		public GuiEntryButton(int n, String entryName) {
 			super(entryName);
-			style.getWidth().setRelative(1);
+			style.getWidth().setRelative(1, CssValue.Unit.RELATIVE_INT);
 			this.entryId = n;
 		}
 		

@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.RELATIVE_INT;
+
 public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseExtraClickListener 
 {
     protected final List<ISliderListener> sliderListeners = new ArrayList<ISliderListener>();
@@ -35,8 +37,8 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
 		super();
 		this.horizontal = horizontal;
 		add(sliderButton = new GuiSliderButton());
-		sliderButton.getStyle().getWidth().setRelative(1F / (horizontal ? 5 : 1));
-		sliderButton.getStyle().getHeight().setRelative(1F / (horizontal ? 1 : 5));
+		sliderButton.getStyle().getWidth().setRelative(1F / (horizontal ? 5 : 1), RELATIVE_INT);
+		sliderButton.getStyle().getHeight().setRelative(1F / (horizontal ? 1 : 5), RELATIVE_INT);
 		/*sliderButton.getStyle().addAutoStyleHandler(new AutoStyleHandler<ComponentStyleManager>() {
             @Override
             public boolean handleProperty(EnumCssStyleProperties property, EnumSelectorContext context, ComponentStyleManager target) {
