@@ -29,8 +29,9 @@ public class CssStyleProperty<T>
                 this.value = (T) property.parser.getValue(value.stringValue());
                 if (this.value == null)
                     throw new IllegalArgumentException("Cannot parse " + value + " for property " + property);
-            } else
+            } else {
                 this.value = null;
+            }
         } else {
             this.type = EnumStylePropertyType.NORMAL;
             this.value = (T) value;

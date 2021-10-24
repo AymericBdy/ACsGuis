@@ -89,6 +89,11 @@ public class ComponentProperties<A, B> {
         setter.accept((A) into, value);
     }
 
+    public Object getValueFromComponent(GuiComponent<?> from) {
+        ScriptType<B> object = getter.apply((A) from);
+        return object.getObject();
+    }
+
     public void getValueFromComponent(GuiComponent<?> from, ScriptContext context) {
         ScriptType<B> object = getter.apply((A) from);
         if (object != null) {

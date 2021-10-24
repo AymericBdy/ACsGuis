@@ -11,8 +11,7 @@ import java.util.Collection;
  *
  * @see Effect
  */
-public interface ICssFont
-{
+public interface ICssFont {
     /**
      * Loads this font, called on each resource pack reload
      */
@@ -26,9 +25,9 @@ public interface ICssFont
     /**
      * Draw a text
      *
-     * @param x Screen x pos
-     * @param y Screen y pos
-     * @param text The text to draw
+     * @param x     Screen x pos
+     * @param y     Screen y pos
+     * @param text  The text to draw
      * @param color Color of the text to draw
      */
     void draw(float x, float y, String text, int color);
@@ -51,8 +50,7 @@ public interface ICssFont
     /**
      * Listener of font loading errors
      */
-    interface FontReloadOrigin
-    {
+    interface FontReloadOrigin {
         void handleFontException(ResourceLocation r, Exception e);
     }
 }
