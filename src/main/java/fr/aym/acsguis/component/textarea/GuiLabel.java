@@ -12,6 +12,7 @@ import fr.aym.acsguis.component.style.TextComponentStyleManager;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class GuiLabel extends GuiTextArea implements AutoStyleHandler<TextComponentStyleManager>
@@ -143,7 +144,7 @@ public class GuiLabel extends GuiTextArea implements AutoStyleHandler<TextCompon
 
 	private static final List<EnumCssStyleProperties> affectedProperties = Arrays.asList(EnumCssStyleProperties.WIDTH, EnumCssStyleProperties.HEIGHT);
 	@Override
-	public List<EnumCssStyleProperties> getModifiedProperties(TextComponentStyleManager target) {
+	public Collection<EnumCssStyleProperties> getModifiedProperties(TextComponentStyleManager target) {
 		return affectedProperties;
 	}
 }

@@ -31,10 +31,10 @@ import java.util.List;
         examples = "define gui frame my_frame:",
         regex = "^define gui frame .*:",
         side = Side.CLIENT),
-        fields = { @Feature(name = "css_class"), //TODO DOC BETTER
-                @Feature(name = "css_id"),
-                @Feature(name = "css_code"),
-                @Feature(name = "css_sheets")}
+        fields = { @Feature(name = "css_class", description = "Sets the css class of this frame"),
+                @Feature(name = "css_id", description = "Sets the css id of this frame"),
+                @Feature(name = "css_code", description = "Sets the css code of this frame"),
+                @Feature(name = "css_sheets", description = "List the css sheets used by the gui here. Array of resource locations. Required", type = "String array")}
 )
 public class ScriptBlockGuiFrame extends ScriptBlock
 {

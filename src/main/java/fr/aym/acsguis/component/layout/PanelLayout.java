@@ -7,6 +7,7 @@ import fr.aym.acsguis.component.style.ComponentStyleManager;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -66,7 +67,7 @@ public interface PanelLayout<T extends ComponentStyleManager> extends AutoStyleH
     List<EnumCssStyleProperties> modifiedProperties = Arrays.asList(EnumCssStyleProperties.TOP, EnumCssStyleProperties.LEFT, EnumCssStyleProperties.WIDTH, EnumCssStyleProperties.HEIGHT);
 
     @Override
-    default List<EnumCssStyleProperties> getModifiedProperties(T target) {
+    default Collection<EnumCssStyleProperties> getModifiedProperties(T target) {
         return modifiedProperties;
     }
 

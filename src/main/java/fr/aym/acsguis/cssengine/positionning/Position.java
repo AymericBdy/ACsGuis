@@ -28,8 +28,8 @@ public class Position
     /**
      * Computes the value of this 1D position depending on the element and parent sizes
      *
-     * @param screenWidth TODO
-     * @param screenHeight
+     * @param screenWidth The screen width
+     * @param screenHeight The screen height
      * @param parentSize The size of the parent, in the same dimension (width or height)
      * @param elementSize The side of this element, in the same dimension (width or height)
      * @return The real value
@@ -84,8 +84,8 @@ public class Position
 
     /**
      * Sets this position to a relative position containing value
-     * TODO
      * @param value relative pos (0-1)
+     * @param type The unit of the value. MUST be relative_something.
      */
     public void setRelative(float value, CssValue.Unit type) {
         setRelative(value, type, GuiConstants.ENUM_RELATIVE_POS.START);
@@ -94,6 +94,7 @@ public class Position
     /**
      * Sets this position to a relative position containing value
      * @param pos The local origin of this position to set
+     * @param type The unit of the value. MUST be relative_something.
      */
     public void setRelative(float value, CssValue.Unit type, GuiConstants.ENUM_RELATIVE_POS pos) {
         if(type == CssValue.Unit.RELATIVE_INT &&

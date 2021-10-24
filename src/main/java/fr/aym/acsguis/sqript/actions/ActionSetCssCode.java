@@ -2,10 +2,12 @@ package fr.aym.acsguis.sqript.actions;
 
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.textarea.TextComponent;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
 import fr.aym.acsguis.sqript.component.ComponentProperties;
 import fr.aym.acsguis.sqript.component.ParseableComponent;
 import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.compiling.ScriptException;
+import fr.nico.sqript.expressions.ExprPrimitive;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
@@ -36,16 +38,26 @@ import fr.nico.sqript.types.ScriptType;
                         pattern = "set text of {gui_component} to {string}"),
                 @Feature(
                         name = "Set other properties of gui components",
-                        description = "Sets other properties of gui components, list in the doc", //FIXME LIST IN DOC
-                        examples = "set checked_state of this component to true",
-                        pattern = "set {string} of {gui_component} to {string}")}
+                        description = "Sets other properties of gui components, list in the doc",
+                        examples = "cset checked_state of this component to true",
+                        pattern = "set css {string} of {gui_component} to {string}"),
+                @Feature(
+                        name = "Set other properties of the current component",
+                        description = "Sets other properties of the current component, list in the doc. You MUST be in a component block, and not in a component event !",
+                        examples = "cset \"color\" to \"green\"",
+                        pattern = "set css {string} to {string}")}
 )
 public class ActionSetCssCode extends ScriptAction {
     @Override
     @SuppressWarnings("unchecked")
     public void execute(ScriptContext context) throws ScriptException {
-        ScriptType<GuiComponent<?>> param = getParameter(getMatchedIndex() == 4 ? 2 : 1).get(context);
-        System.out.println("SET ON " + getMatchedIndex() + " " + param.getObject());
+        ScriptType<GuiComponent<?>> param = getMatchedIndex() == 5 ? null : getParameter(getMatchedIndex() == 4 ? 2 : 1).get(context);
+        if (getMatchedIndex() == 5) {
+            param = (ScriptType<GuiComponent<?>>) context.getVariable("this_component");
+            //System.out.println("Found param : "+param);
+        } else {
+            //System.out.println("SET ON " + getMatchedIndex() + " " + param.getObject());
+        }
         switch (getMatchedIndex()) {
             case 0:
                 param.getObject().setCssCode(getParameter(2).get(context).toString());
@@ -61,23 +73,39 @@ public class ActionSetCssCode extends ScriptAction {
                     ((TextComponent) param.getObject()).setText(getParameter(2).get(context).toString());
                 else
                     throw new IllegalArgumentException(param.getObject() + " is not a TextComponent");
-                System.out.println("So text: " + ((TextComponent) param.getObject()).getText());
+                //System.out.println("So text: " + ((TextComponent) param.getObject()).getText());
                 break;
             case 4:
+            case 5:
                 String optn = getParameter(1).toString();
-                System.out.println("Try change " + optn + " : WIP");
+                if(getParameter(1) instanceof ExprPrimitive) {
+                    optn = ((ExprPrimitive)getParameter(1)).get(context).toString();
+                }
+                //System.out.println("Try change " + optn + " : WIP");
                 boolean found = false;
                 ParseableComponent componentType = ParseableComponent.find(param.getObject());
                 for (ComponentProperties<?, ?> property : componentType.getProperties()) {
                     if (property.getName().equals(optn)) {
-                        ((ComponentProperties<?, Object>) property).setValueOnComponent(param.getObject(), getParameter(2).get(context).getObject());
-                        System.out.println("Success on " + property.getName());
+                        ((ComponentProperties<?, Object>) property).setValueOnComponent(param.getObject(), getParameter(3).get(context).getObject());
+                        //System.out.println("Success on " + property.getName());
                         found = true;
                         break;
                     }
                 }
-                if (!found)
+                if (!found) {
+                    //System.out.println("Search for "+optn);
+                    for(EnumCssStyleProperties properties : EnumCssStyleProperties.values()) {
+                        if(properties.key.equals(optn)) {
+                            param.getObject().getStyle().injectStyle(properties, getParameter(getMatchedIndex() == 5 ? 2 : 3).get(context).getObject().toString());
+                            //System.out.println("Injection success on " + properties.key+" on "+param.getObject());
+                            found = true;
+                            param.getObject().getStyle().refreshCss(true, "injection");
+                        }
+                    }
+                }
+                if (!found) {
                     throw new ScriptException.ScriptBadVariableNameException(getLine());
+                }
                 break;
         }
     }

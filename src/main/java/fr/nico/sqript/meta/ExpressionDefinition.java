@@ -51,20 +51,12 @@ public class ExpressionDefinition {
         for (int i = 0; i < transformedPatterns.length; i++) {
             TransformedPattern pattern = transformedPatterns[i];
             Matcher m = pattern.getPattern().matcher(line);
-            if (line.contains("new grid"))
-                System.out.println("Does " + line + " matches " + pattern.getPattern().pattern());
             if (m.matches()) {
-                if (line.contains("new grid"))
-                    System.out.println(m.matches() + " for pattern " + pattern.getPattern().pattern() + " matching " + line);
                 for (String argument : pattern.getAllArguments(line)) {
                     if (!ScriptDecoder.isParenthesageGood(argument)) {
-                        if (line.contains("new grid"))
-                            System.out.println("Bad p for "+argument);
                         continue t;
                     }
                 }
-                if (line.contains("new grid"))
-                    System.out.println("Add result");
                 matchResults.add(new MatchResult(i, transformedPatterns[i].getAllMarks(line)));
             }
         }

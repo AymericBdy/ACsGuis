@@ -4,15 +4,13 @@ import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.panel.GuiScrollPane;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
-import fr.aym.acsguis.component.textarea.GuiLabel;
-import fr.aym.acsguis.component.textarea.GuiTextField;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
 import net.minecraft.command.CommandBase;
-import scala.actors.migration.pattern;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -84,7 +82,7 @@ public abstract class GuiSearchField extends GuiPanel
 					}
 
 					@Override
-					public List<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
+					public Collection<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
 						return linesModifiedProperties;
 					}
 				});

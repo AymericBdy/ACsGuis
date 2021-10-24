@@ -10,10 +10,7 @@ import fr.aym.acsguis.cssengine.style.CssPanelStyleManager;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
 import fr.aym.acsguis.component.layout.PanelLayout;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoStyleHandler<ComponentStyleManager> {
 	
@@ -104,7 +101,7 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 
 	private static final List<EnumCssStyleProperties> affectedProperties = Collections.singletonList(EnumCssStyleProperties.HEIGHT);
 	@Override
-	public List<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
+	public Collection<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
 		return affectedProperties;
 	}
 

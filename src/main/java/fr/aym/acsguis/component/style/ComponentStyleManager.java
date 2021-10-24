@@ -67,6 +67,29 @@ public interface ComponentStyleManager
     Collection<AutoStyleHandler<?>> getAutoStyleHandlers();
 
     /**
+     * Adds this style to the element <br>
+     * The style will persist after reloading the element style
+     *
+     * @param property The property name
+     * @param value The new property value
+     * @return this
+     */
+    ComponentStyleManager injectStyle(EnumCssStyleProperties property, String value);
+    /**
+     * Adds this style to the element <br>
+     * The style will persist after reloading the element style
+     *
+     * @param property The property to add
+     * @return this
+     */
+    ComponentStyleManager injectStyle(CssStyleProperty<?> property);
+    /**
+     * @return The list of injected style properties, or null if there are none
+     */
+    @Nullable
+    InjectedStyleList getInjectedStyleList();
+
+    /**
      * Refreshes the css of this element
      *
      * @param reloadCssStack If css stack should be reloaded (heavy)

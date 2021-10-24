@@ -1,11 +1,13 @@
 package fr.aym.acsguis.cssengine.selectors;
 
+import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
 import fr.aym.acsguis.cssengine.style.CssStyleProperty;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +20,7 @@ public class CssStackElement
     private final Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> propertyMap;
     /* Not multi-thread compatible */
     private final List<CssStyleProperty<?>> matchingProperties = new ArrayList<>();
+    private CompoundCssSelector universalSelector;
 
     public CssStackElement(CssStackElement parent, Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> propertyMap) {
         this.parent = parent;
@@ -27,6 +30,17 @@ public class CssStackElement
 
     public CssStackElement getParent() {
         return parent;
+    }
+
+    public void injectProperty(GuiComponent<?> component, EnumCssStyleProperties property, CssStyleProperty<?> value) {
+        if(universalSelector == null) {
+            universalSelector = new CompoundCssSelector(new CssSelector<>(CssSelector.EnumSelectorType.A_COMPONENT, component), null, null);
+            universalSelector.setId(Integer.MAX_VALUE); //Max id to override everything
+            if(!propertyMap.containsKey(universalSelector)) {
+                propertyMap.put(universalSelector, new HashMap<>());
+            }
+        }
+        propertyMap.get(universalSelector).put(property, value);
     }
 
     public void applyProperty(EnumSelectorContext context, EnumCssStyleProperties property, ComponentStyleManager to) {
@@ -102,27 +116,6 @@ public class CssStackElement
                 }
             }
         }
-        /*//System.out.println("Prop map is "+propertyMap);
-        //Reset
-        //if(to.getOwner() instanceof GuiButton)
-          //  System.out.println("Set ctx RESET");
-        for (EnumCssStyleProperties properties : EnumCssStyleProperties.values()) {
-            applyProperty(EnumSelectorContext.NORMAL, properties, to);
-        }
-        //if(to.getOwner() instanceof GuiButton)
-          //  System.out.println("Set ctx "+context);
-        if(context != EnumSelectorContext.NORMAL) {
-            if(context == EnumSelectorContext.ACTIVE)
-            {
-                for (EnumCssStyleProperties properties : EnumCssStyleProperties.values()) {
-                    applyProperty(EnumSelectorContext.HOVER, properties, to);
-                }
-            }
-            //Apply
-            for (EnumCssStyleProperties properties : EnumCssStyleProperties.values()) {
-                applyProperty(context, properties, to);
-            }
-        }*/
     }
 
     public List<String> getProperties(EnumSelectorContext context, ComponentStyleManager to) {

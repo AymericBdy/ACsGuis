@@ -6,7 +6,6 @@ import fr.aym.acsguis.component.style.PanelStyleManager;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
-import fr.aym.acsguis.cssengine.style.CssComponentStyleManager;
 import fr.aym.acsguis.cssengine.style.CssPanelStyleManager;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
 import fr.aym.acsguis.event.listeners.mouse.IMouseClickListener;
@@ -20,6 +19,7 @@ import net.minecraft.util.math.MathHelper;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.RELATIVE_INT;
@@ -154,7 +154,7 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
                 }
 
                 @Override
-                public List<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
+                public Collection<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
                     return affectedSliderProperties;
                 }
             });

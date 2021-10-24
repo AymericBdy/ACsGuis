@@ -5,6 +5,7 @@ import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
+import fr.aym.acsguis.component.style.InjectedStyleList;
 import fr.aym.acsguis.component.textarea.IChildSizeUpdateListener;
 import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
@@ -65,6 +66,7 @@ public class CssComponentStyleManager implements ComponentStyleManager
     
     protected CssStackElement cssStack;
     protected final List<AutoStyleHandler<?>> autoStyleHandler = new ArrayList<>();
+    protected InjectedStyleList injectedStyleList;
 
     protected Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> customStyle;
 
@@ -119,6 +121,9 @@ public class CssComponentStyleManager implements ComponentStyleManager
     public void reloadCssStack() {
         //System.out.println("RELOAD stack of "+getOwner());
         cssStack = ACsGuisCssParser.getStyleFor(this);
+        if(injectedStyleList != null) {
+            injectedStyleList.inject(getOwner(), cssStack);
+        }
     }
 
     @Override //reload css
@@ -171,6 +176,28 @@ public class CssComponentStyleManager implements ComponentStyleManager
     @Override
     public Collection<AutoStyleHandler<?>> getAutoStyleHandlers() {
         return autoStyleHandler;
+    }
+
+    @Override
+    public ComponentStyleManager injectStyle(EnumCssStyleProperties property, String value) {
+        if(injectedStyleList == null) {
+            injectedStyleList = new InjectedStyleList();
+        }
+        injectedStyleList.addProperty(property, value);
+        return this;
+    }
+    @Override
+    public ComponentStyleManager injectStyle(CssStyleProperty<?> property) {
+        if(injectedStyleList == null) {
+            injectedStyleList = new InjectedStyleList();
+        }
+        injectedStyleList.addProperty(property);
+        return this;
+    }
+    @Override
+    @Nullable
+    public InjectedStyleList getInjectedStyleList() {
+        return injectedStyleList;
     }
 
     @Override

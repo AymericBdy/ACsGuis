@@ -82,6 +82,8 @@ public class CssSelector<T>
                 if(to.getCssClass() == null || !to.getCssClass().equals(target))
                     return false;
                 break;
+            case A_COMPONENT:
+                return to == target;
         }
         return true;
     }
@@ -93,7 +95,8 @@ public class CssSelector<T>
     {
         COMPONENT_TYPE,
         ID,
-        CLASS
+        CLASS,
+        A_COMPONENT
     }
 
     @Override

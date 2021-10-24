@@ -5,10 +5,7 @@ import fr.aym.acsguis.cssengine.parsing.core.objects.CssSelectorCombinator;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Hierarchical css selector : checks for states of parent elements
@@ -167,7 +164,7 @@ public class CompoundCssSelector implements Comparable<CompoundCssSelector>
         }
 
         /**
-         * Sets the target of this selector, parsing the input {@link CSSSelectorSimpleMember}
+         * Sets the target of this selector, parsing the input {@link CssSelector}
          */
         private void setTarget(CssSelector<?> selector)
         {
@@ -182,7 +179,7 @@ public class CompoundCssSelector implements Comparable<CompoundCssSelector>
         }
 
         /**
-         * Parses a {@link CSSSelectorSimpleMember}, and adds its settings
+         * Parses a {@link CssSelector}, and adds its settings
          */
         public void withChild(String sourceLocation, CssSelector<?> member)
         {
@@ -242,5 +239,29 @@ public class CompoundCssSelector implements Comparable<CompoundCssSelector>
         /*public void withMemberNot(CSSSelectorMemberNot attribute) {
             throw new UnsupportedOperationException("CSS selector :not()");
         }*/
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CompoundCssSelector)) return false;
+        CompoundCssSelector that = (CompoundCssSelector) o;
+        return id == that.id && target.equals(that.target) && Arrays.equals(parentStrict, that.parentStrict) && Arrays.equals(parents, that.parents);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(target, id);
+        result = 31 * result + Arrays.hashCode(parentStrict);
+        result = 31 * result + Arrays.hashCode(parents);
+        return result;
     }
 }

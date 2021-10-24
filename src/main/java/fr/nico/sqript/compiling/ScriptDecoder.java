@@ -756,6 +756,7 @@ public class ScriptDecoder {
                 //System.out.println("Parameters size : "+parameters.size()+" "+parameters);
 
                 ScriptAction action = actionDefinition.getActionClass().getConstructor().newInstance();
+                System.out.println("Action is "+action+" "+actionDefinition.getActionClass());
                 action.build(line.with(lineWithStrings), compileGroup, parameters, index, marks, tabLevel);
                 return action;
             }

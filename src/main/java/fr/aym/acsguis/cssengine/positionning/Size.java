@@ -14,10 +14,9 @@ public class Size
 
     /**
      * Computes the value of this 1D size, respecting min and max sizes, and depending on the parent size
-     *TODO
      *
-     * @param screenWidth
-     * @param screenHeight
+     * @param screenWidth The screen width
+     * @param screenHeight The screen height
      * @param parentSize The size of the parent, in the same dimension (width or height)
      * @return The real value
      */
@@ -53,6 +52,7 @@ public class Size
     /**
      * Sets this size to a relative size containing value
      * @param value relative pos (0-1)
+     * @param type The unit of the value. MUST be relative_something.
      */
     public void setRelative(float value, CssValue.Unit type) {
         this.value.setRelative(value, type);
@@ -107,9 +107,8 @@ public class Size
         /**
          * Computes the value of this 1D size, depending on the parent size
          *
-         *
-         * @param screenWidth
-         * @param screenHeight
+         * @param screenWidth The screen width
+         * @param screenHeight The screen height
          * @param parentSize The size of the parent, in the same dimension (width or height)
          * @return The real value
          */
@@ -145,6 +144,7 @@ public class Size
         /**
          * Sets this size to a relative size containing value
          * @param value relative pos (0-1)
+         * @param type The unit of the value. MUST be relative_something.
          */
         public void setRelative(float value, CssValue.Unit type) {
             switch (type) {

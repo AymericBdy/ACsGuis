@@ -19,6 +19,7 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiCloseListener, IKeyboardListener, IMouseWheelListener, IMouseClickListener, IMouseExtraClickListener, IMouseMoveListener
@@ -178,7 +179,7 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
 
 	private static final List<EnumCssStyleProperties> affectedProperties = Arrays.asList(EnumCssStyleProperties.WIDTH, EnumCssStyleProperties.HEIGHT, EnumCssStyleProperties.LEFT, EnumCssStyleProperties.COLOR);
 	@Override
-	public List<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
+	public Collection<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
 		return target.getOwner() instanceof GuiTabbedPaneButton ? affectedProperties : super.getModifiedProperties(target);
 	}
 

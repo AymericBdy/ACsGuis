@@ -10,6 +10,7 @@ import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.types.ScriptType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class ScriptAction extends IScript {
@@ -90,14 +91,14 @@ public abstract class ScriptAction extends IScript {
 
     public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks, int tabLevel) throws Exception {
         List<ScriptExpression> expressions = new ArrayList<>(parameters.size());
-        //System.out.println("Building action for line : "+line+", parameters are :"+ Arrays.toString(parameters.toArray(new String[0])));
-        //System.out.println("Marks are : "+Integer.toBinaryString(marks));
+        System.out.println("Building action for line : "+line+", parameters are :"+ Arrays.toString(parameters.toArray(new String[0])));
+        System.out.println("Marks are : "+Integer.toBinaryString(marks));
         String[] strings = ScriptDecoder.extractStrings(line.getText());
-        //System.out.println("for line : "+line+" marks are : "+Integer.toBinaryString(marks));
+        System.out.println("for line : "+line+" marks are : "+Integer.toBinaryString(marks));
         ActionDefinition actionDefinition = ScriptManager.getDefinitionFromAction(this.getClass());
 
         for (int i = 0; i < parameters.size() ; i++) {
-            //System.out.println("Processing parameter : "+parameters.get(i));
+            System.out.println("Processing parameter : "+parameters.get(i));
             String parameter = parameters.get(i);
             if(parameter==null) {
                 expressions.add(null);

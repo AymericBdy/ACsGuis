@@ -13,7 +13,7 @@ define gui frame monGui:
 	set {var2} to false
     set next_tab_pane_name to "TestTab"
 	add css component tabbed_pane with id "tabbed":
-	    set style to "color: red;"
+        set css "color" to "#FFFFFF"
 
 		add css component panel with id "general":
 			add css component scroll_pane:
@@ -21,14 +21,19 @@ define gui frame monGui:
 				#on component tick:
 				#   print "ticking..."
 				add css component label with id "reload_models" and class "reload_button" and text "Recharger les packs"
+
 				add css component panel with class "option-desc":
 					print "Test 1"
 					set {texteb} to "Rendu du debug : "
 					add {var2} to {texteb}
 					add css component label with id "t1" and text "Loading":
 						set text to {texteb}
+						set {omega} to this_component
+					print {omega}
 					add css component button with id "mochebu" class "switch-button-off" and text "":
 						set {btn_on} to false
+						set css "color" of {omega} to "blue"
+						set css "color" to "#FFFFFF"
 						on component click:
 							print "on tu as cliqué !"
 							print [player's hunger]
@@ -36,10 +41,15 @@ define gui frame monGui:
 								set {btn_on} to false
 								set css class of this_component to "switch-button-off"
 								set text of this_component to "Off"
+						        set css "color" of {omega} to "rgb(200, 120, 0)"
+						        set css "border-radius" to "5px"
 							else:
 								set {btn_on} to true
 								set class of this_component to "switch-button-on"
 								set text of this_component to "On"
+						        set css "color" of {omega} to "green"
+						        set css "border-radius" to "20px"
+
 				add css component panel with class "option-desc":
 					add css component label with id "t2" and text "Profilage : n/a"
 					add css component button with id "mochebu" and class "switch-button-off" and text "":

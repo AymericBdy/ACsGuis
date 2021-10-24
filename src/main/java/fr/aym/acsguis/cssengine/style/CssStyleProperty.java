@@ -81,6 +81,13 @@ public class CssStyleProperty<T>
         return type;
     }
 
+    /**
+     * @return The target property
+     */
+    public EnumCssStyleProperties getProperty() {
+        return property;
+    }
+
     @Override
     public String toString() {
         return "CssStyleProperty{" +

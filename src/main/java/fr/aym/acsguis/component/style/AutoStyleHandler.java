@@ -3,7 +3,7 @@ package fr.aym.acsguis.component.style;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Callback for elements that support "auto" css properties, to let them compute it
@@ -36,7 +36,7 @@ public interface AutoStyleHandler<T extends ComponentStyleManager>
      * @param target The component receiving the auto style
      * @return The modified properties, including modified properties in super(...) implementations
      */
-    List<EnumCssStyleProperties> getModifiedProperties(T target);
+    Collection<EnumCssStyleProperties> getModifiedProperties(T target);
 
     /**
      * Auto style priorities <br>
