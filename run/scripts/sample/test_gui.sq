@@ -42,13 +42,13 @@ define gui frame monGui:
 								set css class of this_component to "switch-button-off"
 								set text of this_component to "Off"
 						        set css "color" of {omega} to "rgb(200, 120, 0)"
-						        set css "border-radius" to "5px"
+						        #set css "border-radius" to "5px"
 							else:
 								set {btn_on} to true
 								set class of this_component to "switch-button-on"
 								set text of this_component to "On"
 						        set css "color" of {omega} to "green"
-						        set css "border-radius" to "20px"
+						        #set css "border-radius" to "20px"
 
 				add css component panel with class "option-desc":
 					add css component label with id "t2" and text "Profilage : n/a"

@@ -17,6 +17,7 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptLoop;
+import fr.nico.sqript.structures.Side;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -32,7 +33,8 @@ import java.util.regex.Pattern;
                         "add css component panel with id \"root\"",
                         "add css component scroll_pane",
                         "add css component button with class \"reload_button\" and text \"Recharger les packs\""},
-                pattern = "^add css component .*"))
+                pattern = "^add css component .*",
+        side = Side.CLIENT))
 public class ActionGuiComponent extends ScriptAction {
     private String name;
 
@@ -135,11 +137,11 @@ public class ActionGuiComponent extends ScriptAction {
     private int tabLevel;
 
     @Override
-    public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks, int tabLevel) throws Exception {
-        super.build(line, compileGroup, parameters, matchedIndex, marks, tabLevel);
+    public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
+        super.build(line, compileGroup, parameters, matchedIndex, marks);
         this.name = line.getText().trim().replaceFirst("(^|\\s+)add css component\\s+", "");
         //System.out.println("TABS LEVELS " + ScriptDecoder.getTabLevel(line.getText())+" AND "+ScriptDecoder.getTabLevel(getLine().getText()));
-        this.tabLevel = tabLevel;
+        this.tabLevel = line.getTabLevel();
         //System.out.println("23 Tab level "+ this.tabLevel);
 //TODO TEST FROM MAJ
        // this.tabLevel = tabLevel;

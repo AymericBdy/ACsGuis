@@ -7,6 +7,7 @@ import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
 
 @Action(name = "Modify a gui component properties",
@@ -16,22 +17,26 @@ import fr.nico.sqript.types.ScriptType;
                         name = "Set style of a gui component",
                         description = "The contained string should be a valid ACsGuis css code, see the specific doc",
                         examples = "set style of this component to \"color: green; width: 240px; horizontal-position: center;\"",
-                        pattern = "set style of {gui_component} to {string}"),
+                        pattern = "set style of {gui_component} to {string}",
+                        side = Side.CLIENT),
                 @Feature(
                         name = "Set css id of a gui component",
                         description = "Sets the css id of this component, so you can refer to it in your .css file",
                         examples = "set css id of this component to \"root\"",
-                        pattern = "set [css] id of {gui_component} to {string}"),
+                        pattern = "set [css] id of {gui_component} to {string}",
+                        side = Side.CLIENT),
                 @Feature(
                         name = "Set css class of a gui component",
                         description = "Sets the css class of this component, so you can refer to it in your .css file",
                         examples = "set css class of this component to \"option_button\"",
-                        pattern = "set [css] class of {gui_component} to {string}"),
+                        pattern = "set [css] class of {gui_component} to {string}",
+                        side = Side.CLIENT),
                 @Feature(
                         name = "Set text of a gui component that can contain text",
                         description = "Sets the text of this component only if it can contain text",
                         examples = "set text of this component to \"Hello World !\"",
-                        pattern = "set text of {gui_component} to {string}")
+                        pattern = "set text of {gui_component} to {string}",
+                        side = Side.CLIENT)
         }
 )
 public class ActionSetCssCode extends ScriptAction {

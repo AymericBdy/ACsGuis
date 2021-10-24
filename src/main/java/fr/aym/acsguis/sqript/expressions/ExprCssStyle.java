@@ -10,6 +10,7 @@ import fr.nico.sqript.expressions.ScriptExpression;
 import fr.nico.sqript.meta.Expression;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
+import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.TypeString;
 
@@ -18,12 +19,14 @@ import fr.nico.sqript.types.primitive.TypeString;
                 name = "Set other properties of gui components",
                 description = "Sets other properties of gui components, list in the doc",
                 examples = "cset checked_state of this component to true",
-                pattern = "css {string} of {gui_component}"),
+                pattern = "css {string} of {gui_component}",
+                side = Side.CLIENT),
                 @Feature(
                         name = "Set other properties of the current component",
                         description = "Sets other properties of the current component, list in the doc. You MUST be in a component block, and not in a component event !",
                         examples = "cset \"color\" to \"green\"",
-                        pattern = "css {string}")}
+                        pattern = "css {string}",
+                        side = Side.CLIENT)}
 )
 public class ExprCssStyle extends ScriptExpression {
     @Override
