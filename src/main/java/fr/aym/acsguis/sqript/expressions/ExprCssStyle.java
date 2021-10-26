@@ -34,7 +34,7 @@ public class ExprCssStyle extends ScriptExpression {
         ScriptType<GuiComponent<?>> param = getMatchedIndex() == 1 ?
                 (ScriptType<GuiComponent<?>>) context.getVariable("this_component") : parameters[1];
         String optn = parameters[0].getObject().toString();
-        //System.out.println("Try change " + optn + " : WIP");
+        //System.out.println("Try get " + optn + " : WIP ON " + param.getObject());
 
         ComponentProperties<?, ?> property = findComponentProperty(param.getObject(), optn);
         if (property != null) {
@@ -44,7 +44,7 @@ public class ExprCssStyle extends ScriptExpression {
         EnumCssStyleProperties properties = findCssProperty(param.getObject(), optn);
         if (properties != null) {
             InjectedStyleList list = param.getObject().getStyle().getInjectedStyleList();
-            if (list != null) {
+            if (list != null && list.getPropertyMap().containsKey(properties)) {
                 return new TypeString(list.getPropertyMap().get(properties).getValue().toString());
             }
         }
@@ -75,21 +75,24 @@ public class ExprCssStyle extends ScriptExpression {
         ScriptType<GuiComponent<?>> param = getMatchedIndex() == 1 ?
                 (ScriptType<GuiComponent<?>>) context.getVariable("this_component") : parameters[1];
         String optn = parameters[0].getObject().toString();
-        //System.out.println("Try change " + optn + " : WIP");
+        //System.out.println("Try set " + optn + " : WIP ON " + param.getObject() + " to " + to.getObject());
 
         ComponentProperties<?, Object> property = findComponentProperty(param.getObject(), optn);
         if (property != null) {
             property.setValueOnComponent(param.getObject(), to.getObject());
+            //System.out.println("Good found " + property);
             return true;
         }
 
         EnumCssStyleProperties properties = findCssProperty(param.getObject(), optn);
         if (properties != null) {
             param.getObject().getStyle().injectStyle(properties, to.getObject().toString());
-            //System.out.println("Injection success on " + properties.key+" on "+param.getObject());
+            //System.out.println("Injection success on " + properties.key + " on " + param.getObject());
             param.getObject().getStyle().refreshCss(true, "injection");
             return true;
-        }
+        }/* else {
+            System.out.println("Fail property not found");
+        }*/
 
         return false;
     }

@@ -222,8 +222,8 @@ public class TtfFontRenderer implements ICssFont
             line++;
         }
         GL11.glPopMatrix();
+        GL11.glColor4f(1, 1, 1, 1); //Clear color, don't use GlStateManager which keeps the old value in cache
         GlStateManager.bindTexture(0); //Make mc think another texture is bind (which is true)
-        //GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
     protected void drawAdditionnalEffects(float posX, float posY, float length, float height)

@@ -1,11 +1,14 @@
 package fr.aym.acsguis.sqript.block;
 
 import fr.aym.acsguis.api.ACsGuiApi;
+import fr.aym.acsguis.api.ACsGuiApiService;
 import fr.aym.acsguis.component.layout.GuiScaler;
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.sqript.component.ComponentProperties;
 import fr.aym.acsguis.sqript.component.ComponentUtils;
 import fr.aym.acsguis.sqript.expressions.TypeComponent;
+import fr.aym.acslib.ACsLib;
+import fr.aym.acslib.utils.ACsLogger;
 import fr.nico.sqript.blocks.ScriptBlock;
 import fr.nico.sqript.compiling.ScriptCompilationContext;
 import fr.nico.sqript.compiling.ScriptException;
@@ -34,30 +37,13 @@ import java.util.List;
         fields = { @Feature(name = "css_class", description = "Sets the css class of this frame"),
                 @Feature(name = "css_id", description = "Sets the css id of this frame"),
                 @Feature(name = "css_code", description = "Sets the css code of this frame"),
+                @Feature(name = "gui_scaling", description = "Sets the scaling function of the gui (identity or adjust_full_screen)"), //TODO SUPPORT MAX WIDTH & MAX HEIGHT
+                @Feature(name = "enable_debug", description = "Enables debug functions on the gui : reload all css files when the gui is opened and enable the 'K' debug key"),
                 @Feature(name = "css_sheets", description = "List the css sheets used by the gui here. Array of resource locations. Required", type = "String array")}
 )
 public class ScriptBlockGuiFrame extends ScriptBlock
 {
     private final String name;
-
-    /*public static ScriptBlock loadBlock(ScriptInstance instance, List<ScriptToken> block, ScriptToken line, ScriptToken head) throws Exception {
-        BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(head);
-        if(blockDefinition==null)
-            throw new ScriptException.ScriptUnknownTokenException(head);
-        if(blockDefinition.getSide().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())){
-            Class scriptBlockClass = blockDefinition.getBlockClass();
-            //System.out.println("Loading : "+scriptBlockClass.getSimpleName());
-            try{
-                ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptToken.class).newInstance(head);
-                scriptBlock.setLine(line);
-                scriptBlock.setScriptInstance(instance);
-                return scriptBlock;
-            } catch (InvocationTargetException exception){
-                ScriptManager.handleError(line,exception.getTargetException());
-            }
-        }
-        return null;
-    }*/
 
     public ScriptBlockGuiFrame(ScriptToken head) throws ScriptException {
         super(head);
@@ -104,16 +90,45 @@ public class ScriptBlockGuiFrame extends ScriptBlock
                     });
 
                     //System.out.println(lt);
-                    GuiFrame frame = new GuiFrame(new GuiScaler.Identity()) {
+                    final boolean enableDebug;
+                    if(fieldDefined("enable_debug")) {
+                        enableDebug = (boolean) getSubBlock("enable_debug").evaluate().getObject();
+                    } else {
+                        enableDebug = false;
+                    }
+
+                    final GuiScaler scale;
+                    if(fieldDefined("gui_scaling")) {
+                        String scaling = getSubBlock("gui_scaling").getString();
+                        if(scaling.equalsIgnoreCase("adjust_full_screen")) {
+                            scale = new GuiScaler.AdjustFullScreen();
+                        } else {
+                            scale = new GuiScaler.Identity();
+                        }
+                    } else {
+                        scale = new GuiScaler.Identity();
+                    }
+                    
+                    GuiFrame frame = new GuiFrame(scale) {
                         @Override
                         public List<ResourceLocation> getCssStyles() {
                             return lt;
+                        }
+
+                        @Override
+                        public boolean allowDebugInGui() {
+                            return enableDebug;
+                        }
+
+                        @Override
+                        public boolean needsCssReload() {
+                            return enableDebug;
                         }
                     };
                     if (fieldDefined("css_class"))
                         frame.setCssClass(getSubBlock("css_class").evaluate().getObject().toString());
                     if (fieldDefined("css_id"))
-                        frame.setCssClass(getSubBlock("css_id").evaluate().getObject().toString());
+                        frame.setCssId(getSubBlock("css_id").evaluate().getObject().toString());
                     if (fieldDefined("css_code"))
                         frame.setCssCode(getSubBlock("css_code").evaluate().getObject().toString());
                     this.frame = frame;
@@ -130,15 +145,15 @@ public class ScriptBlockGuiFrame extends ScriptBlock
                         //System.out.println("Running the command on " + getRoot());
                         k.start(getRoot());
                     } catch (ScriptException e) {
-                        e.printStackTrace();
+                        ACsLogger.serviceFatal(ACsLib.getPlatform().provideService(ACsGuiApiService.class), "An error occurred evaluating gui "+name, e);
+                        throw e;
                     }
                     while(ComponentUtils.lastAddedComponent != null) {
                         ComponentUtils.popComponentVariables(ctx);
                     }
-
                     //System.out.println("SHOW " + frame);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new RuntimeException("Cannot show gui "+name+" : "+ e, e);
                 }
                 return frame;
             });
