@@ -124,11 +124,7 @@ public class GuiLabel extends GuiTextArea implements AutoStyleHandler<TextCompon
 	public boolean handleProperty(EnumCssStyleProperties property, EnumSelectorContext context, TextComponentStyleManager target) {
 		if(property == EnumCssStyleProperties.WIDTH)
 		{
-			if(target.getOwner().getCssId() != null && target.getOwner().getCssId().equals("lol"))
-				System.out.println("CALCUL WEED "+target.getPaddingLeft()+" "+target.getPaddingRight()+" "+target.getFontSize()+" "+mc.fontRenderer.getStringWidth(getText())+" "+getText());
 			target.getWidth().setAbsolute((int) ((getPaddingLeft()+getPaddingRight()+5+mc.fontRenderer.getStringWidth(getText()))*((float)target.getFontSize()/mc.fontRenderer.FONT_HEIGHT)));
-			if(target.getOwner().getCssId() != null && target.getOwner().getCssId().equals("lol"))
-				System.out.println("GOT : "+target.getRenderWidth());
 			return true;
 		}
 		if(property == EnumCssStyleProperties.HEIGHT)

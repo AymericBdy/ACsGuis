@@ -7,20 +7,17 @@ import fr.aym.acsguis.sqript.NoSqriptSupport;
 import fr.aym.acsguis.sqript.SqriptCompatiblity;
 import fr.aym.acsguis.sqript.SqriptSupport;
 import fr.aym.acsguis.utils.CssReloadOrigin;
-import fr.aym.acslib.ACsPlatform;
-import fr.aym.acslib.services.ACsRegisteredService;
-import fr.aym.acslib.services.ACsService;
-import fr.aym.acslib.services.error_tracking.ErrorTrackingService;
-import fr.aym.acslib.services.error_tracking.TrackedErrorType;
-import fr.aym.acslib.services.thrload.ModLoadingSteps;
-import fr.aym.acslib.services.thrload.ThreadedLoadingService;
-import fr.nico.sqript.forge.SqriptForge;
+import fr.aym.acslib.ACsLib;
+import fr.aym.acslib.api.ACsRegisteredService;
+import fr.aym.acslib.api.services.ErrorTrackingService;
+import fr.aym.acslib.api.services.ThreadedLoadingService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLStateEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -32,30 +29,32 @@ import java.util.concurrent.Callable;
 
 /**
  * ACsGuiApi main class <br>
- *     You should register you css sheets here, during the fml pre-initialization <br>
- *     Useful function to show the guis are also provided here
+ * You should register you css sheets here, during the fml pre-initialization <br>
+ * Useful function to show the guis are also provided here
  */
 @SideOnly(Side.CLIENT)
-@ACsRegisteredService(name = ACsGuiApi.RES_LOC_ID, version = ACsGuiApi.VERSION, sides = Side.CLIENT)
-public class ACsGuiApi implements ACsService
-{
-    public static final String RES_LOC_ID = "acsguis";
-    public static final String VERSION = "1.1.1";
+@ACsRegisteredService(name = ACsGuiApi.RES_LOC_ID, version = ACsGuiApi.VERSION, sides = Side.CLIENT, interfaceClass = ACsGuiApiService.class, initOnStartup = true)
+public class ACsGuiApi implements ACsGuiApiService {
+    public static final String RES_LOC_ID = ACsGuiApiService.RES_LOC_ID;
+    public static final String VERSION = "1.2.0";
     public static final Logger log = LogManager.getLogger("ACsGuis");
 
     public static ErrorTrackingService errorTracker;
-    public static TrackedErrorType CSS_ERROR_TYPE;
+    public static ErrorTrackingService.ErrorType CSS_ERROR_TYPE;
 
     /**
      * Styles registry and gui helper
      */
     private static final CssGuisManager manager = new CssGuisManager();
 
-    public static SqriptSupport support = new NoSqriptSupport();
+    private static SqriptSupport sqriptSupport = new NoSqriptSupport();
 
-    @Override
-    public String getName() {
-        return RES_LOC_ID;
+    public ACsGuiApi() {
+        log.info("Initializing ACsGuis API by Aym', version " + VERSION);
+        MinecraftForge.EVENT_BUS.register(manager);
+
+        errorTracker = ACsLib.getPlatform().provideService(ErrorTrackingService.class);
+        CSS_ERROR_TYPE = errorTracker.createErrorType(new ResourceLocation(RES_LOC_ID, "css"), "Css");
     }
 
     @Override
@@ -64,54 +63,20 @@ public class ACsGuiApi implements ACsService
     }
 
     @Override
-    public void initService() {
-        log.info("Initializing ACsGuis API by Aym', version "+VERSION);
-        MinecraftForge.EVENT_BUS.register(manager);
-
-        errorTracker = ACsPlatform.provideService("errtrack");
-        CSS_ERROR_TYPE = errorTracker.createErrorType(new ResourceLocation(RES_LOC_ID, "css"), "Css");
-        if(Loader.isModLoaded("sqript")) {
-            log.info("Sqript detected, loading compatibility");
-            support = new SqriptCompatiblity();
-        }
-
-        /*ScriptManager.parsers.add(new IScriptParser() {
-            @Override
-            public IScript parse(ScriptLine line, ScriptCompileGroup compileGroup) {
-                BlockDefinition blockDefinition = ScriptDecoder.findBlockDefinition(line);
-                System.out.println("Definition ? "+blockDefinition+" "+line.text);
-                if(blockDefinition != null && blockDefinition.getSide().isStrictlyValid() && (!ScriptManager.RELOADING || blockDefinition.isReloadable())){
-                    Class scriptBlockClass = blockDefinition.getBlockClass();
-                    System.out.println("Loading : "+scriptBlockClass.getSimpleName());
-                    if(scriptBlockClass == ScriptBlockGuiFrame.class || scriptBlockClass == ScriptBlockGuiComponent.class) {
-                        try {
-                            ScriptBlock scriptBlock = (ScriptBlock) scriptBlockClass.getConstructor(ScriptLine.class).newInstance(line);
-                            scriptBlock.setLine(line);
-                            scriptBlock.setScriptInstance(line.getScriptInstance());
-                            return scriptBlock;
-                        } catch (InvocationTargetException exception) {
-                            ScriptManager.handleError(line, exception.getTargetException());
-                        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException e) {
-                            ScriptManager.handleError(line, e);
-                        }
-                    }
-                    System.out.println("Eh be non");
-                }
-                return null;
-            }
-        });*/
-    }
-
-    @Override
     public void onFMLStateEvent(FMLStateEvent event) {
-        if(event instanceof FMLInitializationEvent) {
+        if (event instanceof FMLPreInitializationEvent) {
+            if (Loader.isModLoaded("sqript")) {
+                log.info("Sqript detected, loading compatibility");
+                sqriptSupport = new SqriptCompatiblity();
+            }
+        } else if (event instanceof FMLInitializationEvent) {
             ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new CssGuisManager());
         }
     }
 
     /**
      * Registers a css style sheet to (re)load when resources packs are loaded <br>
-     *     Register all the sheets that you are using here, before fml initialization
+     * Register all the sheets that you are using here, before fml initialization
      *
      * @param location The style sheet to load
      */
@@ -121,9 +86,9 @@ public class ACsGuiApi implements ACsService
 
     /**
      * Loads a GuiFrame in another thread, then shows it <br>
-     *     Note : the css fonts are loaded in the client thread (it needs open gl)
+     * Note : the css fonts are loaded in the client thread (it needs open gl)
      *
-     * @param guiName The gui name, used for log messages
+     * @param guiName     The gui name, used for log messages
      * @param guiInstance A function returning the gui, called by the external thread
      */
     public static void asyncLoadThenShowGui(String guiName, Callable<GuiFrame> guiInstance) {
@@ -132,10 +97,10 @@ public class ACsGuiApi implements ACsService
 
     /**
      * Loads a GuiFrame in another thread, then shows it on the HUD <br>
-     *     A hud gui is only a visual gui, you can't interact with it <br>
-     *     Note : the css fonts are loaded in the client thread (it needs open gl)
+     * A hud gui is only a visual gui, you can't interact with it <br>
+     * Note : the css fonts are loaded in the client thread (it needs open gl)
      *
-     * @param guiName The gui name, used for log messages
+     * @param guiName     The gui name, used for log messages
      * @param guiInstance A function returning the gui, called by the external thread
      */
     public static void asyncLoadThenShowHudGui(String guiName, Callable<GuiFrame> guiInstance) {
@@ -158,15 +123,15 @@ public class ACsGuiApi implements ACsService
 
     /**
      * Forces reload of all styles and fonts
+     *
      * @param frame If not null, will handle error gui
      */
     public static void reloadCssStyles(@Nullable GuiFrame frame) {
-        System.out.println("ça reload");
-        support.onCssInit();
+        getSqriptSupport().onCssInit();
         CssReloadEvent.Pre event = new CssReloadEvent.Pre(frame != null ? new CssReloadOrigin.HotCssReloadOrigin(manager, frame) : new CssReloadOrigin(manager, false));
-        if(MinecraftForge.EVENT_BUS.post(event)) return;
+        if (MinecraftForge.EVENT_BUS.post(event)) return;
 
-        ACsPlatform.<ThreadedLoadingService>provideService("ThrLoad").addTask(ModLoadingSteps.FINISH_LOAD, "css_load", () -> {
+        ACsLib.getPlatform().provideService(ThreadedLoadingService.class).addTask(ThreadedLoadingService.ModLoadingSteps.FINISH_LOAD, "css_load", () -> {
             try {
                 event.getReloadOrigin().loadStyles();
             } catch (Exception e) { //This should not happen with our reload origin
@@ -185,5 +150,12 @@ public class ACsGuiApi implements ACsService
             event.getReloadOrigin().loadFonts();
             event.getReloadOrigin().postLoad();
         });
+    }
+
+    /**
+     * @return The Sqript support for ACsGuis
+     */
+    public static SqriptSupport getSqriptSupport() {
+        return sqriptSupport;
     }
 }

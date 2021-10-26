@@ -17,7 +17,6 @@ public class ScriptComponentKeyAction extends GuiActionScriptLoop {
     @Override
     public void appendListener(Callable<ScriptContext> contextProvider, GuiComponent<?> component) {
         component.addKeyboardListener((typedChar, keyCode) -> {
-            System.out.println("Running button action !!");
             ScriptContext context1;
             try {
                 context1 = contextProvider.call();

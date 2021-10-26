@@ -123,9 +123,9 @@ public class ActionGuiComponent extends ScriptAction {
         //TODO SEE IF UTIL
         if (next != null)
             return next;
-        else if (getParent() != null && getParent() instanceof ScriptLoop) {
+        else if (getParent() instanceof ScriptLoop) {
             return getParent().getNext(context);
-        } else if (getParent() != null && getParent() instanceof ActionGuiComponent) {
+        } else if (getParent() instanceof ActionGuiComponent) {
             //if(((ScriptBlockGuiComponent) getParent()).component instanceof GuiPanel)
             //+  context.put(new ScriptAccessor(new TypeComponent(((ScriptBlockGuiComponent) getParent()).component), "this_component"));
             //System.out.println("Mais wtf le next de mon papa c'est " + getParent().getNext(context));
@@ -141,12 +141,7 @@ public class ActionGuiComponent extends ScriptAction {
         super.build(line, compileGroup, parameters, matchedIndex, marks);
         this.name = line.getText().trim().replaceFirst("(^|\\s+)add css component\\s+", "");
         //System.out.println("TABS LEVELS " + ScriptDecoder.getTabLevel(line.getText())+" AND "+ScriptDecoder.getTabLevel(getLine().getText()));
-        this.tabLevel = line.getTabLevel();
+        this.tabLevel = line.getTabLevel()-1;
         //System.out.println("23 Tab level "+ this.tabLevel);
-//TODO TEST FROM MAJ
-       // this.tabLevel = tabLevel;
-
-        //System.out.println("FILL " + text + " WITH TAB " + this.tabLevel);
-        //System.out.println("Long name is " + name);
     }
 }

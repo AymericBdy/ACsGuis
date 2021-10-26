@@ -1,7 +1,8 @@
-package fr.aym.acslib.impl.thrload;
+package fr.aym.acslib.impl.services.thrload;
 
-import fr.aym.acslib.ACsPlatform;
-import fr.aym.acslib.services.thrload.ModLoadingSteps;
+import fr.aym.acslib.ACsLib;
+import fr.aym.acslib.api.services.ThreadedLoadingService;
+import fr.aym.acslib.utils.ACsLogger;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
 import net.minecraftforge.fml.common.LoaderException;
 
@@ -11,7 +12,7 @@ import java.io.PrintWriter;
 public class ThreadedLoadingTask implements Runnable
 {
     private final Runnable task;
-    private final ModLoadingSteps endBefore;
+    private final ThreadedLoadingService.ModLoadingSteps endBefore;
     private final int id;
     private final String name;
     private final Runnable followingInThreadTask;
@@ -19,7 +20,7 @@ public class ThreadedLoadingTask implements Runnable
 
     private static int lastId;
 
-    public ThreadedLoadingTask(Runnable task, ModLoadingSteps endBefore, Runnable followingInThreadTask, String taskName, LightThreadedModLoader executor) {
+    public ThreadedLoadingTask(Runnable task, ThreadedLoadingService.ModLoadingSteps endBefore, Runnable followingInThreadTask, String taskName, LightThreadedModLoader executor) {
         this.task = task;
         this.endBefore = endBefore;
         this.followingInThreadTask = followingInThreadTask;
@@ -36,7 +37,7 @@ public class ThreadedLoadingTask implements Runnable
             task.run();
             executor.onEnd(this, followingInThreadTask, (System.currentTimeMillis()-time));
         } catch (Exception e) {
-            ACsPlatform.serviceFatal(ACsPlatform.provideService("ThrLoad"), "Error in task "+name, e);
+            ACsLogger.serviceFatal(ACsLib.getPlatform().provideService(ThreadedLoadingService.class), "Error in task "+name, e);
             //TODO ERROR SERVCICE DynamXErrorTracker.addError(ErrorType.INIT, "LoadingTasks", "ThreadTask "+name, e.toString(), DynamXErrorTracker.ErrorLevel.FATAL);
             executor.onEnd(this, () -> {
                 if(e instanceof CustomModLoadingErrorDisplayException)
@@ -46,7 +47,7 @@ public class ThreadedLoadingTask implements Runnable
         }
     }
 
-    public boolean shouldEndNow(ModLoadingSteps step) {
+    public boolean shouldEndNow(ThreadedLoadingService.ModLoadingSteps step) {
         return endBefore.getIndex() <= step.getIndex();
     }
 

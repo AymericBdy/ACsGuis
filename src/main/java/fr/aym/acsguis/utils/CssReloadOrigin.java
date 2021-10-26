@@ -6,7 +6,7 @@ import fr.aym.acsguis.cssengine.CssGuisManager;
 import fr.aym.acsguis.cssengine.font.ICssFont;
 import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.event.CssReloadEvent;
-import fr.aym.acslib.services.error_tracking.TrackedErrorLevel;
+import fr.aym.acslib.api.services.ErrorTrackingService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
@@ -34,12 +34,12 @@ public class CssReloadOrigin implements ICssFont.FontReloadOrigin
 
     public void handleException(ResourceLocation r, Exception e) {
         ACsGuiApi.log.error("Error while loading css sheet "+r.toString(), e);
-        ACsGuiApi.errorTracker.addError(ACsGuiApi.CSS_ERROR_TYPE, "Css sheets", "Css sheet "+r.toString(), e.getCause() instanceof Exception ? (Exception) e.getCause() : e, TrackedErrorLevel.LOW);
+        ACsGuiApi.errorTracker.addError(ACsGuiApi.CSS_ERROR_TYPE, "Css sheets", "Css sheet "+r.toString(), e.getCause() instanceof Exception ? (Exception) e.getCause() : e, ErrorTrackingService.TrackedErrorLevel.LOW);
     }
 
     public void handleFontException(ResourceLocation r, Exception e) {
         ACsGuiApi.log.error("Error while loading css font "+r.toString(), e);
-        ACsGuiApi.errorTracker.addError(ACsGuiApi.CSS_ERROR_TYPE, "Css fonts", "Css font "+r.toString(), e, TrackedErrorLevel.LOW);
+        ACsGuiApi.errorTracker.addError(ACsGuiApi.CSS_ERROR_TYPE, "Css fonts", "Css font "+r.toString(), e, ErrorTrackingService.TrackedErrorLevel.LOW);
     }
 
     protected void handlePreLoad() {

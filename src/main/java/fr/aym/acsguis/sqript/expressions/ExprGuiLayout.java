@@ -12,6 +12,7 @@ import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.TypeNumber;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Expression(name = "Gui layout expression",
         features = @Feature(
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 public class ExprGuiLayout extends ScriptExpression {
     @Override
     public ScriptType<PanelLayout<?>> get(ScriptContext context, ScriptType[] parameters) {
+        System.out.println("LAYOUTIZE "+ Arrays.toString(parameters));
         if (parameters.length == 4) {
             GridLayout.GridDirection disposition = parameters[2].getObject().toString().matches("vertical") ? GridLayout.GridDirection.VERTICAL : GridLayout.GridDirection.HORIZONTAL;
             return new TypePanelLayout(new GridLayout((int) (double) ((ArrayList<TypeNumber>) parameters[0].getObject()).get(0).getObject(), (int) (double) ((ArrayList<TypeNumber>) parameters[0].getObject()).get(1).getObject(), (int) (double) parameters[1].getObject(), disposition, (int) (double) parameters[3].getObject()));

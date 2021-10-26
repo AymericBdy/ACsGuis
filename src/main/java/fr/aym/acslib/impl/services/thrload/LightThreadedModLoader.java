@@ -1,9 +1,9 @@
-package fr.aym.acslib.impl.thrload;
+package fr.aym.acslib.impl.services.thrload;
 
-import fr.aym.acslib.ACsPlatform;
-import fr.aym.acslib.services.ACsRegisteredService;
-import fr.aym.acslib.services.thrload.ModLoadingSteps;
-import fr.aym.acslib.services.thrload.ThreadedLoadingService;
+import fr.aym.acslib.ACsLib;
+import fr.aym.acslib.api.ACsRegisteredService;
+import fr.aym.acslib.api.services.ThreadedLoadingService;
+import fr.aym.acslib.utils.ACsLogger;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.event.*;
 
@@ -13,25 +13,24 @@ import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-@ACsRegisteredService(name = "ThrLoad", version = "1.0.0")
+@ACsRegisteredService(name = "ThrLoad", version = "1.0.0", interfaceClass = ThreadedLoadingService.class)
 public class LightThreadedModLoader implements ThreadedLoadingService
 {
-    private ExecutorService POOL;
-    private Map<ThreadedLoadingTask, Future<?>> tasks;
-    private Queue<Runnable> inThreadTasks;
+    private final ExecutorService POOL;
+    private final Map<ThreadedLoadingTask, Future<?>> tasks;
+    private final Queue<Runnable> inThreadTasks;
     private ModLoadingSteps step = ModLoadingSteps.NOT_INIT;
     private final AtomicLong economised = new AtomicLong();
+
+    public LightThreadedModLoader() {
+        POOL = Executors.newFixedThreadPool(1, new DefaultThreadFactory("ACsThreadedLoader"));
+        tasks = new ConcurrentHashMap<>();
+        inThreadTasks = new ConcurrentLinkedQueue<>();
+    }
 
     @Override
     public String getVersion() {
         return "1.0.0";
-    }
-
-    @Override
-    public void initService() {
-        POOL = Executors.newFixedThreadPool(1, new DefaultThreadFactory("ACsThreadedLoader"));
-        tasks = new ConcurrentHashMap<>();
-        inThreadTasks = new ConcurrentLinkedQueue<>();
     }
 
     @Override
@@ -50,7 +49,7 @@ public class LightThreadedModLoader implements ThreadedLoadingService
     public void addTask(ModLoadingSteps finishFor, String taskName, Runnable task, @Nullable Runnable followingInThreadTask) {
         if(POOL.isShutdown())
         {
-            ACsPlatform.serviceInfo(this, "Pool is shutdown, running task now "+taskName);
+            ACsLogger.serviceInfo(this, "Pool is shutdown, running task now "+taskName);
             task.run();
             if (followingInThreadTask != null) {
                 followingInThreadTask.run();
@@ -58,7 +57,7 @@ public class LightThreadedModLoader implements ThreadedLoadingService
         }
         else if(finishFor.getIndex() <= step.getIndex())
         {
-            ACsPlatform.serviceWarn(this, "Got a past task, running it now "+taskName);
+            ACsLogger.serviceWarn(this, "Got a past task, running it now "+taskName);
             task.run();
             if (followingInThreadTask != null) {
                 followingInThreadTask.run();
@@ -72,11 +71,11 @@ public class LightThreadedModLoader implements ThreadedLoadingService
 
     @Override
     public void step(ModLoadingSteps step) {
-        ACsPlatform.serviceDebug(this, "Transition: "+step);
+        ACsLogger.serviceDebug(this, "Transition: "+step);
         for(Map.Entry<ThreadedLoadingTask, Future<?>> task : tasks.entrySet()) {
             if(task.getKey().shouldEndNow(step) && !task.getValue().isDone()) {
                 long time = System.currentTimeMillis();
-                ACsPlatform.serviceDebug(this, "Waiting on "+task.getKey().toString());
+                ACsLogger.serviceDebug(this, "Waiting on "+task.getKey().toString());
                 ProgressManager.ProgressBar bar = ProgressManager.push(getName() + " : "+task.getKey().getName(), 1);
                 try {
                     bar.step(task.getKey().getName());
@@ -87,7 +86,7 @@ public class LightThreadedModLoader implements ThreadedLoadingService
                 finally {
                     ProgressManager.pop(bar);
                 }
-                ACsPlatform.serviceDebug(this, "Waited " + (System.currentTimeMillis()-time) + " ms");
+                ACsLogger.serviceDebug(this, "Waited " + (System.currentTimeMillis()-time) + " ms");
             }
         }
         this.step = step;
@@ -95,18 +94,18 @@ public class LightThreadedModLoader implements ThreadedLoadingService
         long time = System.currentTimeMillis();
         if(!inThreadTasks.isEmpty()) {
             //DynamXMain.log.debug("Run in thread tasks");
-            ProgressManager.ProgressBar bar = ProgressManager.push("Load " + ACsPlatform.NAME + " resources", inThreadTasks.size());
+            ProgressManager.ProgressBar bar = ProgressManager.push("Load " + ACsLib.NAME + " resources", inThreadTasks.size());
             int i = 0;
             while (!inThreadTasks.isEmpty()) {
                 i++;
                 bar.step("Task "+i);
                 inThreadTasks.poll().run();
             }
-            ACsPlatform.serviceDebug(this, "TT Took " + (System.currentTimeMillis() - time) + " ms");
+            ACsLogger.serviceDebug(this, "TT Took " + (System.currentTimeMillis() - time) + " ms");
         }
 
         if(step == ModLoadingSteps.FINISH_LOAD)
-            ACsPlatform.serviceInfo(this, "Le lancement multithreadé a économisé "+economised.get()+" ms");
+            ACsLogger.serviceInfo(this, "Le lancement multithreadé a économisé "+economised.get()+" ms");
     }
 
     protected void onEnd(ThreadedLoadingTask task, Runnable followingInThreadTask, long tookTime) {
@@ -114,7 +113,7 @@ public class LightThreadedModLoader implements ThreadedLoadingService
         if(followingInThreadTask != null) {
             if(POOL.isShutdown())
             {
-                ACsPlatform.serviceWarn(this, "Received following task too late, do it now !");
+                ACsLogger.serviceWarn(this, "Received following task too late, do it now !");
                 followingInThreadTask.run();
             }
             /*else if(step == ModLoadingSteps.FULLY_LOADED)
@@ -126,7 +125,7 @@ public class LightThreadedModLoader implements ThreadedLoadingService
                 inThreadTasks.offer(followingInThreadTask);
         }
         tasks.remove(task);
-        ACsPlatform.serviceDebug(this, "Finished "+task.toString()+" in "+tookTime+" ms during "+step);
+        ACsLogger.serviceDebug(this, "Finished "+task.toString()+" in "+tookTime+" ms during "+step);
     }
 
     /**
@@ -156,7 +155,7 @@ public class LightThreadedModLoader implements ThreadedLoadingService
                 t.setDaemon(false);
             if (t.getPriority() != Thread.NORM_PRIORITY)
                 t.setPriority(Thread.NORM_PRIORITY);
-            t.setUncaughtExceptionHandler((th, e) -> ACsPlatform.serviceError(LightThreadedModLoader.this, "Error in "+t.getName(), e));
+            t.setUncaughtExceptionHandler((th, e) -> ACsLogger.serviceError(LightThreadedModLoader.this, "Error in "+t.getName(), e));
             return t;
         }
     }

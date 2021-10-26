@@ -18,13 +18,13 @@ import fr.nico.sqript.types.primitive.TypeString;
         features = {@Feature(
                 name = "Set other properties of gui components",
                 description = "Sets other properties of gui components, list in the doc",
-                examples = "cset checked_state of this component to true",
+                examples = "set css \"checked_state\" of this_component to \"true\"",
                 pattern = "css {string} of {gui_component}",
                 side = Side.CLIENT),
                 @Feature(
                         name = "Set other properties of the current component",
-                        description = "Sets other properties of the current component, list in the doc. You MUST be in a component block, and not in a component event !",
-                        examples = "cset \"color\" to \"green\"",
+                        description = "Sets other properties of the current component, list in the doc. You MUST be in a component block or in a component event !",
+                        examples = "set css \"color\" to \"green\"",
                         pattern = "css {string}",
                         side = Side.CLIENT)}
 )

@@ -21,7 +21,6 @@ public class ScriptComponentMouseMoveAction extends GuiActionScriptLoop {
         component.addMoveListener(new IMouseMoveListener() {
             @Override
             public void onMouseMoved(int mouseX, int mouseY) {
-                System.out.println("Running button action !!");
                 ScriptContext context1;//new ScriptContext(context); // ça empêche de "faire sortir" des variables : à ne pas utiliser
                 try {
                     context1 = contextProvider.call();
@@ -36,7 +35,6 @@ public class ScriptComponentMouseMoveAction extends GuiActionScriptLoop {
 
             @Override
             public void onMouseHover(int mouseX, int mouseY) {
-                System.out.println("Running button action !!");
                 ScriptContext context1;//new ScriptContext(context); // ça empêche de "faire sortir" des variables : à ne pas utiliser
                 try {
                     context1 = contextProvider.call();
@@ -51,7 +49,6 @@ public class ScriptComponentMouseMoveAction extends GuiActionScriptLoop {
 
             @Override
             public void onMouseUnhover(int mouseX, int mouseY) {
-                System.out.println("Running button action !!");
                 ScriptContext context1;//new ScriptContext(context); // ça empêche de "faire sortir" des variables : à ne pas utiliser
                 try {
                     context1 = contextProvider.call();

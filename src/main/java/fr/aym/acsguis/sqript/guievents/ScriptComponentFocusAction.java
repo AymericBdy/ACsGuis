@@ -20,7 +20,6 @@ public class ScriptComponentFocusAction extends GuiActionScriptLoop {
         component.addFocusListener(new IFocusListener() {
             @Override
             public void onFocus() {
-                System.out.println("Running button action !!");
                 ScriptContext context1;//new ScriptContext(context); // ça empêche de "faire sortir" des variables : à ne pas utiliser
                 try {
                     context1 = contextProvider.call();
@@ -33,7 +32,6 @@ public class ScriptComponentFocusAction extends GuiActionScriptLoop {
 
             @Override
             public void onFocusLoose() {
-                System.out.println("Running button action !!");
                 ScriptContext context1;//new ScriptContext(context); // ça empêche de "faire sortir" des variables : à ne pas utiliser
                 try {
                     context1 = contextProvider.call();

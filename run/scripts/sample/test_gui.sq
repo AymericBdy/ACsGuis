@@ -17,7 +17,10 @@ define gui frame monGui:
 
 		add css component panel with id "general":
 			add css component scroll_pane:
+			    print "test1"
+			    print "test2"
 				set layout to new grid layout with size [-1,25] spacing 5 direction "horizontal" elements per line 1
+			    print "test3"
 				#on component tick:
 				#   print "ticking..."
 				add css component label with id "reload_models" and class "reload_button" and text "Recharger les packs"

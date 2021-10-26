@@ -56,7 +56,7 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
 
 	@Override
 	public GuiPanel add(GuiComponent component) {
-		if(ACsGuiApi.support.isSqriptLoaded() && component instanceof GuiPanel) {
+		if(ACsGuiApi.getSqriptSupport().isSqriptLoaded() && component instanceof GuiPanel) {
 			addTab(SqriptCompatiblity.nextPannedTabName, (GuiPanel) component);
 		} else {
 			super.add(component);

@@ -1,4 +1,4 @@
-package fr.aym.acslib.impl.thrload;
+package fr.aym.acslib.impl.services.thrload;
 
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureManager;

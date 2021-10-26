@@ -32,7 +32,7 @@ public class InjectedStyleList
             //System.out.println("SET VALUE OF "+data[0]+" to "+value);
             cssValue = new CssStringValue(value);
         }
-        System.out.println("Property: "+value+" // "+cssValue);
+        //System.out.println("Property: "+value+" // "+cssValue);
         addProperty(new CssStyleProperty<>(property, cssValue));
     }
 
