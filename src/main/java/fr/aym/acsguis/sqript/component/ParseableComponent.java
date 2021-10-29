@@ -8,9 +8,11 @@ import fr.aym.acsguis.component.panel.*;
 import fr.aym.acsguis.component.textarea.*;
 import fr.nico.sqript.structures.ScriptContext;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.concurrent.Callable;
 
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public enum ParseableComponent
 {
     PANEL(GuiPanel.class, "panel", GuiPanel::new, ComponentProperties.SET_STYLE, ComponentProperties.LAYOUT, ComponentProperties.NEXT_TAB_PANE),

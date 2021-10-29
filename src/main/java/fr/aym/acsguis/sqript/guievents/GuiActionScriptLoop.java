@@ -12,9 +12,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.concurrent.Callable;
 
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public abstract class GuiActionScriptLoop extends ScriptLoop {
     @Override
     public void execute(ScriptContext context) throws ScriptException {

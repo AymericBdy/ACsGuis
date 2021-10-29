@@ -6,6 +6,7 @@ import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.primitive.TypeNumber;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.concurrent.Callable;
 
@@ -13,6 +14,7 @@ import java.util.concurrent.Callable;
         pattern = "on component key input:",
         side = Side.CLIENT
 )
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ScriptComponentKeyAction extends GuiActionScriptLoop {
     @Override
     public void appendListener(Callable<ScriptContext> contextProvider, GuiComponent<?> component) {

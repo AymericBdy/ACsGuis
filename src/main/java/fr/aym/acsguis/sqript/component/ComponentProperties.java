@@ -22,6 +22,7 @@ import fr.nico.sqript.types.primitive.TypeNumber;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ComponentProperties<A, B> {
     private static final List<ComponentProperties<?, ?>> properties = new ArrayList<>();
 

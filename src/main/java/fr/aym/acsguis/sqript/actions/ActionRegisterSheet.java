@@ -9,6 +9,7 @@ import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Action(name = "Register css sheet",
         features = @Feature(
@@ -17,6 +18,7 @@ import net.minecraft.util.ResourceLocation;
                 examples = "register sheet \"dynamx:css/test.css\"",
                 pattern = "register css sheet {string}")
 )
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ActionRegisterSheet extends ScriptAction {
     @Override
     public void execute(ScriptContext context) throws ScriptException {

@@ -23,6 +23,7 @@ import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ import java.util.List;
                 @Feature(name = "enable_debug", description = "Enables debug functions on the gui : reload all css files when the gui is opened and enable the 'K' debug key"),
                 @Feature(name = "css_sheets", description = "List the css sheets used by the gui here. Array of resource locations. Required", type = "String array")}
 )
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ScriptBlockGuiFrame extends ScriptBlock
 {
     private final String name;

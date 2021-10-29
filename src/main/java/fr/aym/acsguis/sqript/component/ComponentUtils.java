@@ -4,7 +4,9 @@ import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.sqript.expressions.TypeComponent;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ComponentUtils {
     public static GuiComponent<?> lastAddedComponent;
 

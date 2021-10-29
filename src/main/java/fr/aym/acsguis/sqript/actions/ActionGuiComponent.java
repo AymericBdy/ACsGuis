@@ -18,6 +18,7 @@ import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptLoop;
 import fr.nico.sqript.structures.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -35,6 +36,7 @@ import java.util.regex.Pattern;
                         "add css component button with class \"reload_button\" and text \"Recharger les packs\""},
                 pattern = "^add css component .*",
         side = Side.CLIENT))
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ActionGuiComponent extends ScriptAction {
     private String name;
 

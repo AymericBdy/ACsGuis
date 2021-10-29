@@ -9,6 +9,7 @@ import fr.nico.sqript.meta.Action;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Action(name = "Show css gui",
         features = {
@@ -26,6 +27,7 @@ import fr.nico.sqript.structures.Side;
                         pattern = "display css gui {string} {string}",
                         side = Side.CLIENT
                 )})
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ActionShowGui extends ScriptAction {
     @Override
     public void execute(ScriptContext context) throws ScriptException {

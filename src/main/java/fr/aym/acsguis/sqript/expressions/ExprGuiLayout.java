@@ -10,6 +10,7 @@ import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.TypeNumber;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import java.util.Arrays;
                 type = "panel_layout",
                 side = Side.CLIENT)
 )
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ExprGuiLayout extends ScriptExpression {
     @Override
     public ScriptType<PanelLayout<?>> get(ScriptContext context, ScriptType[] parameters) {

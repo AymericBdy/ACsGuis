@@ -9,6 +9,7 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Action(name = "Modify a gui component properties",
         priority = 20, //Override ActDefinition
@@ -39,6 +40,7 @@ import fr.nico.sqript.types.ScriptType;
                         side = Side.CLIENT)
         }
 )
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ActionSetCssCode extends ScriptAction {
     @Override
     @SuppressWarnings("unchecked")

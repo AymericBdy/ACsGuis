@@ -7,6 +7,7 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Action(name = "Close a gui",
         features = @Feature(
@@ -16,6 +17,7 @@ import net.minecraft.client.Minecraft;
                 pattern = "close current [css] gui",
                 side = Side.CLIENT)
 )
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ActionCloseGui extends ScriptAction {
     @Override
     public void execute(ScriptContext context) throws ScriptException {

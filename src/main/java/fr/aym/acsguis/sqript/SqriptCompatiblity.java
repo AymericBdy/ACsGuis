@@ -2,7 +2,9 @@ package fr.aym.acsguis.sqript;
 
 import fr.aym.acsguis.sqript.events.EventOnCssInit;
 import fr.nico.sqript.ScriptManager;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class SqriptCompatiblity implements SqriptSupport
 {
     public static String nextPannedTabName = "not set";

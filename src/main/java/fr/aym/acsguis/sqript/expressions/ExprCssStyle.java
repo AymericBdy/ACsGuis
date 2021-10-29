@@ -13,6 +13,7 @@ import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.primitive.TypeString;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Expression(name = "Css style manipulation expression",
         features = {@Feature(
@@ -28,6 +29,7 @@ import fr.nico.sqript.types.primitive.TypeString;
                         pattern = "css {string}",
                         side = Side.CLIENT)}
 )
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ExprCssStyle extends ScriptExpression {
     @Override
     public ScriptType<String> get(ScriptContext context, ScriptType[] parameters) {

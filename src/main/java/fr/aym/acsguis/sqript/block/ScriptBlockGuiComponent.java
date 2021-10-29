@@ -13,6 +13,7 @@ import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptLoop;
 import fr.nico.sqript.structures.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +29,7 @@ import java.util.regex.Pattern;
         pattern = "^add css component .*:",
         side = Side.CLIENT
 )
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ScriptBlockGuiComponent extends ScriptLoop {
     public static final String[] supportedFields = new String[]{"text", "max_text_length", "checked", "entity_to_render", "choices", "min_value", "max_value", "hint_text", "regex"};
 

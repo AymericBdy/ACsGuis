@@ -4,6 +4,7 @@ import fr.aym.acsguis.component.GuiComponent;
 import fr.nico.sqript.meta.Loop;
 import fr.nico.sqript.structures.*;
 import fr.nico.sqript.types.primitive.TypeNumber;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.concurrent.Callable;
 
@@ -11,6 +12,7 @@ import java.util.concurrent.Callable;
         pattern = "on component click:",
         side = Side.CLIENT
 )
+@SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ScriptComponentClickAction extends GuiActionScriptLoop {
     @Override
     public void appendListener(Callable<ScriptContext> contextProvider, GuiComponent<?> component) {
