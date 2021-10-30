@@ -251,6 +251,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 			flushRemovedComponents();
 			debugPane.flushRemovedComponents();
 			Keyboard.enableRepeatEvents(enableRepeatEvents);
+			frame.setVisible(true);
 		}
 		
 		@Override
@@ -382,5 +383,4 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	public APIGuiScreen getGuiScreen() {
 		return guiScreen;
 	}
-	
 }
