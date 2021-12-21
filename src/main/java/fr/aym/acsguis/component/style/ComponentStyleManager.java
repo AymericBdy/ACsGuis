@@ -111,22 +111,53 @@ public interface ComponentStyleManager
      */
     void update();
 
+    /**
+     * @return The x pos of this component
+     */
     Position getXPos();
 
+    /**
+     * @return The y pos of this component
+     */
     Position getYPos();
 
+    /**
+     * @return The computed X render pos of this component
+     */
     int getRenderX();
 
+    /**
+     * @return The computed y render pos of this component
+     */
     int getRenderY();
 
+    /**
+     * @return The width of this component
+     */
     Size getWidth();
 
+    /**
+     * @return The height of this component
+     */
     Size getHeight();
 
+    /**
+     * @return The computed render width of this component
+     */
     int getRenderWidth();
 
+    /**
+     * @return The computed render height of this component
+     */
     int getRenderHeight();
 
+    /**
+     * Fired when the display screen is resized <br>
+     * Refreshes the css state
+     *
+     * @param screenWidth The new screen width
+     * @param screenHeight The new screen height
+     */
     void resize(int screenWidth, int screenHeight);
 
     ComponentStyleManager setForegroundColor(int color);
@@ -166,6 +197,20 @@ public interface ComponentStyleManager
 
     ComponentStyleManager setBorderSize(CssValue borderSize);
     int getBorderSize();
+
+    /**
+     * Allows keeping thin border visible when the gui has a little scale (see {@link fr.aym.acsguis.component.layout.GuiScaler}) <br>
+     * API : the border system will be refactored in near future
+     * @param inverseScreenScale True to rescale the border bigger, according to the gui scale
+     * @return this
+     */
+    ComponentStyleManager setShouldRescaleBorder(boolean inverseScreenScale);
+    /**
+     * Allows keeping thin border visible when the gui has a little scale (see {@link fr.aym.acsguis.component.layout.GuiScaler}) <br>
+     * API : the border system will be refactored in near future
+     * @return True to rescale the border bigger, according to the gui scale
+     */
+    boolean shouldRescaleBorder();
 
     ComponentStyleManager setBorderColor(int borderColor);
     int getBorderColor();

@@ -17,6 +17,7 @@ import fr.aym.acsguis.component.layout.GuiScaler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
@@ -167,12 +168,12 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 		return scale;
 	}
 
-	public int getScaledWidth() {
-		return (int) (getWidth()*guiScreen.scaleX);
+	public float getScaledX() {
+		return guiScreen.scaleX;
 	}
 
-	public int getScaledHeight() {
-		return (int) (getHeight()*guiScreen.scaleY);
+	public float getScaleY() {
+		return guiScreen.scaleY;
 	}
 
 	@Override
@@ -182,8 +183,10 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 			public void updateComponentPosition(int screenWidth, int screenHeight)
 			{
 				//Re-compute scales after computation of width and height
-				getGuiScreen().scaleX = getScale().getScaleX(GuiFrame.resolution, mc.displayWidth, GuiFrame.resolution.getScaledWidth(), getStyle().getRenderWidth());
-				getGuiScreen().scaleY = getScale().getScaleY(GuiFrame.resolution, mc.displayHeight, GuiFrame.resolution.getScaledHeight(), getStyle().getRenderHeight());
+				float[] scale = getScale().getScale(GuiFrame.resolution, mc.displayWidth, GuiFrame.resolution.getScaledWidth(), getStyle().getRenderWidth(),
+						mc.displayHeight, GuiFrame.resolution.getScaledHeight(), getStyle().getRenderHeight());
+				getGuiScreen().scaleX = scale[0];
+				getGuiScreen().scaleY = scale[1];
 
 				//And adapt component position (for relative positions, eg : center of the screen)
 				int parentWidth = (int) (screenWidth/getGuiScreen().scaleX);
@@ -284,14 +287,17 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 					debugPane.mouseMoved(mouseX, mouseY, true);
 			}
 
-			GL11.glScalef(scaleX, scaleY, 1);
+			GlStateManager.scale(scaleX, scaleY, 1);
 			GuiAPIClientHelper.setCurrentScissorScaling(scaleX, scaleY);
+			frame.scale.onApplyScale(scaleX, scaleY);
 			frame.render(mouseX, mouseY, partialTicks);
+			frame.scale.onRemoveScale(scaleX, scaleY);
 			GuiAPIClientHelper.resetScissorScaling();
 			GL11.glScalef(1/scaleX, 1/scaleY, 1);
 
 			mouseX *= scaleX;
 			mouseY *= scaleY;
+
 			if(hoveringText != null && !hoveringText.isEmpty())
 				GuiAPIClientHelper.drawHoveringText(hoveringText, mouseX, mouseY);
 

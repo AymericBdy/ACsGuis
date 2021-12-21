@@ -94,7 +94,7 @@ public class GuiTextArea extends GuiComponent<TextComponentStyleManager> impleme
         if(!getText().isEmpty())
 		    drawTextLines(getRenderedTextLines(), textScale);
 
-        GuiAPIClientHelper.glScissor(getRenderMinX() + getBorderSize(), getRenderMinY() + getBorderSize(), getRenderMaxX() - getRenderMinX() - getBorderSize(), getRenderMaxY() - getRenderMinY() - getBorderSize());
+        GuiAPIClientHelper.glScissor(getRenderMinX() + getScaledBorderSize(), getRenderMinY() + getScaledBorderSize(), getRenderMaxX() - getRenderMinX() - getScaledBorderSize(), getRenderMaxY() - getRenderMinY() - getScaledBorderSize());
         drawHintLines(textScale);
 
         if(isEditable() && isFocused()) {

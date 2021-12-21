@@ -10,6 +10,11 @@ import net.minecraft.client.gui.ScaledResolution;
  */
 public interface GuiScaler
 {
+    //TODO DOC
+    default float[] getScale(ScaledResolution res, int mcWidth, int scaledWidth, int guiWidth, int mcHeight, int scaledHeight, int guiHeight) {
+        return new float[] {getScaleX(res, mcWidth, scaledWidth, guiWidth), getScaleY(res, mcHeight, scaledHeight, guiHeight)};
+    }
+
     /**
      * @param res Game resolution
      * @param mcWidth Total screen width (mc's display width)
@@ -18,6 +23,7 @@ public interface GuiScaler
      * @return The scale on X axis
      */
     float getScaleX(ScaledResolution res, int mcWidth, int scaledWidth, int guiWidth);
+
     /**
      * @param res Game resolution
      * @param mcHeight Total screen height (mc's display height)
@@ -26,6 +32,12 @@ public interface GuiScaler
      * @return The scale on Y axis
      */
     float getScaleY(ScaledResolution res, int mcHeight, int scaledHeight, int guiHeight);
+
+    default void onApplyScale(float scaleX, float scaleY) {
+    }
+
+    default void onRemoveScale(float scaleX, float scaleY) {
+    }
 
     /**
      * Returns an 1:1 scale
@@ -64,11 +76,26 @@ public interface GuiScaler
      */
     class AdjustToScreenSize implements GuiScaler
     {
+        private final boolean keepProportions;
         private final float maxScreenSizeWidth, maxScreenSizeHeight;
 
-        public AdjustToScreenSize(float maxScreenSizeWidth, float maxScreenSizeHeight) {
+        public AdjustToScreenSize(boolean keepProportions, float maxScreenSizeWidth, float maxScreenSizeHeight) {
+            this.keepProportions = keepProportions;
             this.maxScreenSizeWidth = maxScreenSizeWidth;
             this.maxScreenSizeHeight = maxScreenSizeHeight;
+        }
+
+        @Override
+        public float[] getScale(ScaledResolution res, int mcWidth, int scaledWidth, int guiWidth, int mcHeight, int scaledHeight, int guiHeight) {
+            float[] scales = GuiScaler.super.getScale(res, mcWidth, scaledWidth, guiWidth, mcHeight, scaledHeight, guiHeight);
+            if(keepProportions) {
+                if (scales[0] < scales[1]) {
+                    scales[1] = scales[0];
+                } else if (scales[1] < scales[0]) {
+                    scales[0] = scales[1];
+                }
+            }
+            return scales;
         }
 
         @Override

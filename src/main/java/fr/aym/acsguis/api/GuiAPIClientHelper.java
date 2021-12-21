@@ -174,11 +174,20 @@ public class GuiAPIClientHelper {
         return indexes;
     }
 
+    //TODO DOC
     private static float currentScaleX = 1, currentScaleY = 1;
 
     public static void setCurrentScissorScaling(float scaleX, float scaleY) {
         currentScaleX = scaleX;
         currentScaleY = scaleY;
+    }
+
+    public static float getCurrentScaleX() {
+        return currentScaleX;
+    }
+
+    public static float getCurrentScaleY() {
+        return currentScaleY;
     }
 
     public static void resetScissorScaling() {
@@ -188,20 +197,15 @@ public class GuiAPIClientHelper {
     /**
      * Create rendering boundaries, the elements' parts outside of them will not be rendered.
      */
-    public static void glScissor(int x, int y, int width, int height) {
+    public static void glScissor(float x, float y, float width, float height) {
         int f = GuiFrame.resolution.getScaleFactor();
         GL11.glScissor((int) (x * f * currentScaleX), (int) (mc.displayHeight - (y + height) * f * currentScaleY), (int) MathHelper.clamp(width * f * currentScaleX, 0, Integer.MAX_VALUE), (int) MathHelper.clamp(height * f * currentScaleY, 0, Integer.MAX_VALUE));
     }
 
-    public static void drawBorderedRectangle(int left, int top, int right, int bottom, int borderSize, int backgroundColor, int borderColor, int borderRadius) {
+    public static void drawBorderedRectangle(float left, float top, float right, float bottom, float borderSize, int backgroundColor, int borderColor, int borderRadius) {
         CircleBackground.renderBorder(borderRadius, left, top, right, bottom, borderSize, borderColor);
-        CircleBackground.renderBackground(borderRadius, left + borderSize, top + borderSize, right - borderSize, bottom - borderSize, backgroundColor);
-
-		/*GuiScreen.drawRect(left, top, right, top + borderSize, borderColor);
-		GuiScreen.drawRect(left, bottom - borderSize, right, bottom, borderColor);
-		GuiScreen.drawRect(left, top + borderSize, left + borderSize, bottom - borderSize, borderColor);
-		GuiScreen.drawRect(right - borderSize, top + borderSize, right, bottom - borderSize, borderColor);
-		GuiScreen.drawRect(left + borderSize, top + borderSize, right - borderSize, bottom - borderSize, backgroundColor);*/
+        CircleBackground.renderBackground(borderRadius, (int) (left + borderSize), (int) (top + borderSize),
+                (int) (right - borderSize), (int) (bottom - borderSize), backgroundColor);
     }
 	
 	/*

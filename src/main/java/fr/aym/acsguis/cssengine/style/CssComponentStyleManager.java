@@ -53,6 +53,7 @@ public class CssComponentStyleManager implements ComponentStyleManager
 
     protected float relBorderSize = -1, relBorderRadius = -1;
     protected int borderSize = 0, borderRadius;
+    protected boolean rescaleBorder;
     protected int borderColor = Color.DARK_GRAY.getRGB();
 
     protected BORDER_POSITION borderPosition = BORDER_POSITION.EXTERNAL;
@@ -514,6 +515,17 @@ public class CssComponentStyleManager implements ComponentStyleManager
             this.relBorderSize = -1;
             this.borderSize = borderSize.intValue();
         }
+        return this;
+    }
+
+    @Override
+    public boolean shouldRescaleBorder() {
+        return rescaleBorder;
+    }
+
+    @Override
+    public ComponentStyleManager setShouldRescaleBorder(boolean inverseScreenScale) {
+        this.rescaleBorder = inverseScreenScale;
         return this;
     }
 

@@ -228,12 +228,14 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
      */
     public void drawBackground(int mouseX, int mouseY, float partialTicks)
     {
-        if(getBorderSize() > 0) {
+        if(getScaledBorderSize() > 0) {
             if(style.getBorderPosition() == ComponentStyleManager.BORDER_POSITION.EXTERNAL) {
-                GuiAPIClientHelper.glScissor(getRenderMinX() - getBorderSize(), getRenderMinY() - getBorderSize(), getRenderMaxX() - getRenderMinX() + getBorderSize() * 2, getRenderMaxY() - getRenderMinY() + getBorderSize() * 2);
-                GuiAPIClientHelper.drawBorderedRectangle(getScreenX() - getBorderSize(), getScreenY() - getBorderSize(), getScreenX() + getWidth() + getBorderSize(), getScreenY() + getHeight() + getBorderSize(), getBorderSize(), style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
+                GuiAPIClientHelper.glScissor(getRenderMinX() - getScaledBorderSize(), getRenderMinY() - getScaledBorderSize(), getRenderMaxX() - getRenderMinX() + getScaledBorderSize() * 2, getRenderMaxY() - getRenderMinY() + getScaledBorderSize() * 2);
+                GuiAPIClientHelper.drawBorderedRectangle(getScreenX() - getScaledBorderSize(), getScreenY() - getScaledBorderSize(), getScreenX() + getWidth() + getScaledBorderSize(),
+                        getScreenY() + getHeight() + getScaledBorderSize(), getScaledBorderSize(), style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
             } else {
-                GuiAPIClientHelper.drawBorderedRectangle(getScreenX(), getScreenY(), getScreenX() + getWidth(), getScreenY() + getHeight(), getBorderSize(), style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
+                GuiAPIClientHelper.drawBorderedRectangle(getScreenX(), getScreenY(), getScreenX() + getWidth(),
+                        getScreenY() + getHeight(), getScaledBorderSize(), style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
             }
         } else {
             //System.out.println("Back color of "+this+" is "+style.getBackgroundColor());
@@ -672,7 +674,15 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
         return style.getRenderHeight();
     }
 
-    public int getBorderSize() { return style.getBorderSize(); }
+    /**
+     * @return The border size scaled with the custom style manager border scale
+     */
+    public float getScaledBorderSize() {
+        if(style.shouldRescaleBorder()) {
+            return style.getBorderSize() / GuiAPIClientHelper.getCurrentScaleY();
+        }
+        return style.getBorderSize();
+    }
 
     //TODO BETTER IMPLEMENTATION OF THIS
     @Deprecated
