@@ -12,4 +12,5 @@ You can redistribute this mod if I'm in the credits.
 
 Aym'
 
-https://www.curseforge.com/minecraft/mc-mods/acsguis
+CurseForge : https://www.curseforge.com/minecraft/mc-mods/acsguis
+Documentation : https://github.com/AymericBdy/ACsGuis/blob/master/src/main/resources/doc.md
