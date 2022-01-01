@@ -30,7 +30,7 @@ public class GuiProgressBar extends GuiComponent<GuiProgressBar.ProgressBarStyle
     }
 
     @Override
-    public ProgressBarStyleManager getStyle() {
+    protected ProgressBarStyleManager createStyleManager() {
         return new ProgressBarStyleManager(this);
     }
 

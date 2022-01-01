@@ -2,6 +2,8 @@ package fr.aym.acsguis.sqript.guievents;
 
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.event.listeners.mouse.IMouseMoveListener;
+import fr.nico.sqript.compiling.ScriptCompilationContext;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Loop;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
@@ -18,6 +20,13 @@ import java.util.concurrent.Callable;
 )
 @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ScriptComponentMouseMoveAction extends GuiActionScriptLoop {
+    @Override
+    public void build(ScriptToken line, ScriptCompilationContext compileGroup) {
+        compileGroup.add("type", TypeString.class);
+        compileGroup.add("mouse_x", TypeNumber.class);
+        compileGroup.add("mouse_y", TypeNumber.class);
+    }
+
     @Override
     public void appendListener(Callable<ScriptContext> contextProvider, GuiComponent<?> component) {
         component.addMoveListener(new IMouseMoveListener() {

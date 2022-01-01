@@ -15,10 +15,7 @@ import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.meta.Feature;
-import fr.nico.sqript.structures.IScript;
-import fr.nico.sqript.structures.ScriptClock;
-import fr.nico.sqript.structures.ScriptContext;
-import fr.nico.sqript.structures.Side;
+import fr.nico.sqript.structures.*;
 import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import net.minecraft.util.ResourceLocation;
@@ -70,7 +67,7 @@ public class ScriptBlockGuiFrame extends ScriptBlock
         ScriptCompilationContext group = new ScriptCompilationContext();
         group.add("this_component", TypeComponent.class);
         for(ComponentProperties<?, ?> property : ComponentProperties.getProperties()) {
-            group.add(property.getName(), ScriptType.class);
+            group.add(property.getName(), ScriptElement.class);
         }
         IScript script = getMainField().compile(group);
         setRoot(script);
@@ -142,7 +139,7 @@ public class ScriptBlockGuiFrame extends ScriptBlock
                     //System.out.println("2" + ctx.printVariables());
                     //Running the associated script
                     ScriptClock k = new ScriptClock(ctx);
-                    ScriptBlockGuiComponent.lastRuntTab = -1;
+                    ScriptBlockGuiComponent.lastRuntTab = getLine().getTabLevel()-1;
                     try {
                         //System.out.println("Running the command on " + getRoot());
                         k.start(getRoot());

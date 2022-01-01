@@ -16,10 +16,10 @@ import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.ABSOLU
 import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.RELATIVE_INT;
 
 public enum EnumCssStyleProperties {
-    BACKGROUND_COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setBackgroundColor(p.getValue()), "background-color", true),
-    COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setForegroundColor(p.getValue()), "color", true),
+    BACKGROUND_COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setBackgroundColor(p.getValue()), "background-color", false, true),
+    COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setForegroundColor(p.getValue()), "color", false, true),
     BORDER_COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setBorderColor(p.getValue()), "border-color"),
-    TEXTURE(CssHelper.TEXTURE_SPRITE, (ctx, p, c) -> c.setTexture(p.getValue()), "background-image"),
+    TEXTURE(CssHelper.TEXTURE_SPRITE, (ctx, p, c) -> c.setTexture(p.getValue()), "background-image", true),
     VISIBILITY(CssHelper.STRING, (ctx, p, c) -> c.setVisible(!p.getValue().equals("hidden")), "visibility"),
     FONT_SIZE(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (c instanceof TextComponentStyleManager) {
@@ -44,7 +44,7 @@ public enum EnumCssStyleProperties {
         if (c instanceof TextComponentStyleManager) {
             ((TextComponentStyleManager) c).setFontFamily(p.getValue());
         }
-    }, "font-family", true),
+    }, "font-family", false, true),
     BORDER_WIDTH(CssHelper.CSS_INT, (ctx, p, c) -> c.setBorderSize(p.getValue()), "border-width"),
     BORDER_STYLE(CssHelper.STRING, (ctx, p, c) -> {
         if (!p.getValue().equals("solid")) {
@@ -57,7 +57,7 @@ public enum EnumCssStyleProperties {
         } else {
             c.setBorderPosition(ComponentStyleManager.BORDER_POSITION.EXTERNAL);
         }
-    }, "border-position", true),
+    }, "border-position", false, true),
     BACKGROUND_REPEAT(CssHelper.STRING, (ctx, p, c) -> {
         switch (p.getValue()) {
             case "repeat":
@@ -104,7 +104,7 @@ public enum EnumCssStyleProperties {
                 ((TextComponentStyleManager) c).removeEffect(ShadowEffect.class);
             }
         }
-    }, "text-shadow", false),
+    }, "text-shadow"),
     Z_INDEX(CssHelper.INT, (ctx, p, c) -> c.setZLevel(p.getValue()), "z-index"),
     PADDING_LEFT(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (c instanceof TextComponentStyleManager) {
@@ -214,7 +214,7 @@ public enum EnumCssStyleProperties {
         if (c instanceof PanelStyleManager) {
             ((PanelStyleManager) c).setLayout(p.getValue());
         }
-    }, "component-layout"),
+    }, "component-layout", true),
     //NOTE : for the positioning, the order is important ! And other properties as padding must have been set before for labels
     WIDTH(CssHelper.CSS_INT, (ctx, p, c) -> {
         //System.out.println("Set width of "+c.getOwner()+" to "+p.getValue());
@@ -223,42 +223,42 @@ public enum EnumCssStyleProperties {
         } else {
             c.getWidth().setAbsolute(p.getValue().intValue());
         }
-    }, "width", true),
+    }, "width", false, true),
     MAX_WIDTH(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (p.getValue().getUnit() != ABSOLUTE_INT) {
             c.getWidth().getMaxValue().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
         } else {
             c.getWidth().getMaxValue().setAbsolute(p.getValue().intValue());
         }
-    }, "max-width", false),
+    }, "max-width"),
     MIN_WIDTH(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (p.getValue().getUnit() != ABSOLUTE_INT) {
             c.getWidth().getMinValue().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
         } else {
             c.getWidth().getMinValue().setAbsolute(p.getValue().intValue());
         }
-    }, "min-width", false),
+    }, "min-width"),
     HEIGHT(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (p.getValue().getUnit() != ABSOLUTE_INT) {
             c.getHeight().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
         } else {
             c.getHeight().setAbsolute(p.getValue().intValue());
         }
-    }, "height", false),
+    }, "height"),
     MAX_HEIGHT(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (p.getValue().getUnit() != ABSOLUTE_INT) {
             c.getHeight().getMaxValue().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
         } else {
             c.getHeight().getMaxValue().setAbsolute(p.getValue().intValue());
         }
-    }, "max-height", false),
+    }, "max-height"),
     MIN_HEIGHT(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (p.getValue().getUnit() != ABSOLUTE_INT) {
             c.getHeight().getMinValue().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
         } else {
             c.getHeight().getMinValue().setAbsolute(p.getValue().intValue());
         }
-    }, "min-height", false),
+    }, "min-height"),
     LEFT(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (p.getValue().getUnit() != ABSOLUTE_INT) {
             c.getXPos().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit(), GuiConstants.ENUM_RELATIVE_POS.START);
@@ -320,16 +320,22 @@ public enum EnumCssStyleProperties {
     public final String key;
     public final DefinitionType<?> parser;
     public final CssStyleApplier<?> applyFunction;
+    public final boolean acceptsNullValue;
     public final boolean inheritable;
 
     <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key) {
-        this(parser, applyFunction, key, false);
+        this(parser, applyFunction, key, false, false);
     }
 
-    <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key, boolean inheritable) {
+    <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key, boolean acceptsNullValue) {
+        this(parser, applyFunction, key, acceptsNullValue, false);
+    }
+
+    <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key, boolean acceptsNullValue, boolean inheritable) {
         this.applyFunction = applyFunction;
         this.key = key;
         this.parser = parser;
+        this.acceptsNullValue = acceptsNullValue;
         this.inheritable = inheritable;
     }
 

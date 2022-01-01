@@ -105,20 +105,41 @@ public class ScriptBlockGuiComponent extends ScriptLoop {
     }
 
     public static int lastRuntTab;
+    public static int hiddenTabs;
+    public static boolean hidden;
 
     @Override
     public IScript run(ScriptContext context) throws ScriptException {
+        //System.out.println("=== Compute real tab level of "+getLine().getText()+" ===");
+        IScript parent = getParent();
+        realTabLevel = tabLevel;
+        while (parent != null) {
+            if (parent instanceof ScriptBlockGuiFrame) {
+                //System.out.println("Encountered root parent");
+                break;
+            } else if (parent instanceof ScriptBlockGuiComponent) {
+                //System.out.println("Dec real tab by " + (((ScriptBlockGuiComponent) parent).getTabLevel() - ((ScriptBlockGuiComponent) parent).getRealTabLevel()));
+                realTabLevel -= (((ScriptBlockGuiComponent) parent).getTabLevel() - ((ScriptBlockGuiComponent) parent).getRealTabLevel());
+                break;
+            } else {
+                //System.out.println("Dec real tab because of loop " + parent);
+                realTabLevel--;
+            }
+            parent = parent.getParent();
+        }
+
+        //System.out.println(">>>> GOT THE REAL TAB LEVEL " + realTabLevel + " / " + tabLevel);
         //System.out.println("OWW I DOING DONE " + getWrapped() + " " + getParent() + " " + this);
         IScript toDo = getWrapped() == null ? getNext(context) : getWrapped();
-        //System.out.println("-------------> Return " + totDo + " " + this.next);
-        //System.out.println("Last runt is "+lastRuntTab+" and tabs "+tabLevel+" and this "+getLine());
-        while (lastRuntTab >= this.tabLevel) {
+        //System.out.println("-------------> Return " + toDo + " " + this.next);
+        //System.out.println("Last runt is " + lastRuntTab + " and tabs " + tabLevel + " and this " + getLine());
+        while (lastRuntTab >= realTabLevel) {
             lastRuntTab--;
             ComponentUtils.popComponentVariables(context);
         }
 
         execute(context);
-        lastRuntTab = this.tabLevel;
+        lastRuntTab = realTabLevel;
         return toDo;
     }
 
@@ -143,6 +164,7 @@ public class ScriptBlockGuiComponent extends ScriptLoop {
     }
 
     private int tabLevel;
+    private int realTabLevel;
 
     @Override
     public void wrap(IScript wrapped) {
@@ -153,5 +175,13 @@ public class ScriptBlockGuiComponent extends ScriptLoop {
         //System.out.println("FILL "+text+" WITH TAB "+tabLevel);
         //System.out.println("Long name is " + name);
         super.wrap(wrapped);
+    }
+
+    public int getTabLevel() {
+        return tabLevel;
+    }
+
+    public int getRealTabLevel() {
+        return realTabLevel;
     }
 }

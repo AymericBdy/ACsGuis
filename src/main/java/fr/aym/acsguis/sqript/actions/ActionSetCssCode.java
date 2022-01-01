@@ -2,6 +2,7 @@ package fr.aym.acsguis.sqript.actions;
 
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.textarea.TextComponent;
+import fr.aym.acsguis.sqript.component.ComponentUtils;
 import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.meta.Action;
@@ -61,8 +62,11 @@ public class ActionSetCssCode extends ScriptAction {
                     ((TextComponent) param.getObject()).setText(getParameter(2).get(context).toString());
                 else
                     throw new IllegalArgumentException(param.getObject() + " is not a TextComponent");
-                //System.out.println("So text: " + ((TextComponent) param.getObject()).getText());
                 break;
+        }
+        //Update component building context if we are compiling it
+        if(ComponentUtils.lastAddedComponent == param.getObject()) {
+            ComponentUtils.setComponentContext(param.getObject(), context);
         }
     }
 }

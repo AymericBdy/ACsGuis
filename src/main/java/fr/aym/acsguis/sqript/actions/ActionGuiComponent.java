@@ -4,12 +4,12 @@ import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.textarea.TextComponent;
 import fr.aym.acsguis.sqript.block.ScriptBlockGuiComponent;
+import fr.aym.acsguis.sqript.block.ScriptBlockGuiFrame;
 import fr.aym.acsguis.sqript.component.ComponentUtils;
 import fr.aym.acsguis.sqript.component.ParseableComponent;
 import fr.aym.acsguis.sqript.expressions.TypeComponent;
 import fr.nico.sqript.actions.ScriptAction;
 import fr.nico.sqript.compiling.ScriptCompilationContext;
-import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
 import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Action;
@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static fr.aym.acsguis.sqript.block.ScriptBlockGuiComponent.lastRuntTab;
+
 @Action(name = "Add gui component action",
         features = @Feature(
                 name = "Add a new gui component",
@@ -35,7 +37,7 @@ import java.util.regex.Pattern;
                         "add css component scroll_pane",
                         "add css component button with class \"reload_button\" and text \"Recharger les packs\""},
                 pattern = "^add css component .*",
-        side = Side.CLIENT))
+                side = Side.CLIENT))
 @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ActionGuiComponent extends ScriptAction {
     private String name;
@@ -106,17 +108,36 @@ public class ActionGuiComponent extends ScriptAction {
 
     @Override
     public IScript run(ScriptContext context) throws ScriptException {
-        //System.out.println("OWW I DOING DONE " + getWrapped() + " " + getParent() + " " + this);
+        //System.out.println("=== Compute real tab level of "+getLine().getText()+" ===");
+        IScript parent = getParent();
+        realTabLevel = tabLevel;
+        while (parent != null) {
+            if (parent instanceof ScriptBlockGuiFrame) {
+                //System.out.println("Encountered root parent");
+                break;
+            } else if (parent instanceof ScriptBlockGuiComponent) {
+                //System.out.println("Dec real tab by " + (((ScriptBlockGuiComponent) parent).getTabLevel() - ((ScriptBlockGuiComponent) parent).getRealTabLevel()));
+                realTabLevel -= (((ScriptBlockGuiComponent) parent).getTabLevel() - ((ScriptBlockGuiComponent) parent).getRealTabLevel());
+                break;
+            } else {
+                //System.out.println("Dec real tab because of loop " + parent);
+                realTabLevel--;
+            }
+            parent = parent.getParent();
+        }
+
+        //System.out.println(">>>> GOT THE REAL TAB LEVEL " + realTabLevel + " / " + tabLevel);
+        //System.out.println("OWW I DOING DONE dummy in line " + getParent() + " " + this);
         IScript toDo = getNext(context);
-        //System.out.println("-------------> Return " + totDo + " " + this.next);
+        //System.out.println("-------------> Return " + toDo + " " + this.next);
         //System.out.println("Last runt is " + ScriptBlockGuiComponent.lastRuntTab + " and tabs " + tabLevel + " and this " + getLine());
-        while (ScriptBlockGuiComponent.lastRuntTab >= this.tabLevel) {
-            ScriptBlockGuiComponent.lastRuntTab--;
+        while (lastRuntTab >= realTabLevel) {
+            lastRuntTab--;
             ComponentUtils.popComponentVariables(context);
         }
 
         execute(context);
-        ScriptBlockGuiComponent.lastRuntTab = this.tabLevel;
+        lastRuntTab = realTabLevel;
         return toDo;
     }
 
@@ -137,13 +158,22 @@ public class ActionGuiComponent extends ScriptAction {
     }
 
     private int tabLevel;
+    private int realTabLevel;
 
     @Override
     public void build(ScriptToken line, ScriptCompilationContext compileGroup, List<String> parameters, int matchedIndex, int marks) throws Exception {
         super.build(line, compileGroup, parameters, matchedIndex, marks);
         this.name = line.getText().trim().replaceFirst("(^|\\s+)add css component\\s+", "");
         //System.out.println("TABS LEVELS " + ScriptDecoder.getTabLevel(line.getText())+" AND "+ScriptDecoder.getTabLevel(getLine().getText()));
-        this.tabLevel = line.getTabLevel()-1;
+        this.tabLevel = line.getTabLevel() - 1;
         //System.out.println("23 Tab level "+ this.tabLevel);
+    }
+
+    public int getTabLevel() {
+        return tabLevel;
+    }
+
+    public int getRealTabLevel() {
+        return realTabLevel;
     }
 }

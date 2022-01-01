@@ -2,8 +2,10 @@ package fr.aym.acsguis.sqript.guievents;
 
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.sqript.expressions.TypeComponent;
+import fr.nico.sqript.compiling.ScriptCompilationContext;
 import fr.nico.sqript.compiling.ScriptDecoder;
 import fr.nico.sqript.compiling.ScriptException;
+import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.structures.IScript;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptLoop;
@@ -18,6 +20,9 @@ import java.util.concurrent.Callable;
 
 @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public abstract class GuiActionScriptLoop extends ScriptLoop {
+    @Override
+    public abstract void build(ScriptToken line, ScriptCompilationContext compileGroup);
+
     @Override
     public void execute(ScriptContext context) throws ScriptException {
         GuiComponent<?> component = ((TypeComponent) context.getAccessor("this_component").element).getObject();

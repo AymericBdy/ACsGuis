@@ -32,6 +32,9 @@ Il y a deux manière d'ajouter des composants : avec un block sqript, ou avec un
 
 Le block permet de déclarer un panel avec des sous-composants, alors que l'action est réservée à des composants simple (type label ou button) sans sous-composants.
 
+!!!info
+	Il est possible d'utiliser des conditions if et des boucles (for, while...) dans la structure du gui, pour simplifier le script et/ou rendre le gui plus dynamique.
+
 #### Ajouter un composant simple :
 
 L'instruction à écrire est de la forme :
@@ -164,6 +167,8 @@ Voici la liste des évènements de composants supportés :
 | on component mouse move           | Appelé quand la souris survole le composant                  | mouse_x, mouse_y, type (mouse_moved, mouse_hover, mouse_unhover) |
 | on component mouse wheel          | Appelé en scrollant dans l'élément                           | dWheel                                                       |
 | on component tick                 | Appelé à chaque tick                                         |                                                              |
+| on component render background    | Appelé après le rendu de l'arrière plan du composant         | render_x, render_y, render_width, render_height              |
+| on component render foreground    | Appelé après le rendu du premier plan du composant           | render_x, render_y, render_width, render_height              |
 
 
 

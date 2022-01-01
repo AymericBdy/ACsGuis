@@ -56,8 +56,12 @@ public class CssStyleProperty<T>
             ((CssStyleApplier<T>) property.applyFunction).apply(context, this, to);
             return false;
         }
-        else if(getType().isNone())
+        else if(getType().isNone()) {
+            if(property.acceptsNullValue) {
+                ((CssStyleApplier<T>) property.applyFunction).apply(context, this, to);
+            }
             return false;
+        }
         else if(getType().isAuto())
         {
             for(AutoStyleHandler.Priority p : AutoStyleHandler.Priority.values())

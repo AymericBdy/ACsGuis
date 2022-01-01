@@ -3,57 +3,72 @@ on script load:
 	#set {var2} to false
 
 function closeTheGui():
-    #print {test}
+	#print {test}
 	close current css gui
 
 define gui frame monGui:
 	css_class: "home"
 	css_sheets: ["acsguis:css/dnx_debug.css"]
+	enable_debug: true
 	print "ceci est un test"
-	set {var2} to false
-    set next_tab_pane_name to "TestTab"
+	#set {var2} to false
+	set {lol} to "TestTab"
+	set next_tab_pane_name to "TestTab"
 	add css component tabbed_pane with id "tabbed":
-        set css "color" to "#FFFFFF"
+		set css "color" to "#FFFFFF"
+		set {the_color} to 0xFF00FFFF
+
+		on component render background:
+		    draw rectangle at [render_x+10, render_y+10] with size [render_width-10, render_height-10] with color {the_color}
+		on component render foreground:
+		    draw text "Health : %player's health%" at [render_x+10, render_y+10]
 
 		add css component panel with id "general":
 			add css component scroll_pane:
-			    print "test1"
-			    print "test2"
+				print "test1"
+				print "test2"
 				set layout to new grid layout with size [-1,25] spacing 5 direction "horizontal" elements per line 1
-			    print "test3"
+				print "test3"
 				#on component tick:
 				#   print "ticking..."
 				add css component label with id "reload_models" and class "reload_button" and text "Recharger les packs"
 
-				add css component panel with class "option-desc":
-					print "Test 1"
-					set {texteb} to "Rendu du debug : "
-					add {var2} to {texteb}
-					add css component label with id "t1" and text "Loading":
-						set text to {texteb}
-						set {omega} to this_component
-					print {omega}
-					add css component button with id "mochebu" class "switch-button-off" and text "":
-						set {btn_on} to false
-						set css "color" of {omega} to "blue"
-						set css "color" to "#FFFFFF"
-						on component click:
-							print "on tu as cliqué !"
-							print [player's hunger]
-							if {btn_on}:
-								set {btn_on} to false
-								set css class of this_component to "switch-button-off"
-								set text of this_component to "Off"
-						        set css "color" of {omega} to "rgb(200, 120, 0)"
-						        #set css "border-radius" to "5px"
-							else:
-								set {btn_on} to true
-								set class of this_component to "switch-button-on"
-								set text of this_component to "On"
-						        set css "color" of {omega} to "green"
-						        #set css "border-radius" to "20px"
+				for {i} in range of 10:
+					if {i}%2 != 0:
+						add css component panel with id "first_pane" and class "option-desc":
+							print "Test 1"
+							set {texteb} to "Rendu du debug : "
+							add {var2} to {texteb}
 
-				add css component panel with class "option-desc":
+							add css component label with id "t1" and text "Loading":
+								set css id of this_component to "t%{i}%"
+								set text to "Button %{i}%"
+								set {omega.<{i}>} to this_component
+
+							print "WE WILL PRINT ! %{i}%"
+							print {omega.<{i}>}
+							add css component button with id "mochebu" class "switch-button-off" and text "":
+								set {btn_on} to false
+								set css "color" of {omega.<{i}>} to "blue"
+								set css "color" to "#FFFFFF"
+								on component click:
+		                            set {the_color} to -16776961
+									print "on tu as cliqué ! %{i}%"
+									print [player's hunger]
+									if {btn_on}:
+										set {btn_on} to false
+										set css class of this_component to "switch-button-off"
+										set text of this_component to "Off"
+										set css "color" of {omega.<{i}>} to "rgb(200, 120, 0)"
+										#set css "border-radius" to "5px"
+									else:
+										set {btn_on} to true
+										set class of this_component to "switch-button-on"
+										set text of this_component to "On"
+										set css "color" of {omega.<{i}>} to "green"
+										#set css "border-radius" to "20px"
+
+				add css component panel with id "second_pane" and class "option-desc":
 					add css component label with id "t2" and text "Profilage : n/a"
 					add css component button with id "mochebu" and class "switch-button-off" and text "":
 						on component click:
@@ -61,7 +76,7 @@ define gui frame monGui:
 							closeTheGui("test1")
 						print ":Oo"
 				add css component label with id "player_hunger" and class "reload_button" and text "To fill":
-					set text to "Faim du joueur : " + (player's hunger)
+					set {text} to "Faim du joueur : " + (player's hunger)
 
 on acsguis load:
 	register css sheet "sample:css/test.css"
