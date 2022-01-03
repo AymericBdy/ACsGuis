@@ -131,7 +131,7 @@ public class ScriptBlockGuiComponent extends ScriptLoop {
         //System.out.println(">>>> GOT THE REAL TAB LEVEL " + realTabLevel + " / " + tabLevel);
         //System.out.println("OWW I DOING DONE " + getWrapped() + " " + getParent() + " " + this);
         IScript toDo = getWrapped() == null ? getNext(context) : getWrapped();
-        //System.out.println("-------------> Return " + toDo + " " + this.next);
+        //System.out.println("-------------> Return " + toDot + " " + this.next);
         //System.out.println("Last runt is " + lastRuntTab + " and tabs " + tabLevel + " and this " + getLine());
         while (lastRuntTab >= realTabLevel) {
             lastRuntTab--;

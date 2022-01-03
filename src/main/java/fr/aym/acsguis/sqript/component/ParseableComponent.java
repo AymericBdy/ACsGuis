@@ -6,6 +6,7 @@ import fr.aym.acsguis.component.button.GuiCheckBox;
 import fr.aym.acsguis.component.entity.GuiEntityRender;
 import fr.aym.acsguis.component.panel.*;
 import fr.aym.acsguis.component.textarea.*;
+import fr.aym.acsguis.sqript.SqriptCompatiblity;
 import fr.nico.sqript.structures.ScriptContext;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -19,9 +20,9 @@ public enum ParseableComponent
     TABBED_PANE(GuiTabbedPane.class, "tabbed_pane", GuiTabbedPane::new, ComponentProperties.SET_STYLE, ComponentProperties.LAYOUT),
     SCROL_PANE(GuiScrollPane.class, "scroll_pane", GuiScrollPane::new, ComponentProperties.SET_STYLE, ComponentProperties.LAYOUT, ComponentProperties.NEXT_TAB_PANE),
     LABEL(GuiLabel.class, "label", () -> new GuiLabel("not set"), ComponentProperties.SET_STYLE, ComponentProperties.TEXT),
-    //TEXT_FIELD(GuiTextField.class, "text_field", GuiTextField::new, SqriptCompatiblity.TEXT_AREA_PROPERTIES_PARSER),
-    //TEXT_AREA(GuiTextArea.class, "text_area", GuiTextArea::new, SqriptCompatiblity.TEXT_AREA_PROPERTIES_PARSER),
-    //PASSWORD_FIELD(GuiPasswordField.class, "password_field", GuiPasswordField::new, SqriptCompatiblity.TEXT_AREA_PROPERTIES_PARSER),
+    TEXT_FIELD(GuiTextField.class, "text_field", GuiTextField::new, SqriptCompatiblity.TEXT_AREA_PROPERTIES_PARSER),
+    TEXT_AREA(GuiTextArea.class, "text_area", GuiTextArea::new, SqriptCompatiblity.TEXT_AREA_PROPERTIES_PARSER),
+    PASSWORD_FIELD(GuiPasswordField.class, "password_field", GuiPasswordField::new, SqriptCompatiblity.TEXT_AREA_PROPERTIES_PARSER),
     INTEGER_FIELD(GuiIntegerField.class, "integer_field", () -> new GuiIntegerField(0, 255), ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.MIN_VALUE, ComponentProperties.MAX_VALUE),
     CHECKBOX(GuiCheckBox.class, "checkbox", GuiCheckBox::new, ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.CHECKED),
     BUTTON(GuiButton.class, "button", () -> new GuiButton("not set"), ComponentProperties.SET_STYLE, ComponentProperties.TEXT),
@@ -30,7 +31,7 @@ public enum ParseableComponent
     PROGRESS_BAR(GuiProgressBar.class, "progress_bar", GuiProgressBar::new, ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.PROGRESS),
     PROGRESS_BAR_VERTICAL(GuiProgressBar.class, "progress_bar_vertical", () -> new GuiProgressBar(false), ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.PROGRESS);
 
-    //FIXME NOT SUPPORTED : GuiResizableButton, GuiSlider, GuiCameraView, GuiList, GuiKeyLabel, GuiSearchField, tabs of GuiTabbedPane
+    //FIXME NOT SUPPORTED : GuiResizableButton, GuiSlider, GuiCameraView, GuiList, GuiKeyLabel, GuiSearchField
     //TODO SLOTS
 
     private final Class<?> clazz;

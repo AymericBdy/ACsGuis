@@ -1,7 +1,9 @@
 package fr.aym.acslib.impl.services.thrload;
 
 import fr.aym.acslib.ACsLib;
+import fr.aym.acslib.api.services.ErrorTrackingService;
 import fr.aym.acslib.api.services.ThreadedLoadingService;
+import fr.aym.acslib.impl.services.error_tracking.ACsLibErrorType;
 import fr.aym.acslib.utils.ACsLogger;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
 import net.minecraftforge.fml.common.LoaderException;
@@ -38,7 +40,9 @@ public class ThreadedLoadingTask implements Runnable
             executor.onEnd(this, followingInThreadTask, (System.currentTimeMillis()-time));
         } catch (Exception e) {
             ACsLogger.serviceFatal(ACsLib.getPlatform().provideService(ThreadedLoadingService.class), "Error in task "+name, e);
-            //TODO ERROR SERVCICE DynamXErrorTracker.addError(ErrorType.INIT, "LoadingTasks", "ThreadTask "+name, e.toString(), DynamXErrorTracker.ErrorLevel.FATAL);
+            if(ACsLib.getPlatform().isServiceSupported(ErrorTrackingService.class)) {
+                ACsLib.getPlatform().provideService(ErrorTrackingService.class).addError(ACsLibErrorType.ACSLIBERROR, "LoadingTasks", "ThreadTask "+name, e, ErrorTrackingService.TrackedErrorLevel.FATAL);
+            }
             executor.onEnd(this, () -> {
                 if(e instanceof CustomModLoadingErrorDisplayException)
                     throw e;

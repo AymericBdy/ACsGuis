@@ -129,7 +129,7 @@ public class ActionGuiComponent extends ScriptAction {
         //System.out.println(">>>> GOT THE REAL TAB LEVEL " + realTabLevel + " / " + tabLevel);
         //System.out.println("OWW I DOING DONE dummy in line " + getParent() + " " + this);
         IScript toDo = getNext(context);
-        //System.out.println("-------------> Return " + toDo + " " + this.next);
+        //System.out.println("-------------> Return " + toDot + " " + this.next);
         //System.out.println("Last runt is " + ScriptBlockGuiComponent.lastRuntTab + " and tabs " + tabLevel + " and this " + getLine());
         while (lastRuntTab >= realTabLevel) {
             lastRuntTab--;
