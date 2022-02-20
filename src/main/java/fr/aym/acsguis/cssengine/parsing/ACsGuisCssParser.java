@@ -138,8 +138,9 @@ public class ACsGuisCssParser
         } catch (Exception e) {
             throw new RuntimeException("Cannot load css code "+css, e);
         }
+        ACsGuiApi.closeHudGui();
 
-        ACsGuiApi.log.debug("[CSS] Parsed style "+css);
+        //ACsGuiApi.log.debug("[CSS] Parsed style "+css);
         //System.out.println("Got style : "+cssStyleSheets);
         return data;
     }
