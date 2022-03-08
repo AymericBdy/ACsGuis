@@ -40,7 +40,7 @@ define gui frame monGui:
 							set {texteb} to "Rendu du debug : "
 							add {var2} to {texteb}
 
-							add css component label with id "t1" and text "Loading":
+							add css component password_field with id "t1" and text "Loading":
 								set css id of this_component to "t%{i}%"
 								set text to "Button %{i}%"
 								set {omega.<{i}>} to this_component

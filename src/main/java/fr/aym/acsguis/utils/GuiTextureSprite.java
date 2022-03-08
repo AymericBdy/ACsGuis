@@ -13,8 +13,8 @@ public class GuiTextureSprite implements IGuiTexture {
     private int atlasWidth, atlasHeight;
 
     private final int textureU, textureV;
-    private int textureWidth;
-    private int textureHeight;
+    private final int textureWidth;
+    private final int textureHeight;
 
     private final GuiTextureLoader loader;
 
@@ -32,7 +32,7 @@ public class GuiTextureSprite implements IGuiTexture {
         this.textureWidth = textureWidth;
         this.textureHeight = textureHeight;
 
-        System.out.println("Texture is " + atlasTexture + " " + atlasTexture.getNamespace());
+        //System.out.println("Texture is " + atlasTexture + " " + atlasTexture.getNamespace());
         if (atlasTexture.getNamespace().startsWith("http")) {
             loader = new HttpGuiTextureLoader(atlasTexture);
         } else {
