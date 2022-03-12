@@ -71,12 +71,15 @@ public class ExprCssCode extends ScriptExpression {
             case 0:
                 param.getObject().setCssCode(to.getObject().toString());
                 isReturn = true;
+                break;
             case 1:
                 param.getObject().setCssId(to.getObject().toString());
                 isReturn = true;
+                break;
             case 2:
                 param.getObject().setCssClass(to.getObject().toString());
                 isReturn = true;
+                break;
             case 3:
                 if (param.getObject() instanceof TextComponent) {
                     ((TextComponent) param.getObject()).setText(to.getObject().toString());
@@ -85,6 +88,7 @@ public class ExprCssCode extends ScriptExpression {
                     isReturn = false;
                     throw new IllegalArgumentException(param.getObject() + " is not a TextComponent");
                 }
+                break;
         }
         if(isReturn){
             //Update component building context if we are compiling it
