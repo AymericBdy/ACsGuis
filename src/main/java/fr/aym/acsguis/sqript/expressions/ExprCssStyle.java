@@ -16,18 +16,20 @@ import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Expression(name = "Css style manipulation expression",
-        features = {@Feature(
-                name = "Set other properties of gui components",
-                description = "Sets other properties of gui components, list in the doc",
-                examples = "set css \"checked_state\" of this_component to \"true\"",
-                pattern = "css {string} of {gui_component}",
-                side = Side.CLIENT),
-                @Feature(
-                        name = "Set other properties of the current component",
-                        description = "Sets other properties of the current component, list in the doc. You MUST be in a component block or in a component event !",
-                        examples = "set css \"color\" to \"green\"",
-                        pattern = "css {string}",
-                        side = Side.CLIENT)}
+        features = {
+            @Feature(
+                    name = "Set other properties of gui components",
+                    description = "Sets other properties of gui components, list in the doc",
+                    examples = "set css \"checked_state\" of this_component to \"true\"",
+                    pattern = "css {string} of {gui_component}",
+                    side = Side.CLIENT),
+            @Feature(
+                    name = "Set other properties of the current component",
+                    description = "Sets other properties of the current component, list in the doc. You MUST be in a component block or in a component event !",
+                    examples = "set css \"color\" to \"green\"",
+                    pattern = "css {string}",
+                    side = Side.CLIENT)
+            }
 )
 @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class ExprCssStyle extends ScriptExpression {

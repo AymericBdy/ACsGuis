@@ -17,7 +17,6 @@ define gui frame monGui:
 	add css component tabbed_pane with id "tabbed":
 		set css "color" to "#FFFFFF"
 		set {the_color} to 0xFF00FFFF
-
 		on component render background:
 		    draw rectangle at [render_x+10, render_y+10] with size [render_width-10, render_height-10] with color {the_color}
 		on component render foreground:
@@ -28,6 +27,14 @@ define gui frame monGui:
 				print "test1"
 				print "test2"
 				set layout to new grid layout with size [-1,25] spacing 5 direction "horizontal" elements per line 1
+
+				add css component text_field with id "t1" and text "t":
+				    print text of this_component
+				    set text of this_component to "test"
+				    print text of this_component
+				    set style of this_component to "font-size: 10px;"
+				    print style of this_component
+
 				print "test3"
 				#on component tick:
 				#   print "ticking..."
