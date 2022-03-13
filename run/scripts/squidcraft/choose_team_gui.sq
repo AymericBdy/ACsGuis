@@ -1,0 +1,153 @@
+packet packet_chooseTeam({player}, {team}, {option}):
+	client:
+		print "Team selected"
+
+function closeTheGui():
+	close current css gui
+
+function chooseTeam({team}, {option}):
+	print "test"
+	send packet_chooseTeam(player's name, {team}, {option}) to server
+	close current css gui
+
+# ---------------------------------------- GUI ----------------------------------------
+#
+#
+#
+# -------------------------------------------------------------------------------------
+define gui frame chooseTeam:
+	css_id: "frame"
+	css_sheets: ["squidcraft:css/choose_team.css"]
+	gui_scaling: "adjust_full_screen"
+	enable_debug: true
+	add css component panel with id "root":
+		add css component panel with id "header":
+			add css component label with id "title_icon" and text ""
+			add css component panel with id "header_bar"
+			add css component label with id "title" and text "CHOOSE YOUR TEAM"
+		add css component panel with id "body":
+			add css component label with class "body_title" and text "Player":
+				set css "left" to "95px"
+			add css component label with class "body_title" and text "Staff":
+				set css "left" to "561px"
+			add css component label with class "body_title" and text "Random":
+				set css "left" to "1006px"
+
+
+#Player
+
+			add css component panel with class "option_icon_container":
+				set css "left" to "117px"
+				set css "top" to "138px"
+				add css component label with id "icon_stuff" and class "option_icon" and text "" 
+			add css component label with class "option_desc" and text "Tool":
+				set css "left" to "117px"
+				set css "top" to "250px"
+			add css component label with class "choose_button" and text "choose":
+				set css "left" to "100px"
+				set css "top" to "315px"
+				on component click:
+					print "Select tool"
+					chooseTeam("player", "tool")
+
+
+			add css component panel with class "option_icon_container":
+				set css "left" to "323px"
+				set css "top" to "140px"
+				add css component label with id "icon_skill" and class "option_icon" and text "" 
+			add css component label with class "option_desc" and text "Skill":
+				set css "left" to "323px"
+				set css "top" to "250px"
+			add css component label with class "choose_button" and text "choose":
+				set css "left" to "307px"
+				set css "top" to "315px"
+				on component click:
+					print "Select skill"
+					chooseTeam("player", "skill")
+
+#Staff
+
+			add css component panel with class "option_icon_container":
+				set css "left" to "566px"
+				set css "top" to "140px"
+				add css component label with id "icon_worker" and class "option_icon" and text "" 
+			add css component label with class "option_desc" and text "Worker":
+				set css "left" to "566px"
+				set css "top" to "250px"
+			add css component label with class "choose_button" and text "choose":
+				set css "left" to "778px"
+				set css "top" to "271px"
+				on component click:
+					print "Select worker"
+					chooseTeam("worker", "none")
+
+			add css component panel with class "horizontal_bar":
+				set css "top" to "288px"
+
+			add css component panel with class "option_icon_container":
+				set css "left" to "566px"
+				set css "top" to "304px"
+				add css component label with id "icon_soldier" and class "option_icon" and text "" 
+			add css component label with class "option_desc" and text "Guard":
+				set css "left" to "566px"
+				set css "top" to "416px"
+			add css component label with class "choose_button" and text "choose":
+				set css "left" to "778px"
+				set css "top" to "435px"
+				on component click:
+					print "Select guard"
+					chooseTeam("soldier", "none")
+
+			add css component panel with class "horizontal_bar":
+				set css "top" to "452px"
+
+			add css component panel with class "option_icon_container":
+				set css "left" to "566px"
+				set css "top" to "484px"
+				add css component label with id "icon_manager" and class "option_icon" and text "" 
+			add css component label with class "option_desc" and text "Manager":
+				set css "left" to "566px"
+				set css "top" to "596px"
+			add css component label with class "choose_button" and text "choose":
+				set css "left" to "778px"
+				set css "top" to "615px"
+				on component click:
+					print "Select manager"
+					chooseTeam("manager", "none")
+
+			add css component panel with class "horizontal_bar":
+				set css "top" to "632px"
+
+#Random
+
+			add css component label with class "choose_button" and text "choose":
+				set css "left" to "1112px"
+				set css "top" to "204px"
+				on component click:
+					print "Select random"
+					chooseTeam("player", "none")
+
+on acsguis load:
+	register css sheet "squidcraft:css/choose_team.css"
+
+# ---------------------------------------- END OF GUI ----------------------------------------
+#
+#
+#
+# ---------------------------------------- CLIENT SIDE --------------------------------------------
+
+
+on load:
+	if ${phase} is not defined:
+		set ${phase} to 0
+
+packet packet_phase({value}):
+	client:
+		set ${phase} to {value}
+
+packet packet_OpenGui({gui}):
+	client:
+		display css gui {gui}
+
+on click with minecraft:apple:
+    display css gui "chooseTeam"

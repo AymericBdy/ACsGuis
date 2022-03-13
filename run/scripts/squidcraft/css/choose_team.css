@@ -1,0 +1,164 @@
+@font-face {
+    font-family: "squidcraft:roboto";
+    src: url("squidcraft:css/roboto.TTF");
+    font-size: 40px;
+}
+
+#frame
+{
+    background-color: translucent;
+    width: 1920px;
+    height: 1080px;
+    font-family: "squidcraft:roboto";
+}
+
+#root
+{
+    background-color: translucent; 
+    top: 50%;
+    bottom: 50%;
+    left:50%; 
+    right: 50%;
+    width: 1481px;
+    height: 741px;
+    color: black;
+}
+
+#header
+{
+    background-color: white;
+    width: 1475px;
+    height: 66px;
+}
+
+#title_icon
+{
+    width: 58px;
+    height: 41px;
+    left: 35px;
+    top: 13px;
+    background-image: url("squidcraft:textures/people.png");
+}
+
+#header_bar
+{
+    background-color: #6E6E6E;
+    width: 2px;
+    height: 51px;
+    left: 124px;
+    top: 8px;
+}
+
+#title
+{
+    width: 500px;
+    height: 51px;
+    left: 145px;
+    top: 8px;
+    text-align-vertical: center;
+    padding: 0;
+}
+
+#body
+{
+    background-color: rgba(0, 0, 0, 204);
+    left: 6px;
+    top: 67px;
+    width: 1475px;
+    height: 674px;
+}
+
+.body_title
+{
+    background-color: white;
+    top: 58px;
+    width: 368px;
+    height: 46px;
+}
+
+#player_title
+{
+    left: 95px;
+}
+
+.option_icon_container
+{
+    width: 112px;
+    height:  112px;
+    border-width: 3px;
+    border-color: #4D4D4D;
+    background-color: translucent;
+}
+
+.option_icon
+{
+    width: 54px;
+    height: 54px;
+    left: 29px;
+    top: 30px;
+}
+
+#icon_stuff
+{
+    background-image: url("https://dynamx.fr/uploads/logo_dynamx_noir.png");
+}
+
+#icon_skill
+{
+    background-image: url("httpfs://dynamx.fr/uploads/logo_dynamx_noir.png");
+}
+
+#icon_worker
+{
+    background-image: url("squidcraft:textures/worker.png");
+}
+
+#icon_soldier
+{
+    background-image: url("squidcraft:textures/soldier.png");
+}
+
+#icon_manager
+{
+    background-image: url("squidcraft:textures/manager.png");
+}
+
+.option_desc
+{
+    width: 112px;
+    height: 31px;
+    color: #6E6E6E;
+    text-align: center;
+    text-align-vertical: center;
+    background-color: translucent;
+    font-size: 4px;
+    padding: 0;
+}
+
+.choose_button
+{
+    background-color: #808080;
+    width: 145px;
+    height: 36px;
+    text-align: center;
+    text-align-vertical: top;
+    padding: 0;
+    font-size: 8px;
+    font-family: "squidcraft:roboto";
+    text-shadow: none;
+}
+
+.choose_button:hover
+{
+    background-color: white;
+    font-family: "squidcraft:roboto";
+}
+
+
+.horizontal_bar
+{
+    background-color: #707070;
+    width: 197px;
+    height: 3px;
+    left: 555px;
+}
