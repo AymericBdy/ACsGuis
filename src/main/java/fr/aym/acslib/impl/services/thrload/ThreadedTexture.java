@@ -19,8 +19,8 @@ public class ThreadedTexture extends AbstractTexture
     private static final Logger LOGGER = LogManager.getLogger();
     protected final ResourceLocation textureLocation;
 
-    private BufferedImage imageData;
-    private boolean flag, flag1;
+    protected BufferedImage imageData;
+    protected boolean textureBlur, textureClamp;
 
     public ThreadedTexture(ResourceLocation textureResourceLocation)
     {
@@ -33,8 +33,8 @@ public class ThreadedTexture extends AbstractTexture
         {
             iresource = resourceManager.getResource(this.textureLocation);
             BufferedImage bufferedimage = TextureUtil.readBufferedImage(iresource.getInputStream());
-            flag = false;
-            flag1 = false;
+            textureBlur = false;
+            textureClamp = false;
 
             if (iresource.hasMetadata())
             {
@@ -44,8 +44,8 @@ public class ThreadedTexture extends AbstractTexture
 
                     if (texturemetadatasection != null)
                     {
-                        flag = texturemetadatasection.getTextureBlur();
-                        flag1 = texturemetadatasection.getTextureClamp();
+                        textureBlur = texturemetadatasection.getTextureBlur();
+                        textureClamp = texturemetadatasection.getTextureClamp();
                     }
                 }
                 catch (RuntimeException runtimeexception)
@@ -71,7 +71,7 @@ public class ThreadedTexture extends AbstractTexture
     public void uploadTexture(TextureManager resourceManager)
     {
         if(imageData != null) {
-            TextureUtil.uploadTextureImageAllocate(super.getGlTextureId(), imageData, flag, flag1); //take care of the super
+            TextureUtil.uploadTextureImageAllocate(super.getGlTextureId(), imageData, textureBlur, textureClamp); //take care of the super
             imageData = null;
         }
         //else already uploaded (or errored)
