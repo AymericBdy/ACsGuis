@@ -52,7 +52,7 @@ public class TtfFontRenderer implements ICssFont
     {
         GlStateManager.disableTexture2D();
         try{
-            Font UIFont1 = Font.createFont(Font.TRUETYPE_FONT, resourceManager.getResource(location).getInputStream());
+            Font UIFont1 = Font.createFont(Font.TRUETYPE_FONT, ACsGuisCssParser.getResource(location));
             UIFont1 = UIFont1.deriveFont(Font.PLAIN, style.getSize()); //You can change "PLAIN" to "BOLD" or "ITALIC"... and 16.f is the size of your font
 
             uniFont = new org.newdawn.slick.UnicodeFont(UIFont1, UIFont1.getSize(), style.isBold(), style.isItalic());
