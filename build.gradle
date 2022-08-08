@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
@@ -15,11 +15,15 @@ plugins {
 
 repositories {
     maven {
-        url 'http://maven.dynamx.fr/artifactory/ACsLibRepo'
+        url 'https://maven.dynamx.fr/artifactory/ACsLibRepo'
     }
 
     maven {
         url artifactory_contextUrl + '/ACsGuisRepo'
+    }
+
+    flatDir {
+        dir 'libs'
     }
 }
 
@@ -53,8 +57,10 @@ minecraft {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
-    compile "fr.aym:ACsLib:1.1.0-5"
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+
+    implementation "fr.aym:ACsLib:1.1.0-5"
+    implementation ":Sqript+v1.2.6.2:"
+    implementation ":slick:"
 
     shadow "fr.aym:ACsLib:1.1.0-5"
     shadow files('libs/slick.jar')
@@ -70,8 +76,7 @@ reobf {
     }
 }
 
-tasks.build.dependsOn reobfShadowJar
-jar.finalizedBy('reobfShadowJar')
+jar.finalizedBy('reobfJar')
 
 ext {
     builtFile = ""
