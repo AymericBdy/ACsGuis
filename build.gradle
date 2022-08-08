@@ -17,6 +17,7 @@ repositories {
     maven {
         url 'http://maven.dynamx.fr/artifactory/ACsLibRepo'
     }
+
     maven {
         url artifactory_contextUrl + '/ACsGuisRepo'
     }
@@ -27,7 +28,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'maven-publish'
 apply plugin: "com.jfrog.artifactory"
 
-version = "1.2.3-2"
+version = "1.2.3-3"
 group = "fr.aym.acsguis" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ACsGuis"
 
@@ -36,36 +37,15 @@ compileJava.options.encoding = 'UTF-8'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    // The mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   Snapshot are built nightly.
-    // stable_#            Stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // Simply re-run your setup task after changing the mappings to update your workspace.
-    //mappings channel: 'snapshot', version: '20171003-1.12'
     mappings channel: 'stable', version: '39-1.12'
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
         }
-
         server {
-
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
         }
     }
@@ -75,21 +55,29 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
     compile "fr.aym:ACsLib:1.1.0-5"
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    //not anymore :) compile 'com.helger:ph-css:6.2.3'
 
     shadow "fr.aym:ACsLib:1.1.0-5"
-    //shadow 'com.helger:ph-css:6.2.3'
     shadow files('libs/slick.jar')
 }
 
 shadowJar {
+    classifier = 'all'
     configurations = [project.configurations.shadow]
 }
+
+reobf {
+    shadowJar {
+    }
+}
+
+tasks.build.dependsOn reobfShadowJar
+jar.finalizedBy('reobfShadowJar')
 
 ext {
     builtFile = ""
     builtFileSources = ""
 }
+
 
 task onBuild(type: Jar) {
     builtFile = archiveName.replaceAll(".jar", "-all.jar")
@@ -97,16 +85,8 @@ task onBuild(type: Jar) {
     project.logger.lifecycle("Just built file is ${builtFile}")
 }
 
-/*task sourcesJar(type: Jar, dependsOn: classes) {
-    from sourceSets.main.allSource
-}
-
-artifacts {
-    archives sourcesJar
-}*/
-
 task outputNoTestJar(type: Jar) {
-    destinationDir = new File("D:/Modding/ACsGuis/build/libs/fixed/")
+    destinationDir = new File("build/libs/fixed/")
     archiveName = builtFile
     project.logger.lifecycle("Copy from ${builtFile}")
     from(zipTree("build/libs/${builtFile}")) {
@@ -118,7 +98,7 @@ task outputNoTestJar(type: Jar) {
     //into(file(destinationDir))
 }
 task outputNoTestJarSources(type: Jar) {
-    destinationDir = new File("D:/Modding/ACsGuis/build/libs/fixed/")
+    destinationDir = new File("build/libs/fixed/")
     archiveName = builtFileSources
     from(zipTree("build/libs/${builtFileSources}")) {
         exclude '/fr/nico/'
@@ -129,13 +109,15 @@ task outputNoTestJarSources(type: Jar) {
     //into(file(destinationDir))
 }
 
+tasks.reobfShadowJar.mustRunAfter shadowJar
+tasks.onBuild.mustRunAfter reobfShadowJar
 outputNoTestJar.dependsOn onBuild
 outputNoTestJarSources.dependsOn onBuild
 
 build {
-    dependsOn shadowJar
+    dependsOn reobfShadowJar
     dependsOn outputNoTestJar
-    dependsOn outputNoTestJarSources
+    //dependsOn outputNoTestJarSources
 }
 
 artifactoryPublish.dependsOn build
@@ -144,22 +126,11 @@ jar.finalizedBy('reobfJar')
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            //from components.java
             artifact source : ("build/libs/fixed/${builtFile}"), extension: 'jar'
             artifact source: ("build/libs/fixed/${builtFileSources}"), classifier: "sources", extension: 'jar'
         }
     }
 }
-
-/*task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    //from sourceSets.main.allSource
-    artifact source: ("MpsOut/${builtFileSources}"), classifier: "${version_suffix}-sources", extension: 'jar'
-}
-
-artifacts {
-    archives sourcesJar
-}*/
 
 artifactory {
     contextUrl = "${artifactory_contextUrl}"
