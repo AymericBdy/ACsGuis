@@ -9,6 +9,7 @@ import fr.aym.acsguis.sqript.SqriptSupport;
 import fr.aym.acsguis.utils.CssReloadOrigin;
 import fr.aym.acslib.ACsLib;
 import fr.aym.acslib.api.ACsRegisteredService;
+import fr.aym.acslib.api.services.ErrorManagerService;
 import fr.aym.acslib.api.services.ErrorTrackingService;
 import fr.aym.acslib.api.services.ThreadedLoadingService;
 import net.minecraft.client.Minecraft;
@@ -39,8 +40,8 @@ public class ACsGuiApi implements ACsGuiApiService {
     public static final String VERSION = "1.2.3";
     public static final Logger log = LogManager.getLogger("ACsGuis");
 
-    public static ErrorTrackingService errorTracker;
-    public static ErrorTrackingService.ErrorType CSS_ERROR_TYPE;
+    private static ErrorManagerService errorTracker;
+    private static ErrorManagerService.ErrorCategory CSS_ERROR_TYPE;
 
     /**
      * Styles registry and gui helper
@@ -53,8 +54,8 @@ public class ACsGuiApi implements ACsGuiApiService {
         log.info("Initializing ACsGuis API by Aym', version " + VERSION);
         MinecraftForge.EVENT_BUS.register(manager);
 
-        errorTracker = ACsLib.getPlatform().provideService(ErrorTrackingService.class);
-        CSS_ERROR_TYPE = errorTracker.createErrorType(new ResourceLocation(RES_LOC_ID, "css"), "Css");
+        errorTracker = ACsLib.getPlatform().provideService(ErrorManagerService.class);
+        CSS_ERROR_TYPE = errorTracker.createErrorCategory(new ResourceLocation(RES_LOC_ID, "css"), "Css");
     }
 
     @Override
@@ -157,5 +158,13 @@ public class ACsGuiApi implements ACsGuiApiService {
      */
     public static SqriptSupport getSqriptSupport() {
         return sqriptSupport;
+    }
+
+    public static ErrorManagerService getErrorTracker() {
+        return errorTracker;
+    }
+
+    public static ErrorManagerService.ErrorCategory getCssErrorType() {
+        return CSS_ERROR_TYPE;
     }
 }

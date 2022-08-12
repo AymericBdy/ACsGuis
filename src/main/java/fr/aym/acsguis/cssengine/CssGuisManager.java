@@ -7,6 +7,7 @@ import fr.aym.acsguis.event.CssReloadEvent;
 import fr.aym.acsguis.utils.CssReloadOrigin;
 import fr.aym.acsguis.utils.GuiCssError;
 import fr.aym.acslib.ACsLib;
+import fr.aym.acslib.api.services.ErrorManagerService;
 import fr.aym.acslib.api.services.ErrorTrackingService;
 import fr.aym.acslib.api.services.ThreadedLoadingService;
 import net.minecraft.client.Minecraft;
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.common.ProgressManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static fr.aym.acsguis.api.ACsGuiApi.log;
@@ -74,6 +76,41 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
         ProgressManager.pop(bar);
     }
 
+    private void loadGui(String loadingName, Callable<GuiFrame> guiInstance, Consumer<GuiFrame> displayGui) {
+        try {
+            Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading " + loadingName + "...", true);
+            GuiFrame gui = guiInstance.call();
+            boolean reloadCss = gui.needsCssReload();
+            CssReloadEvent.Pre event = null;
+            if (reloadCss) {
+                Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading css...", true);
+                event = new CssReloadEvent.Pre(new CssReloadOrigin.HotCssReloadOrigin(this, gui));
+                if (MinecraftForge.EVENT_BUS.post(event)) return;
+                event.getReloadOrigin().loadStyles();
+            }
+            Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading " + loadingName + "...", true);
+            CssReloadEvent.Pre finalEvent = event;
+
+            //Don't use ThreadedLoader scheduler : it's not updated after mc launch
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                if (reloadCss) {
+                    ACsGuisCssParser.loadFonts((r, e) -> {
+                        log.error("Error while loading css font " + r.toString(), e);
+                        ACsGuiApi.getErrorTracker().addError("ACsGuis reload", ACsGuiApi.getCssErrorType(), "css_font_load_error", ErrorManagerService.ErrorLevel.LOW, r.toString(), null, e);
+                    });
+                    finalEvent.getReloadOrigin().postLoad();
+                }
+                Minecraft.getMinecraft().ingameGUI.setOverlayMessage("", false);
+                displayGui.accept(gui);
+            });
+        } catch (Throwable e) {
+            log.fatal("Cannot show " + loadingName, e);
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                Minecraft.getMinecraft().displayGuiScreen(new GuiCssError(loadingName, e).getGuiScreen());
+            });
+        }
+    }
+
     /**
      * Loads a GuiFrame in another thread, then shows it <br>
      * Note : the css fonts are loaded in the client thread (needs open gl)
@@ -84,40 +121,8 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
     public void asyncLoadThenShowGui(String guiName, Callable<GuiFrame> guiInstance) {
         Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading CSS gui " + guiName + "...", true);
 
-        ACsLib.getPlatform().provideService(ThreadedLoadingService.class).addTask(ThreadedLoadingService.ModLoadingSteps.NEVER, "css_load", () -> {
-            try {
-                Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading CSS gui " + guiName + "...", true);
-                GuiFrame gui = guiInstance.call();
-                boolean reloadCss = gui.needsCssReload();
-                CssReloadEvent.Pre event = null;
-                if (reloadCss) {
-                    Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading css...", true);
-                    event = new CssReloadEvent.Pre(new CssReloadOrigin.HotCssReloadOrigin(this, gui));
-                    if (MinecraftForge.EVENT_BUS.post(event)) return;
-                    event.getReloadOrigin().loadStyles();
-                }
-                Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading CSS gui " + guiName + "...", true);
-                CssReloadEvent.Pre finalEvent = event;
-
-                //Don't use ThreadedLoader scheduler : it's not updated after mc launch
-                Minecraft.getMinecraft().addScheduledTask(() -> {
-                    if (reloadCss) {
-                        ACsGuisCssParser.loadFonts((r, e) -> {
-                            log.error("Error while loading css font " + r.toString(), e);
-                            ACsGuiApi.errorTracker.addError(ACsGuiApi.CSS_ERROR_TYPE, "Css fonts", "Font " + r.toString(), e, ErrorTrackingService.TrackedErrorLevel.LOW);
-                        });
-                        finalEvent.getReloadOrigin().postLoad();
-                    }
-                    Minecraft.getMinecraft().ingameGUI.setOverlayMessage("", false);
-                    Minecraft.getMinecraft().displayGuiScreen(gui.getGuiScreen());
-                });
-            } catch (Throwable e) {
-                log.fatal("Cannot show css gui " + guiName, e);
-                Minecraft.getMinecraft().addScheduledTask(() -> {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiCssError(guiName, e).getGuiScreen());
-                });
-            }
-        });
+        ACsLib.getPlatform().provideService(ThreadedLoadingService.class).addTask(ThreadedLoadingService.ModLoadingSteps.NEVER, "css_load",
+                () -> loadGui("css gui " + guiName, guiInstance, gui -> Minecraft.getMinecraft().displayGuiScreen(gui.getGuiScreen())));
     }
 
     /**
@@ -130,44 +135,13 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
      */
     public void asyncLoadThenShowHudGui(String guiName, Callable<GuiFrame> guiInstance) {
         Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading CSS hud " + guiName + "...", true);
-        ACsLib.getPlatform().provideService(ThreadedLoadingService.class).addTask(ThreadedLoadingService.ModLoadingSteps.NEVER, "css_load", () -> {
-            try {
-                Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading CSS hud " + guiName + "...", true);
-                GuiFrame gui = guiInstance.call();
-                boolean reloadCss = gui.needsCssReload();
-                CssReloadEvent.Pre event = null;
-                if (reloadCss) {
-                    Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading css...", true);
-                    event = new CssReloadEvent.Pre(new CssReloadOrigin.HotCssReloadOrigin(this, gui));
-                    if (MinecraftForge.EVENT_BUS.post(event)) return;
-                    event.getReloadOrigin().loadStyles();
-                }
-                Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Displaying CSS hud " + guiName + "...", true);
-                CssReloadEvent.Pre finalEvent = event;
-                Minecraft.getMinecraft().addScheduledTask(() -> {
-                    if (reloadCss) {
-                        ACsGuisCssParser.loadFonts((r, e) -> {
-                            log.error("Error while loading css font " + r.toString(), e);
-                            ACsGuiApi.errorTracker.addError(ACsGuiApi.CSS_ERROR_TYPE, "Css fonts", "Font " + r.toString(), e, ErrorTrackingService.TrackedErrorLevel.LOW);
-                        });
-                        finalEvent.getReloadOrigin().postLoad();
-                    }
-                    Minecraft.getMinecraft().ingameGUI.setOverlayMessage("", false);
-                    getHud().setCurrentHUD(gui);
-                });
-            } catch (Throwable e) {
-                log.fatal("Cannot show css gui " + guiName, e);
-                Minecraft.getMinecraft().addScheduledTask(() -> {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiCssError(guiName, e).getGuiScreen());
-                });
-            }
-        });
+        ACsLib.getPlatform().provideService(ThreadedLoadingService.class).addTask(ThreadedLoadingService.ModLoadingSteps.NEVER, "css_load",
+                () -> loadGui("css hud " + guiName, guiInstance, gui -> getHud().setCurrentHUD(gui)));
     }
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate) {
-        if (resourcePredicate.test(VanillaResourceType.TEXTURES)) {
+        if (resourcePredicate.test(VanillaResourceType.TEXTURES))
             ACsGuiApi.reloadCssStyles(null);
-        }
     }
 }

@@ -6,6 +6,7 @@ import fr.aym.acsguis.cssengine.CssGuisManager;
 import fr.aym.acsguis.cssengine.font.ICssFont;
 import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.event.CssReloadEvent;
+import fr.aym.acslib.api.services.ErrorManagerService;
 import fr.aym.acslib.api.services.ErrorTrackingService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -33,17 +34,17 @@ public class CssReloadOrigin implements ICssFont.FontReloadOrigin
     }
 
     public void handleException(ResourceLocation r, Exception e) {
-        ACsGuiApi.log.error("Error while loading css sheet "+r.toString(), e);
-        ACsGuiApi.errorTracker.addError(ACsGuiApi.CSS_ERROR_TYPE, "Css sheets", "Css sheet "+r.toString(), e.getCause() instanceof Exception ? (Exception) e.getCause() : e, ErrorTrackingService.TrackedErrorLevel.LOW);
+        ///ACsGuiApi.log.error("Error while loading css sheet "+r.toString(), e);
+        ACsGuiApi.getErrorTracker().addError("ACsGuis reload", ACsGuiApi.getCssErrorType(), "css_sheet_load_error", ErrorManagerService.ErrorLevel.LOW, r.toString(), null, e.getCause() instanceof Exception ? (Exception) e.getCause() : e);
     }
 
     public void handleFontException(ResourceLocation r, Exception e) {
-        ACsGuiApi.log.error("Error while loading css font "+r.toString(), e);
-        ACsGuiApi.errorTracker.addError(ACsGuiApi.CSS_ERROR_TYPE, "Css fonts", "Css font "+r.toString(), e, ErrorTrackingService.TrackedErrorLevel.LOW);
+        //ACsGuiApi.log.error("Error while loading css font "+r.toString(), e);
+        ACsGuiApi.getErrorTracker().addError("ACsGuis reload", ACsGuiApi.getCssErrorType(), "css_font_load_error", ErrorManagerService.ErrorLevel.LOW, r.toString(), null, e.getCause() instanceof Exception ? (Exception) e.getCause() : e);
     }
 
     protected void handlePreLoad() {
-        ACsGuiApi.errorTracker.clear(ACsGuiApi.CSS_ERROR_TYPE);
+        ACsGuiApi.getErrorTracker().clear(ACsGuiApi.getCssErrorType());
         ACsGuisCssParser.clearFonts();
     }
 
@@ -68,7 +69,7 @@ public class CssReloadOrigin implements ICssFont.FontReloadOrigin
     protected void handlePostLoad() throws Exception {
         if(Minecraft.getMinecraft().player != null)
         {
-            if(ACsGuiApi.errorTracker.hasErrors()) {
+            if(ACsGuiApi.getErrorTracker().hasErrors(ACsGuiApi.getCssErrorType())) {
                 /*List<String> to = new ArrayList<>();
                 to.add(TextFormatting.DARK_RED+"Erreur(s) de chargement du CSS :");
                 to.add("");

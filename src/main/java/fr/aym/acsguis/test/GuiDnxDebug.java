@@ -91,7 +91,7 @@ public class GuiDnxDebug extends GuiFrame
                 box3.setText("Rechargement en cours...");
                 ACsGuiApi.reloadCssStyles(this);
                 box3.setEnabled(true);
-                if(ACsGuiApi.errorTracker.hasErrors())
+                if(ACsGuiApi.getErrorTracker().hasErrors(ACsGuiApi.getCssErrorType()))
                         box3.setText(TextFormatting.RED+"Des styles css ont des erreurs");
                 else
                     box3.setText("Styles css rechargés");
@@ -104,7 +104,7 @@ public class GuiDnxDebug extends GuiFrame
                 box4.setText("Rechargement en cours...");
                 ACsGuiApi.reloadCssStyles(this);
                 box4.setEnabled(true);
-                if(ACsGuiApi.errorTracker.hasErrors())
+                if(ACsGuiApi.getErrorTracker().hasErrors(ACsGuiApi.getCssErrorType()))
                     box4.setText(TextFormatting.RED+"Des styles css ont des erreurs");
                 else
                     box4.setText("Styles css rechargés");

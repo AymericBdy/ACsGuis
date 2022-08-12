@@ -10,7 +10,7 @@ buildscript {
 }
 
 plugins {
-    id "com.jfrog.artifactory" version "4.9.8"
+    id "com.jfrog.artifactory" version "4.28.1"
 }
 
 repositories {
@@ -32,7 +32,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'maven-publish'
 apply plugin: "com.jfrog.artifactory"
 
-version = "1.2.3-3"
+version = "1.2.4-1c"
 group = "fr.aym.acsguis" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ACsGuis"
 
@@ -58,11 +58,11 @@ minecraft {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
-    implementation "fr.aym:ACsLib:1.1.0-5"
+    implementation "fr.aym:ACsLib:1.2.0-1c"
     implementation ":Sqript+v1.2.6.2:"
     implementation ":slick:"
 
-    shadow "fr.aym:ACsLib:1.1.0-5"
+    shadow "fr.aym:ACsLib:1.2.0-1c"
     shadow files('libs/slick.jar')
 }
 
@@ -132,7 +132,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact source : ("build/libs/fixed/${builtFile}"), extension: 'jar'
-            artifact source: ("build/libs/fixed/${builtFileSources}"), classifier: "sources", extension: 'jar'
+            //artifact source: ("build/libs/fixed/${builtFileSources}"), classifier: "sources", extension: 'jar'
         }
     }
 }
