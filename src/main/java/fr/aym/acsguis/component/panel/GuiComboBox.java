@@ -1,5 +1,6 @@
 package fr.aym.acsguis.component.panel;
 
+import fr.aym.acsguis.component.textarea.TextComponent;
 import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
 import fr.aym.acsguis.utils.GuiConstants;
 import fr.aym.acsguis.component.EnumComponentType;
@@ -14,7 +15,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiComboBox extends GuiPanel {
+public class GuiComboBox extends GuiPanel implements TextComponent {
 	
 	protected GuiComboBoxButton guiComboBoxButton;
 	
@@ -50,7 +51,17 @@ public class GuiComboBox extends GuiPanel {
 	public EnumComponentType getType() {
 		return EnumComponentType.COMBO_BOX;
 	}
-	
+
+	@Override
+	public String getText() {
+		return guiComboBoxButton.getText();
+	}
+
+	@Override
+	public TextComponent setText(String text) {
+		return guiComboBoxButton.setText(text);
+	}
+
 	public class GuiComboBoxButton extends GuiButton implements IFocusListener {
 		
 		public GuiComboBoxButton(String defaultText) {
