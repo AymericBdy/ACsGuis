@@ -1,9 +1,9 @@
 package fr.aym.acslib.impl.services.thrload;
 
 import fr.aym.acslib.ACsLib;
-import fr.aym.acslib.api.services.ErrorTrackingService;
 import fr.aym.acslib.api.services.ThreadedLoadingService;
-import fr.aym.acslib.impl.services.error_tracking.ACsLibErrorType;
+import fr.aym.acslib.api.services.error.ErrorLevel;
+import fr.aym.acslib.api.services.error.ErrorManagerService;
 import fr.aym.acslib.utils.ACsLogger;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
 import net.minecraftforge.fml.common.LoaderException;
@@ -11,8 +11,7 @@ import net.minecraftforge.fml.common.LoaderException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-public class ThreadedLoadingTask implements Runnable
-{
+public class ThreadedLoadingTask implements Runnable {
     private final Runnable task;
     private final ThreadedLoadingService.ModLoadingSteps endBefore;
     private final int id;
@@ -37,17 +36,16 @@ public class ThreadedLoadingTask implements Runnable
         long time = System.currentTimeMillis();
         try {
             task.run();
-            executor.onEnd(this, followingInThreadTask, (System.currentTimeMillis()-time));
+            executor.onEnd(this, followingInThreadTask, (System.currentTimeMillis() - time));
         } catch (Exception e) {
-            ACsLogger.serviceFatal(ACsLib.getPlatform().provideService(ThreadedLoadingService.class), "Error in task "+name, e);
-            if(ACsLib.getPlatform().isServiceSupported(ErrorTrackingService.class)) {
-                ACsLib.getPlatform().provideService(ErrorTrackingService.class).addError(ACsLibErrorType.ACSLIBERROR, "LoadingTasks", "ThreadTask "+name, e, ErrorTrackingService.TrackedErrorLevel.FATAL);
-            }
+            ACsLogger.serviceFatal(ACsLib.getPlatform().provideService(ThreadedLoadingService.class), "Error in task " + name, e);
+            if (ACsLib.getPlatform().isServiceSupported(ErrorManagerService.class))
+                ACsLib.getPlatform().provideService(ErrorManagerService.class).addError("ACsGuis ThreadedLoadingTask", ACsLib.getPlatform().getACsLibErrorCategory(), "loading_tasks", ErrorLevel.FATAL, "ThreadTask " + name, null, e);
             executor.onEnd(this, () -> {
-                if(e instanceof CustomModLoadingErrorDisplayException)
+                if (e instanceof CustomModLoadingErrorDisplayException)
                     throw e;
                 throw new ThreadedLoadingException(name, e);
-            }, (System.currentTimeMillis()-time));
+            }, (System.currentTimeMillis() - time));
         }
     }
 
@@ -71,10 +69,9 @@ public class ThreadedLoadingTask implements Runnable
                 '}';
     }
 
-    public static class ThreadedLoadingException extends LoaderException
-    {
+    public static class ThreadedLoadingException extends LoaderException {
         public ThreadedLoadingException(String taskName, Exception e) {
-            super("Exception in task "+taskName, e);
+            super("Exception in task " + taskName, e);
             setStackTrace(new StackTraceElement[0]);
         }
 
@@ -84,32 +81,28 @@ public class ThreadedLoadingTask implements Runnable
         }
 
         @Override
-        public void printStackTrace(final PrintWriter s)
-        {
+        public void printStackTrace(final PrintWriter s) {
             super.printStackTrace(s);
-            printCustomMessage(new WrappedPrintStream()
-            {
+            printCustomMessage(new WrappedPrintStream() {
                 @Override
-                public void println(String line)
-                {
-                    s.println(line);
-                }
-            });
-        }
-        @Override
-        public void printStackTrace(final PrintStream s)
-        {
-            super.printStackTrace(s);
-            printCustomMessage(new WrappedPrintStream()
-            {
-                @Override
-                public void println(String line)
-                {
+                public void println(String line) {
                     s.println(line);
                 }
             });
         }
 
-        protected void printCustomMessage(WrappedPrintStream stream) {}
+        @Override
+        public void printStackTrace(final PrintStream s) {
+            super.printStackTrace(s);
+            printCustomMessage(new WrappedPrintStream() {
+                @Override
+                public void println(String line) {
+                    s.println(line);
+                }
+            });
+        }
+
+        protected void printCustomMessage(WrappedPrintStream stream) {
+        }
     }
 }

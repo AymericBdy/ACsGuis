@@ -9,9 +9,9 @@ import fr.aym.acsguis.sqript.SqriptSupport;
 import fr.aym.acsguis.utils.CssReloadOrigin;
 import fr.aym.acslib.ACsLib;
 import fr.aym.acslib.api.ACsRegisteredService;
-import fr.aym.acslib.api.services.ErrorManagerService;
-import fr.aym.acslib.api.services.ErrorTrackingService;
 import fr.aym.acslib.api.services.ThreadedLoadingService;
+import fr.aym.acslib.api.services.error.ErrorCategory;
+import fr.aym.acslib.api.services.error.ErrorManagerService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -41,7 +41,7 @@ public class ACsGuiApi implements ACsGuiApiService {
     public static final Logger log = LogManager.getLogger("ACsGuis");
 
     private static ErrorManagerService errorTracker;
-    private static ErrorManagerService.ErrorCategory CSS_ERROR_TYPE;
+    private static ErrorCategory CSS_ERROR_TYPE;
 
     /**
      * Styles registry and gui helper
@@ -164,7 +164,7 @@ public class ACsGuiApi implements ACsGuiApiService {
         return errorTracker;
     }
 
-    public static ErrorManagerService.ErrorCategory getCssErrorType() {
+    public static ErrorCategory getCssErrorType() {
         return CSS_ERROR_TYPE;
     }
 }
