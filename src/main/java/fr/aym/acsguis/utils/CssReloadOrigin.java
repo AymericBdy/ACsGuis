@@ -6,8 +6,7 @@ import fr.aym.acsguis.cssengine.CssGuisManager;
 import fr.aym.acsguis.cssengine.font.ICssFont;
 import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.event.CssReloadEvent;
-import fr.aym.acslib.api.services.ErrorManagerService;
-import fr.aym.acslib.api.services.ErrorTrackingService;
+import fr.aym.acslib.api.services.error.ErrorLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
@@ -18,13 +17,12 @@ import java.util.List;
 
 /**
  * Handles css reload and listens all errors
- *
+ * <p>
  * TODO CLEAN THE RELOAD SYSTEM
  *
  * @see HotCssReloadOrigin
  */
-public class CssReloadOrigin implements ICssFont.FontReloadOrigin
-{
+public class CssReloadOrigin implements ICssFont.FontReloadOrigin {
     private final CssGuisManager manager;
     private final boolean isHot;
 
@@ -35,12 +33,12 @@ public class CssReloadOrigin implements ICssFont.FontReloadOrigin
 
     public void handleException(ResourceLocation r, Exception e) {
         ///ACsGuiApi.log.error("Error while loading css sheet "+r.toString(), e);
-        ACsGuiApi.getErrorTracker().addError("ACsGuis reload", ACsGuiApi.getCssErrorType(), "css_sheet_load_error", ErrorManagerService.ErrorLevel.LOW, r.toString(), null, e.getCause() instanceof Exception ? (Exception) e.getCause() : e);
+        ACsGuiApi.getErrorTracker().addError("ACsGuis reload", ACsGuiApi.getCssErrorType(), "css_sheet_load_error", ErrorLevel.LOW, r.toString(), null, e.getCause() instanceof Exception ? (Exception) e.getCause() : e);
     }
 
     public void handleFontException(ResourceLocation r, Exception e) {
         //ACsGuiApi.log.error("Error while loading css font "+r.toString(), e);
-        ACsGuiApi.getErrorTracker().addError("ACsGuis reload", ACsGuiApi.getCssErrorType(), "css_font_load_error", ErrorManagerService.ErrorLevel.LOW, r.toString(), null, e.getCause() instanceof Exception ? (Exception) e.getCause() : e);
+        ACsGuiApi.getErrorTracker().addError("ACsGuis reload", ACsGuiApi.getCssErrorType(), "css_font_load_error", ErrorLevel.LOW, r.toString(), null, e.getCause() instanceof Exception ? (Exception) e.getCause() : e);
     }
 
     protected void handlePreLoad() {
@@ -67,9 +65,8 @@ public class CssReloadOrigin implements ICssFont.FontReloadOrigin
     }
 
     protected void handlePostLoad() throws Exception {
-        if(Minecraft.getMinecraft().player != null)
-        {
-            if(ACsGuiApi.getErrorTracker().hasErrors(ACsGuiApi.getCssErrorType())) {
+        if (Minecraft.getMinecraft().player != null) {
+            if (ACsGuiApi.getErrorTracker().hasErrors(ACsGuiApi.getCssErrorType())) {
                 /*List<String> to = new ArrayList<>();
                 to.add(TextFormatting.DARK_RED+"Erreur(s) de chargement du CSS :");
                 to.add("");
@@ -78,7 +75,7 @@ public class CssReloadOrigin implements ICssFont.FontReloadOrigin
                 {
                     Minecraft.getMinecraft().player.sendMessage(new TextComponentString(s));
                 }*/
-                Minecraft.getMinecraft().player.sendMessage(new TextComponentString(TextFormatting.RED+"[ACsGuis] Certaines feuilles de style ont des problèmes, utilisez le menu de debug pour les voir"));
+                Minecraft.getMinecraft().player.sendMessage(new TextComponentString(TextFormatting.RED + "[ACsGuis] Certaines feuilles de style ont des problèmes, utilisez le menu de debug pour les voir"));
             }
         }
     }
@@ -90,8 +87,7 @@ public class CssReloadOrigin implements ICssFont.FontReloadOrigin
     /**
      * Listens loading errors and allows to show them on the error gui
      */
-    public static class HotCssReloadOrigin extends CssReloadOrigin
-    {
+    public static class HotCssReloadOrigin extends CssReloadOrigin {
         protected final List<ResourceLocation> sheets;
         protected Exception throwE;
 
@@ -103,14 +99,14 @@ public class CssReloadOrigin implements ICssFont.FontReloadOrigin
         @Override
         public void handleException(ResourceLocation r, Exception e) {
             super.handleException(r, e);
-            if(throwE == null && (sheets.contains(r) || ACsGuisCssParser.DEFAULT_STYLE_SHEET.equals(r)))
+            if (throwE == null && (sheets.contains(r) || ACsGuisCssParser.DEFAULT_STYLE_SHEET.equals(r)))
                 throwE = e;
         }
 
         @Override
         protected void handlePostLoad() throws Exception {
             super.handlePostLoad();
-            if(throwE != null)
+            if (throwE != null)
                 throw throwE;
         }
     }

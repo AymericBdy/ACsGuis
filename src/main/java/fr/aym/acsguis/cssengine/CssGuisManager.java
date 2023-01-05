@@ -7,9 +7,8 @@ import fr.aym.acsguis.event.CssReloadEvent;
 import fr.aym.acsguis.utils.CssReloadOrigin;
 import fr.aym.acsguis.utils.GuiCssError;
 import fr.aym.acslib.ACsLib;
-import fr.aym.acslib.api.services.ErrorManagerService;
-import fr.aym.acslib.api.services.ErrorTrackingService;
 import fr.aym.acslib.api.services.ThreadedLoadingService;
+import fr.aym.acslib.api.services.error.ErrorLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -96,7 +95,7 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
                 if (reloadCss) {
                     ACsGuisCssParser.loadFonts((r, e) -> {
                         log.error("Error while loading css font " + r.toString(), e);
-                        ACsGuiApi.getErrorTracker().addError("ACsGuis reload", ACsGuiApi.getCssErrorType(), "css_font_load_error", ErrorManagerService.ErrorLevel.LOW, r.toString(), null, e);
+                        ACsGuiApi.getErrorTracker().addError("ACsGuis reload", ACsGuiApi.getCssErrorType(), "css_font_load_error", ErrorLevel.LOW, r.toString(), null, e);
                     });
                     finalEvent.getReloadOrigin().postLoad();
                 }
