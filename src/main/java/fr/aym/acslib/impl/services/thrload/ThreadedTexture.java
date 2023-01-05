@@ -1,5 +1,7 @@
 package fr.aym.acslib.impl.services.thrload;
 
+import fr.aym.acsguis.api.ACsGuiApi;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -16,7 +18,6 @@ import java.io.IOException;
 
 public class ThreadedTexture extends AbstractTexture
 {
-    private static final Logger LOGGER = LogManager.getLogger();
     protected final ResourceLocation textureLocation;
 
     protected BufferedImage imageData;
@@ -50,10 +51,12 @@ public class ThreadedTexture extends AbstractTexture
                 }
                 catch (RuntimeException runtimeexception)
                 {
-                    LOGGER.warn("Failed reading metadata of: {}", this.textureLocation, runtimeexception);
+                    ACsGuiApi.log.warn("Failed reading metadata of: {}", this.textureLocation, runtimeexception);
                 }
             }
             imageData = bufferedimage;
+            if(Minecraft.getMinecraft().isCallingFromMinecraftThread())
+                uploadTexture();
         }
         finally
         {
@@ -68,7 +71,12 @@ public class ThreadedTexture extends AbstractTexture
         return super.getGlTextureId();
     }
 
-    public void uploadTexture(TextureManager resourceManager)
+    @Deprecated
+    public void uploadTexture(TextureManager resourceManager) {
+        uploadTexture();
+    }
+
+    public void uploadTexture()
     {
         if(imageData != null) {
             TextureUtil.uploadTextureImageAllocate(super.getGlTextureId(), imageData, textureBlur, textureClamp); //take care of the super
