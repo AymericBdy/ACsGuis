@@ -60,6 +60,28 @@ public class GridLayout implements PanelLayout<ComponentStyleManager> {
         this.elementsPerLine = elementsPerLine;
     }
 
+    /**
+     * Creates a simple column layout with one element per line
+     *
+     * @param height  Element height, in pixels
+     * @param spacing Space between elements, in pixels
+     * @return A new column layout
+     */
+    public static GridLayout columnLayout(int height, int spacing) {
+        return new GridLayout(new SizeValue(1, GuiConstants.ENUM_SIZE.RELATIVE), new SizeValue(height, GuiConstants.ENUM_SIZE.ABSOLUTE), new SizeValue(spacing, GuiConstants.ENUM_SIZE.ABSOLUTE), GridDirection.HORIZONTAL, 1);
+    }
+
+    /**
+     * Creates a simple column layout with one element per line
+     *
+     * @param height  Element height, relative between 0 and 1 (0.5 = 50%)
+     * @param spacing Space between elements, relative between 0 and 1 (0.5 = 50%)
+     * @return A new column layout
+     */
+    public static GridLayout columnLayout(float height, float spacing) {
+        return new GridLayout(new SizeValue(1, GuiConstants.ENUM_SIZE.RELATIVE), new SizeValue(height, GuiConstants.ENUM_SIZE.RELATIVE), new SizeValue(spacing, GuiConstants.ENUM_SIZE.RELATIVE), GridDirection.HORIZONTAL, 1);
+    }
+
     @Override
     public int getX(ComponentStyleManager target) {
         if (!cache.containsKey(target)) {
