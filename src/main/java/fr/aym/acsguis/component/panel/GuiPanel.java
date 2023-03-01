@@ -74,6 +74,8 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 			}
 		}
 		this.layout = layout;
+		if(layout != null)
+			layout.setContainer(this);
 	}
 
 	public PanelLayout<?> getLayout() {

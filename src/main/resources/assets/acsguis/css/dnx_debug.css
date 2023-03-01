@@ -139,3 +139,38 @@ tabbed_pane > button:hover, tabbed_pane > button:active {
     top: 40px;
     height: 60%;
 }
+
+
+.property_horizontal
+{
+    width: 100%;
+    height: 20px;
+    background-color: orange;
+    top: 120px;
+}
+.property_horizontal>label
+{
+    width: 40%;
+}
+.property_horizontal>text_field
+{
+    right: 0;
+    width: 60%;
+}
+
+.property_vertical
+{
+    width: 60%;
+    height: 40px;
+    background-color: green;
+    top: 200px;
+}
+.property_vertical>label
+{
+    height: 50%;
+}
+.property_vertical>text_field
+{
+    bottom: 0;
+    height: 50%;
+}

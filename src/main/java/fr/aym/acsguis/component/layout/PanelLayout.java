@@ -1,5 +1,6 @@
 package fr.aym.acsguis.component.layout;
 
+import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.utils.GuiConstants;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
@@ -80,4 +81,6 @@ public interface PanelLayout<T extends ComponentStyleManager> extends AutoStyleH
      * Resets the layouts
      */
     void clear();
+
+    void setContainer(GuiPanel container);
 }

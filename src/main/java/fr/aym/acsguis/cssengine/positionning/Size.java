@@ -99,6 +99,11 @@ public class Size
         private float value;
         private GuiConstants.ENUM_SIZE type;
 
+        /**
+         * Creates a new SizeValue
+         * @param value The value, in absolute pixels or relative (0-1)
+         * @param type The type of the value, absolute or relative
+         */
         public SizeValue(float value, GuiConstants.ENUM_SIZE type) {
             this.value = value;
             this.type = type;
