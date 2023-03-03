@@ -185,7 +185,7 @@ combo_box>button
     width: 50%;
     height: 60%;
     z-index: 500;
-    component-layout: row 10 0;
+    /*component-layout: row 10 0;*/
 }
 #css_debug_pane>label
 {
