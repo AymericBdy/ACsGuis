@@ -39,6 +39,15 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	protected boolean pauseGame = true;
 	protected boolean enableRepeatEvents = true;
 	protected boolean escapeQuit = true;
+
+	/**
+	 * Either to reload all css sheets when the gui is loaded, only for creating/debugging the gui
+	 */
+	protected boolean needsCssReload = false;
+	/**
+	 * Enables show debug option by pressing 'K' on the keyboard while hovering a component
+	 */
+	protected boolean enableDebugPanel = false;
 	
 	public static long lastClickTime;
 	public static int mouseX, mouseY;
@@ -111,7 +120,6 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	public abstract List<ResourceLocation> getCssStyles();
 
 	/**
-	 * If you return true, you should use the CssGuiManager to show your gui, in order to make the reload effective
 	 * @return True to add default style sheet to this gui, recommended
 	 */
 	public boolean usesDefaultStyle() {
@@ -119,14 +127,31 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	}
 
 	/**
-	 * @return True to reload all css sheets when your gui is loaded, only for creating/debugging your gui
+	 * If you return true, you should use the ACsGuiApi class to show your gui, in order to make the reload effective
+	 * @return True to reload all css sheets when the gui is loaded, only for creating/debugging the gui
 	 */
-	public boolean needsCssReload() { return false; }
+	public boolean needsCssReload() { return needsCssReload; }
+
+	public void setNeedsCssReload(boolean needsCssReload) {
+		this.needsCssReload = needsCssReload;
+	}
 
 	/**
-	 * @return True to enable show debug option by 'K' on the keyboard while hovering a component
+	 * @deprecated Replaced by isEnableDebugPanel()
 	 */
-	public boolean allowDebugInGui() { return false; }
+	@Deprecated
+	public boolean allowDebugInGui() { return enableDebugPanel; }
+
+	/**
+	 * @return True to enable show debug option by pressing 'K' on the keyboard while hovering a component
+	 */
+	public boolean isEnableDebugPanel() {
+		return enableDebugPanel;
+	}
+
+	public void setEnableDebugPanel(boolean enableDebugPanel) {
+		this.enableDebugPanel = enableDebugPanel;
+	}
 
 	@Override
 	public boolean isFocused() {
