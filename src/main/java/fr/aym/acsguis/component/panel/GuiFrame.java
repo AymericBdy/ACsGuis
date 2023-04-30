@@ -217,8 +217,8 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 				int parentWidth = (int) (screenWidth/getGuiScreen().scaleX);
 				int parentHeight = (int) (screenHeight/getGuiScreen().scaleY);
 
-				computedX = getXPos().computeValue(screenWidth, screenHeight, parentWidth, getRenderWidth());
-				computedY = getYPos().computeValue(screenWidth, screenHeight, parentHeight, getRenderHeight());
+				computedX = getXPos().computeValue(parentWidth, parentHeight, parentWidth, getRenderWidth());
+				computedY = getYPos().computeValue(parentWidth, parentHeight, parentHeight, getRenderHeight());
 			}
 		};
 		s.addAutoStyleHandler(this);
@@ -230,7 +230,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	 */
 	public class APIGuiScreen extends GuiScreen
 	{
-		private float scaleX, scaleY;
+		private float scaleX = 1, scaleY = 1;
 		protected final GuiFrame frame;
 		
 		APIGuiScreen(GuiFrame frame) {
@@ -242,13 +242,13 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 		public void setWorldAndResolution(Minecraft mc, int width, int height) {
 			super.setWorldAndResolution(mc, width, height);
 			resolution = new ScaledResolution(mc);
-			frame.resize(width, height);
-			debugPane.resize(width, height);
+			frame.resize(this, width, height);
+			debugPane.resize(this, width, height);
 			debugPane.updateSlidersVisibility();
 
 			//Needed for scale
-			style.update();
-			debugPane.getStyle().update();
+			style.update(this);
+			debugPane.getStyle().update(this);
 			//worldRenderBuffer.createBindFramebuffer(width * resolution.getScaleFactor(), height * resolution.getScaleFactor());
 		}
 		
@@ -413,5 +413,10 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	
 	public APIGuiScreen getGuiScreen() {
 		return guiScreen;
+	}
+
+	@Override
+	public APIGuiScreen getGui() {
+		return getGuiScreen();
 	}
 }

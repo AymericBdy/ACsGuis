@@ -92,7 +92,7 @@ public class ExprCssStyle extends ScriptExpression {
         if (properties != null) {
             param.getObject().getStyle().injectStyle(properties, to.getObject().toString());
             //System.out.println("Injection success on " + properties.key + " on " + param.getObject());
-            param.getObject().getStyle().refreshCss(true, "injection");
+            param.getObject().getStyle().refreshCss(param.getObject().getGui(), true, "injection");
             return true;
         }/* else {
             System.out.println("Fail property not found");

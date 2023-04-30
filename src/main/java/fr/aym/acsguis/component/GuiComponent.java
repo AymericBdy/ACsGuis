@@ -92,6 +92,8 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
     protected final List<IResizeListener> resizeListeners = new ArrayList<>();
     protected final List<IFocusListener> focusListeners = new ArrayList<>();
 
+    protected GuiFrame.APIGuiScreen gui;
+
     /**
      * Creates a new component
      */
@@ -121,7 +123,7 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
      */
     public GuiComponent<T> setCssClass(@Nullable String cssClass) {
         this.cssClass = cssClass;
-        getStyle().refreshCss(true, "set_class");
+        getStyle().refreshCss(getGui(), true, "set_class");
         return this;
     }
 
@@ -139,7 +141,7 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
      */
     public GuiComponent<T> setCssId(@Nullable String cssId) {
         this.cssId = cssId;
-        getStyle().refreshCss(true, "set_id");
+        getStyle().refreshCss(getGui(), true, "set_id");
         return this;
     }
 
@@ -359,9 +361,9 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
      * @param screenWidth  Scaled screen width
      * @param screenHeight Scaled screen height
      */
-    public void resize(int screenWidth, int screenHeight) {
-        style.resize(screenWidth, screenHeight);
-
+    public void resize(GuiFrame.APIGuiScreen gui, int screenWidth, int screenHeight) {
+        style.resize(gui);
+        this.gui = gui;
         for (IResizeListener resizeListener : resizeListeners) {
             resizeListener.onResize(screenWidth, screenHeight);
         }
@@ -379,7 +381,7 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
                     extraClickListener.onMousePressed(GuiFrame.mouseX, GuiFrame.mouseY, GuiFrame.mouseButton);
                 }
             }
-            style.update();
+            style.update(getGui());
 
             if (this instanceof GuiPanel) {
 
@@ -389,7 +391,7 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
                 ((GuiPanel) this).getChildComponents().forEach(GuiComponent::tick);
             }
         } else {
-            style.update();
+            style.update(getGui());
         }
     }
 
@@ -908,5 +910,12 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
                 "cssId='" + cssId + '\'' +
                 ", cssClass='" + cssClass + '\'' +
                 '}';
+    }
+
+    public GuiFrame.APIGuiScreen getGui() {
+        if (gui == null && parent != null) {
+            gui = parent.getGui();
+        }
+        return gui;
     }
 }

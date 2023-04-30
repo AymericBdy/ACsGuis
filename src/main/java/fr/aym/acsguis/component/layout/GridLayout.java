@@ -3,6 +3,7 @@ package fr.aym.acsguis.component.layout;
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
+import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
 import fr.aym.acsguis.cssengine.positionning.Size.SizeValue;
 import fr.aym.acsguis.utils.GuiConstants;
 
@@ -32,6 +33,11 @@ public class GridLayout implements PanelLayout<ComponentStyleManager> {
      */
     public GridLayout(int width, int height, int spacing, GridDirection direction, int elementsPerLine) {
         this(new SizeValue(width, GuiConstants.ENUM_SIZE.ABSOLUTE), new SizeValue(height, GuiConstants.ENUM_SIZE.ABSOLUTE), new SizeValue(spacing, GuiConstants.ENUM_SIZE.ABSOLUTE), direction, elementsPerLine);
+        // Retro-compatibility (-1 was 100%)
+        if(width == -1)
+            this.width.setRelative(1, CssValue.Unit.RELATIVE_INT);
+        if(height == -1)
+            this.height.setRelative(1, CssValue.Unit.RELATIVE_INT);
     }
 
     /**
@@ -124,7 +130,6 @@ public class GridLayout implements PanelLayout<ComponentStyleManager> {
     public void clear() {
         cache.clear();
         nextIndex = 0;
-        container = null;
     }
 
     public int getWidth() {

@@ -86,7 +86,7 @@ public class CssComponentStyleManager implements ComponentStyleManager
     @Override
     public void setCustomParsedStyle(Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> data) {
         this.customStyle = data;
-        refreshCss(true, "setCustomStyle");
+        refreshCss(getOwner().getGui(), true, "setCustomStyle");
     }
 
     @Override
@@ -95,14 +95,22 @@ public class CssComponentStyleManager implements ComponentStyleManager
     }
 
     @Override
-    public void update() {
+    public void update(GuiFrame.APIGuiScreen gui) {
         if(component.getState() != lastContext || cssStack == null) {
             onCssChange(component.getState());
         }
+        float sx = gui != null ? gui.getScaleX() : 1;
+        float sy = gui != null ? gui.getScaleY() : 1;
         if(getWidth().isDirty() || getHeight().isDirty())
-            updateComponentSize(GuiFrame.resolution.getScaledWidth(), GuiFrame.resolution.getScaledHeight());
+            updateComponentSize((int) (GuiFrame.resolution.getScaledWidth()/sx), (int) (GuiFrame.resolution.getScaledHeight()/sy));
         if(getXPos().isDirty() || getYPos().isDirty())
-            updateComponentPosition(GuiFrame.resolution.getScaledWidth(), GuiFrame.resolution.getScaledHeight());
+            updateComponentPosition((int) (GuiFrame.resolution.getScaledWidth()/sx), (int) (GuiFrame.resolution.getScaledHeight()/sy));
+        /*if (component instanceof GuiPanel) {
+            for (GuiComponent<?> c : ((GuiPanel) component).getChildComponents()) {
+                if(!((GuiPanel)component).getToRemoveComponents().contains(c))
+                    c.getStyle().refreshCss(gui, false, "i_u");
+            }
+        }*/
     }
 
     private void onCssChange(EnumSelectorContext context) {
@@ -114,7 +122,7 @@ public class CssComponentStyleManager implements ComponentStyleManager
             //System.out.println("Change context from "+lastContext+" to "+context+" "+getOwner());
             lastContext = context;
             //Reset
-            refreshCss(false, "state_upd");
+            refreshCss(getOwner().getGui(), false, "state_upd");
         }
     }
 
@@ -128,7 +136,7 @@ public class CssComponentStyleManager implements ComponentStyleManager
     }
 
     @Override //reload css
-    public void refreshCss(boolean reloadCssStack, String reason) {
+    public void refreshCss(GuiFrame.APIGuiScreen gui, boolean reloadCssStack, String reason) {
         if(reloadCssStack && cssStack != null) {
             //System.out.println("RECOMPUTING STACK");
             reloadCssStack();
@@ -144,13 +152,15 @@ public class CssComponentStyleManager implements ComponentStyleManager
             getYPos().setType(GuiConstants.ENUM_POSITION.ABSOLUTE);
             //update
             cssStack.applyAllProperties(getContext(), this);
-            updateComponentSize(GuiFrame.resolution.getScaledWidth(), GuiFrame.resolution.getScaledHeight());
-            updateComponentPosition(GuiFrame.resolution.getScaledWidth(), GuiFrame.resolution.getScaledHeight());
+            float sx = gui != null ? gui.getScaleX() : 1;
+            float sy = gui != null ? gui.getScaleY() : 1;
+            updateComponentSize((int) (GuiFrame.resolution.getScaledWidth()/sx), (int) (GuiFrame.resolution.getScaledHeight()/sy));
+            updateComponentPosition((int) (GuiFrame.resolution.getScaledWidth()/sx), (int) (GuiFrame.resolution.getScaledHeight()/sy));
 
             if (component instanceof GuiPanel) {
                 for (GuiComponent<?> c : ((GuiPanel) component).getChildComponents()) {
                     if(!((GuiPanel)component).getToRemoveComponents().contains(c))
-                        c.getStyle().refreshCss(reloadCssStack, "i_"+reason);
+                        c.getStyle().refreshCss(getOwner().getGui(), reloadCssStack, "i_"+reason);
                 }
             }
         }
@@ -288,8 +298,8 @@ public class CssComponentStyleManager implements ComponentStyleManager
     }
 
     @Override
-    public void resize(int screenWidth, int screenHeight) {
-        refreshCss(false,"resize");
+    public void resize(GuiFrame.APIGuiScreen gui) {
+        refreshCss(gui, false, "resize");
     }
 
     @Override

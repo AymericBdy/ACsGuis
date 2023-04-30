@@ -115,7 +115,7 @@ public class GuiLabel extends GuiTextArea implements AutoStyleHandler<TextCompon
     @Override
     public GuiTextArea setText(String text) {
         super.setText(text);
-        getStyle().refreshCss(false, "set_text"); //Refresh style, for auto width and height
+        getStyle().refreshCss(getGui(), false, "set_text"); //Refresh style, for auto width and height
         return this;
     }
 

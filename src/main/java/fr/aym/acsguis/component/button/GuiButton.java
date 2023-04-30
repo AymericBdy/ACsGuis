@@ -2,6 +2,7 @@ package fr.aym.acsguis.component.button;
 
 import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.GuiComponent;
+import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.textarea.TextComponent;
 import fr.aym.acsguis.utils.GuiConstants;
 import fr.aym.acsguis.cssengine.font.CssFontHelper;
@@ -122,8 +123,8 @@ public class GuiButton extends GuiComponent<TextComponentStyleManager> implement
     }
 
     @Override
-    public void resize(int screenWidth, int screenHeight) {
-        super.resize(screenWidth, screenHeight);
+    public void resize(GuiFrame.APIGuiScreen gui, int screenWidth, int screenHeight) {
+        super.resize(gui, screenWidth, screenHeight);
 
         if(getIconHorizontalSize() == GuiConstants.ENUM_SIZE.RELATIVE) {
             setIconWidth((int) (getWidth() * getIconRelativeWidth()));

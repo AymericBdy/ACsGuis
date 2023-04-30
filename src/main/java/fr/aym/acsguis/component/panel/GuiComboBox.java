@@ -117,7 +117,7 @@ public class GuiComboBox extends GuiPanel implements TextComponent {
 			}
 
 			//style.setHeight(comboBoxHeight + sumEntriesButtonHeight());
-			style.refreshCss(false, "combo_deploy");
+			style.refreshCss(getGui(), false, "combo_deploy");
 			guiComboBoxButton.getStyle().getHeight().setAbsolute(comboBoxHeight);
 			
 			for (GuiEntryButton entryButton : entriesButton) {
@@ -125,7 +125,7 @@ public class GuiComboBox extends GuiPanel implements TextComponent {
 				entryButton.setVisible(true);
 			}
 
-			style.refreshCss(false, "combo_deploy");
+			style.refreshCss(getGui(), false, "combo_deploy");
 			style.setZLevel(500);
 			developed = true;
 		}
@@ -144,7 +144,7 @@ public class GuiComboBox extends GuiPanel implements TextComponent {
 				entryButton.setVisible(false);
 			}
 
-			style.refreshCss(false, "combo_deploy");
+			style.refreshCss(getGui(), false, "combo_deploy");
 			style.setZLevel(1);
 			developed = false;
 		}

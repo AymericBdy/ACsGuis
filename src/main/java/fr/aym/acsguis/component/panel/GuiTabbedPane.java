@@ -119,7 +119,7 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
 			}
 		}
 		for(GuiComponent child : getChildComponents())
-			child.getStyle().refreshCss(false, "tab_selection_change");
+			child.getStyle().refreshCss(getGui(), false, "tab_selection_change");
 	}
 	
 	public class GuiTabbedPaneButton extends GuiButton {
@@ -186,11 +186,6 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
 	@Override
 	public Priority getPriority(ComponentStyleManager forT) {
 		return forT.getOwner() instanceof GuiTabbedPaneButton ? Priority.PARENT : super.getPriority(forT);
-	}
-
-	@Override
-	public void resize(int screenWidth, int screenHeight) {
-		super.resize(screenWidth, screenHeight);
 	}
 
 	@Override

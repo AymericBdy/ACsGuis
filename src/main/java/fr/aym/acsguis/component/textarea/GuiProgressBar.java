@@ -128,11 +128,6 @@ public class GuiProgressBar extends GuiComponent<GuiProgressBar.ProgressBarStyle
             super(component);
         }
 
-        @Override
-        public void updateComponentSize(int screenWidth, int screenHeight) {
-            super.updateComponentSize(screenWidth, screenHeight);
-        }
-
         public ProgressBarStyleManager setProgressTextColor(int progressTextColor) {
             this.progressTextColor = progressTextColor;
             return this;

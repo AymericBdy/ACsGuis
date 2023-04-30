@@ -59,7 +59,7 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 				if (this.layout != null)
 					c.getStyle().removeAutoStyleHandler(this.layout);
 			}
-			c.getStyle().refreshCss(false, "layout_change");
+			c.getStyle().refreshCss(getGui(), false, "layout_change");
 		}
 		for(GuiComponent<?> c : childComponents)
 		{
@@ -70,7 +70,7 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 					if (this.layout != null)
 						c.getStyle().removeAutoStyleHandler(this.layout);
 				}
-				c.getStyle().refreshCss(false, "layout_change");
+				c.getStyle().refreshCss(getGui(), false, "layout_change");
 			}
 		}
 		this.layout = layout;
@@ -152,7 +152,7 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 			GuiComponent component = queuedComponentsIterator.next();
 			if(getStyle().getCssStack() != null)
 				component.getStyle().reloadCssStack();
-			component.resize(GuiFrame.resolution.getScaledWidth(), GuiFrame.resolution.getScaledHeight());
+			component.resize(getGui(), GuiFrame.resolution.getScaledWidth(), GuiFrame.resolution.getScaledHeight());
 			getChildComponents().add(component);
 			//the resize already refresh the style component.getStyle().refreshCss(false);
 			
@@ -170,12 +170,9 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 	}
 
 	@Override
-	public void resize(int screenWidth, int screenHeight) {
-		super.resize(screenWidth, screenHeight);
-
-		for(GuiComponent component : this.getReversedChildComponents()) {
-			component.resize(screenWidth, screenHeight);
-		}
+	public void resize(GuiFrame.APIGuiScreen gui, int screenWidth, int screenHeight) {
+		super.resize(gui, screenWidth, screenHeight);
+		this.getReversedChildComponents().forEach(component -> component.resize(gui, screenWidth, screenHeight));
 	}
 
 	public void flushRemovedComponents()

@@ -90,7 +90,7 @@ public abstract class GuiSearchField extends GuiPanel
 				if(maxElementCount != -1 && y1 > maxElementCount*lineHeight)
 					break;
 			}
-			potentialMatches.getStyle().refreshCss(false, "search_bar_upd");
+			potentialMatches.getStyle().refreshCss(getGui(), false, "search_bar_upd");
 		});
 	}
 
