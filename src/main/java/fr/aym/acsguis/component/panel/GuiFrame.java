@@ -214,8 +214,9 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 				getGuiScreen().scaleY = scale[1];
 
 				//And adapt component position (for relative positions, eg : center of the screen)
-				int parentWidth = (int) (screenWidth/getGuiScreen().scaleX);
-				int parentHeight = (int) (screenHeight/getGuiScreen().scaleY);
+				//Fix 23.05.23 : don't use given screenWidth and screenHeight because the old scale was applied
+				int parentWidth = (int) (GuiFrame.resolution.getScaledWidth()/getGuiScreen().scaleX);
+				int parentHeight = (int) (GuiFrame.resolution.getScaledHeight()/getGuiScreen().scaleY);
 
 				computedX = getXPos().computeValue(parentWidth, parentHeight, parentWidth, getRenderWidth());
 				computedY = getYPos().computeValue(parentWidth, parentHeight, parentHeight, getRenderHeight());
