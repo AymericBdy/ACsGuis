@@ -5,6 +5,7 @@ import fr.aym.acsguis.component.button.GuiButton;
 import fr.aym.acsguis.component.button.GuiButtonWithItem;
 import fr.aym.acsguis.component.layout.GridLayout;
 import fr.aym.acsguis.component.layout.GuiScaler;
+import fr.aym.acsguis.component.list.GuiDropdownList;
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.panel.GuiScrollPane;
@@ -19,10 +20,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
 import java.awt.Color;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GuiDnxDebug extends GuiFrame {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(ACsGuiApi.RES_LOC_ID, "css/dnx_debug.css");
@@ -211,6 +209,20 @@ public class GuiDnxDebug extends GuiFrame {
         general = new GuiPanel(0, 0, 0, 0);
         general.setCssId("loadinglog");
         pane.addTab(TextFormatting.GOLD + "Erreurs", general);
+        general.setLayout(new GridLayout(-1, 20, 0, GridLayout.GridDirection.HORIZONTAL, 1));
+        general.add(new GuiDropdownList("Test dropdown", Arrays.asList("t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10"), (s) -> System.out.println("Tu as cliqué sur " + s)));
+        general.add(new GuiLabel("ptdrrrrrr"));
+        general.add(new GuiLabel("LOL"));
+        general.add(new GuiLabel("the end"));
+        general.add(new GuiLabel("test2"));
+        general.add(new GuiLabel("test3"));
+        general.add(new GuiLabel("test4"));
+        general.add(new GuiLabel("test5"));
+        general.add(new GuiLabel("test6"));
+        general.add(new GuiLabel("test7"));
+        general.add(new GuiLabel("test8"));
+        general.add(new GuiLabel("test9"));
+        general.add(new GuiLabel("test10"));
         /*pane.getTabButton(3).addClickListener((mx, my, button) -> {
             if(button == 0)
                 Minecraft.getMinecraft().addScheduledTask(() -> Minecraft.getMinecraft().displayGuiScreen(new GuiLoadingErrors().getGuiScreen()));

@@ -20,7 +20,8 @@ public enum EnumComponentType
     SLOT,
     PROGRESS_BAR,
     ENTITY_RENDER,
-    CAMERA_VIEW;
+    CAMERA_VIEW,
+    DROPDOWN_LIST;
 
     public static EnumComponentType fromString(String value) {
         for(EnumComponentType t : values())

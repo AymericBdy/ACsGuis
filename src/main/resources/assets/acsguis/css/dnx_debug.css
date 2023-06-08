@@ -174,3 +174,13 @@ tabbed_pane > button:hover, tabbed_pane > button:active {
     bottom: 0;
     height: 50%;
 }
+
+
+#loadinglog>label
+{
+    top:auto;
+}
+#loadinglog>label:hover
+{
+    background-color: lightgray;
+}

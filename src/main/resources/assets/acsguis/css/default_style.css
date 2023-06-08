@@ -206,3 +206,55 @@ button_with_icon
     height: 40px;
     background-color: translucent;
 }
+
+/* Basic dropdown list style */
+
+dropdown_list
+{
+    background-color: black;
+    color: lightgray;
+    width: 400px;
+    padding-left: 4px;
+    padding-right: 4px;
+    height: 20px;
+    z-index: 500;
+}
+
+dropdown_list:hover
+{
+    color: white;
+}
+
+dropdown_list>button
+{
+    background: none;
+    width: 100%;
+    border-position: internal;
+    border: 1px gray;
+}
+
+dropdown_list>button:hover
+{
+    border-color: white;
+}
+
+dropdown_list>scroll_pane
+{
+    top: 20px;
+    height: 80px;
+}
+
+dropdown_list label
+{
+    background-color: translucent;
+    text-align: center;
+    top: auto;
+    left: auto;
+    width: auto;
+    height: auto;
+}
+
+dropdown_list label:hover
+{
+    background-color: lightgray;
+}
