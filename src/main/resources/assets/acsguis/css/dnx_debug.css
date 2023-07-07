@@ -140,7 +140,6 @@ tabbed_pane > button:hover, tabbed_pane > button:active {
     height: 60%;
 }
 
-
 .property_horizontal
 {
     width: 100%;
@@ -183,4 +182,12 @@ tabbed_pane > button:hover, tabbed_pane > button:active {
 #loadinglog>label:hover
 {
     background-color: lightgray;
+}
+
+
+button_with_icon
+{
+    width: 400px;
+    height: 40px;
+    background-color: translucent;
 }

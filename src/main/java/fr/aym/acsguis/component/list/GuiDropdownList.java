@@ -1,39 +1,42 @@
 package fr.aym.acsguis.component.list;
 
 import fr.aym.acsguis.component.EnumComponentType;
+import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.button.GuiButton;
 import fr.aym.acsguis.component.layout.GridLayout;
 import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.panel.GuiScrollPane;
-import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
 import fr.aym.acsguis.component.textarea.GuiLabel;
 import fr.aym.acsguis.cssengine.positionning.Size;
-import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.event.listeners.mouse.IMouseClickListener;
 import fr.aym.acsguis.utils.GuiConstants;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class GuiDropdownList extends GuiPanel
-{
+public class GuiDropdownList extends GuiPanel implements IMouseClickListener {
     private final GuiButton button;
     private final GuiPanel panel;
     private String selectedElement;
+    @Nullable
+    private Consumer<String> changeCallback;
 
-    public GuiDropdownList(String label, List<String> elements, @Nullable Consumer<String> changeCallback)
-    {
+    public GuiDropdownList(String label, List<String> elements) {
         super();
         panel = new GuiScrollPane();
         add((button = new GuiButton(label)).addClickListener((mouseX, mouseY, mouseButton) -> panel.setVisible(!panel.isVisible())));
 
         panel.setLayout(new GridLayout(new Size.SizeValue(1, GuiConstants.ENUM_SIZE.RELATIVE), new Size.SizeValue(20, GuiConstants.ENUM_SIZE.ABSOLUTE), new Size.SizeValue(1, GuiConstants.ENUM_SIZE.ABSOLUTE), GridLayout.GridDirection.HORIZONTAL, 1));
-        for(String s : elements)
-        {
+        setElements(elements);
+        panel.setVisible(false);
+        add(panel);
+    }
+
+    public void setElements(List<String> elements) {
+        panel.removeAllChilds();
+        for (String s : elements) {
             panel.add(new GuiLabel(s).addClickListener((mouseX, mouseY, mouseButton) -> {
                 selectedElement = s;
                 panel.setVisible(false);
@@ -41,8 +44,16 @@ public class GuiDropdownList extends GuiPanel
                     changeCallback.accept(s);
             }));
         }
-        panel.setVisible(false);
-        add(panel);
+    }
+
+    public GuiDropdownList setChangeCallback(@Nullable Consumer<String> changeCallback) {
+        this.changeCallback = changeCallback;
+        return this;
+    }
+
+    @Nullable
+    public Consumer<String> getChangeCallback() {
+        return changeCallback;
     }
 
     @Override
@@ -50,19 +61,28 @@ public class GuiDropdownList extends GuiPanel
         return EnumComponentType.DROPDOWN_LIST;
     }
 
-    public GuiButton getButton()
-    {
+    public GuiButton getButton() {
         return button;
     }
 
-    public GuiPanel getPanel()
-    {
+    public GuiPanel getPanel() {
         return panel;
     }
 
-    public String getSelectedElement()
-    {
+    public void setSelectedElement(String selectedElement) {
+        this.selectedElement = selectedElement;
+    }
+
+    public String getSelectedElement() {
         return selectedElement;
+    }
+
+    public void closeDropdown() {
+        panel.setVisible(false);
+    }
+
+    public void setLabel(String label) {
+        getButton().setText(label);
     }
 
     @Override
@@ -71,8 +91,25 @@ public class GuiDropdownList extends GuiPanel
     }
 
     @Override
-	public boolean isMouseOver(int mouseX, int mouseY)
-	{
-		return mouseX >= getScreenX() && mouseX < getScreenX() + getWidth() && mouseY >= getScreenY() && mouseY < getScreenY() + getHeight() + (panel.isVisible() ? panel.getHeight() : 0);
-	}
+    public boolean isMouseOver(int mouseX, int mouseY) {
+        return mouseX >= getScreenX() && mouseX < getScreenX() + getWidth() && mouseY >= getScreenY() && mouseY < getScreenY() + getHeight() + (panel.isVisible() ? panel.getHeight() : 0);
+    }
+
+    @Override
+    public GuiComponent<? extends ComponentStyleManager> setParent(GuiPanel parent) {
+        if (this.parent != null && parent != this.parent) {
+            this.parent.getClickListeners().remove(this);
+        }
+        if (parent != null && parent != this.parent) {
+            parent.addClickListener(this);
+        }
+        return super.setParent(parent);
+    }
+
+    @Override
+    public void onMouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (!isMouseOver(mouseX, mouseY)) {
+            closeDropdown();
+        }
+    }
 }

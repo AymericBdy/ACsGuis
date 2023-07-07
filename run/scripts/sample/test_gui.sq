@@ -34,6 +34,9 @@ define gui frame monGui:
 				    print text of this_component
 				    set style of this_component to "font-size: 10px;"
 				    print style of this_component
+				    set {box} to this_component
+				    set {text} to "test set text"
+                    set text of {box} to {text}
 
 				print "test3"
 				#on component tick:

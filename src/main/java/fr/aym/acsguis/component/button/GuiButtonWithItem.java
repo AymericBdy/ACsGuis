@@ -9,37 +9,37 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 
 public class GuiButtonWithItem extends GuiButton
 {
-    protected static final ResourceLocation buttonTextures = new ResourceLocation("textures/gui/widgets.png");
-    /** The string displayed on this control. */
-    public String hoverMessage;
-    public ItemStack icon;
-    /** True if this control is enabled, false to disable. */
-    public boolean enabled;
-    /** Hides the button completely if false. */
-    public boolean visible;
-    protected boolean hovered;
-    public int packedFGColour;
-    
-    private boolean hasNoBackground;
+    private ItemStack icon;
 
-    public GuiButtonWithItem(ItemStack icon, String hoverMessage)
+    private float itemSize = 32;
+
+    public GuiButtonWithItem(ItemStack icon)
     {
         super("");
-        this.enabled = true;
-        this.visible = true;
-        this.hoverMessage = hoverMessage;
-        
         this.icon = icon;
     }
 
-    public GuiButtonWithItem setHasNoBackgroundTexture()
-    {
-    	hasNoBackground = true;
-    	return this;
+    public ItemStack getIcon() {
+        return icon;
+    }
+
+    public GuiButtonWithItem setIcon(ItemStack icon) {
+        this.icon = icon;
+        return this;
+    }
+
+    public float getItemSize() {
+        return itemSize;
+    }
+
+    public GuiButtonWithItem setItemSize(float itemSize) {
+        this.itemSize = itemSize;
+        return this;
     }
 
     @Override
@@ -51,54 +51,20 @@ public class GuiButtonWithItem extends GuiButton
     public void drawBackground(int mouseX, int mouseY, float partialTicks) 
     {
         super.drawBackground(mouseX, mouseY, partialTicks);
-    	FontRenderer fontrenderer = mc.fontRenderer;
-        
-		float factorX = 1.0F;
-        float factorY = 1.0F;
-		if(getWidth() != 20)
-		{
-			factorX = (float)getWidth()/20;
-		}
-        if(getHeight() != 20)
-        {
-            factorY = (float)getHeight()/20;
-        }
-
-		if(!hasNoBackground)
-		{
-			GL11.glDisable(GL11.GL_LIGHTING);
-			GL11.glEnable(GL11.GL_ALPHA_TEST);
-			GL11.glColor4f(1, 1, 1, 1);
-	        drawTexturedBackground(mouseX, mouseY, partialTicks);
-		}
-        
-      /*  this.zLevel = 100;
-        itemRender.zLevel = 100.0F;*/
-
         GL11.glEnable(GL11.GL_DEPTH_TEST);
-        
+        GL11.glTranslated(getWidth()/2f - itemSize/2, getHeight()/2f - itemSize/2, 0);
+        FontRenderer fontrenderer = mc.fontRenderer;
+        float factorX = itemSize /16;
+        float factorY = itemSize /16;
         if(factorX != 1 || factorY != 1)
-        {
     		GL11.glScalef(factorX, factorY, 0);
-        }
         int x = (int) (getScreenX()/factorX);
         int y = (int) (getScreenY()/factorY);
-        mc.getRenderItem().renderItemAndEffectIntoGUI(icon, x+2, y+2);
-        mc.getRenderItem().renderItemOverlayIntoGUI(fontrenderer, icon, x+2, y+2, null);
-        //itemRender.renderItemOverlayIntoGUI(fontrenderer, mc.getTextureManager(), itemstack, yPosition, j, null);
+        mc.getRenderItem().renderItemAndEffectIntoGUI(icon, x, y);
+        mc.getRenderItem().renderItemOverlayIntoGUI(fontrenderer, icon, x, y, null);
         if(factorX != 1 || factorY != 1)
-        {
     		GL11.glScalef(1/factorX, 1/factorY, 0);
-        }
-
-        /*itemRender.zLevel = 0.0F;
-        this.zLevel = 0;*/
-    	//super.drawBackground(mouseX, mouseY, partialTicks);
-        
-        if(this.isHovered() && !StringUtils.isNullOrEmpty(hoverMessage))
-        {
-        	setHoveringText(fontrenderer.listFormattedStringToWidth(hoverMessage, 50));
-        }
+        GL11.glTranslated(-getWidth()/2f + itemSize/2, -getHeight()/2f + itemSize/2, 0);
     	RenderHelper.disableStandardItemLighting();
     }
 }
