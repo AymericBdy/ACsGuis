@@ -14,6 +14,7 @@ import fr.aym.acsguis.component.textarea.GuiLabel;
 import fr.aym.acsguis.component.textarea.GuiTextField;
 import fr.aym.acsguis.utils.GuiCssError;
 import net.minecraft.client.Minecraft;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -116,7 +117,7 @@ public class GuiDnxDebug extends GuiFrame {
             });
             pane1.add(box4);
 
-            GuiButtonWithItem icon = new GuiButtonWithItem(new ItemStack(Items.ACACIA_BOAT), "");
+            GuiButtonWithItem icon = new GuiButtonWithItem(new ItemStack(Blocks.GLASS_PANE));
             icon.setCssId("acacia.icon");
             pane1.add(icon);
 
@@ -210,7 +211,7 @@ public class GuiDnxDebug extends GuiFrame {
         general.setCssId("loadinglog");
         pane.addTab(TextFormatting.GOLD + "Erreurs", general);
         general.setLayout(new GridLayout(-1, 20, 0, GridLayout.GridDirection.HORIZONTAL, 1));
-        general.add(new GuiDropdownList("Test dropdown", Arrays.asList("t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10"), (s) -> System.out.println("Tu as cliqué sur " + s)));
+        general.add(new GuiDropdownList("Test dropdown", Arrays.asList("t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10")).setChangeCallback((s) -> System.out.println("Tu as cliqué sur " + s)));
         general.add(new GuiLabel("ptdrrrrrr"));
         general.add(new GuiLabel("LOL"));
         general.add(new GuiLabel("the end"));

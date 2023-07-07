@@ -51,6 +51,8 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 		if(this.layout != null) {
 			this.layout.clear();
 		}
+		if (!dif)
+			return;
 		for(GuiComponent<?> c : queuedComponents)
 		{
 			if(dif) {
