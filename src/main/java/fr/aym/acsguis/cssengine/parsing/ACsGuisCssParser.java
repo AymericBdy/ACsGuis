@@ -136,10 +136,9 @@ public class ACsGuisCssParser
         try {
             CssFileReader.readCssFile("Css of component "+component, new ByteArrayInputStream(css.getBytes(StandardCharsets.UTF_8)), visitor);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Cannot load css code "+css, e);
         }
-        ACsGuiApi.closeHudGui();
-
         //ACsGuiApi.log.debug("[CSS] Parsed style "+css);
         //System.out.println("Got style : "+cssStyleSheets);
         return data;
