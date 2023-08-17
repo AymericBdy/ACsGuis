@@ -75,7 +75,7 @@ Voici la liste des propriétés CSS supportées par ACsGuis. Toutes les proprié
 | padding-left            | Marge à gauche                                               |                           |
 | padding-top             | Marche en haut                                               |                           |
 | padding-right           | Marge à droit                                                |                           |
-| paddin-bottom           | Marge en bas                                                 |                           |
+| padding-bottom           | Marge en bas                                                 |                           |
 | text-align              | Alignement horizontal du texte ('left', 'right' ou 'center') |                           |
 | text-align-vertical     | Alignement vertical du texte ('top', 'bottom' ou 'center')   |                           |
 | component-layout        | Layout du composant, voir plus haut                          |                           |
