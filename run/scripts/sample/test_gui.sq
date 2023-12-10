@@ -17,6 +17,10 @@ define gui frame monGui:
 	add css component tabbed_pane with id "tabbed":
 		set css "color" to "#FFFFFF"
 		set {the_color} to 0xFF00FFFF
+
+		set {_M} to "https://www.minecraft.net/content/dam/games/minecraft/key-art/Games_Subnav_Minecraft-300x465.jpg"
+		set style to "background-image: url(%{_M}%);"
+
 		on component render background:
 		    draw rectangle at [render_x+10, render_y+10] with size [render_width-10, render_height-10] with color {the_color}
 		on component render foreground:

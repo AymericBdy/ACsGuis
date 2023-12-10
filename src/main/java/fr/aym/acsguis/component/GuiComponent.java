@@ -78,7 +78,7 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
     /**
      * Text to display when the component is hovered
      **/
-    protected List<String> hoveringText = new ArrayList<String>();
+    protected List<String> hoveringText = new ArrayList<>();
 
     protected final List<IMouseClickListener> clickListeners = new ArrayList<>();
     protected final List<IMouseExtraClickListener> extraClickListeners = new ArrayList<>();

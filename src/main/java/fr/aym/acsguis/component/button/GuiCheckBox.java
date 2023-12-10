@@ -2,13 +2,15 @@ package fr.aym.acsguis.component.button;
 
 import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.panel.GuiPanel;
+import fr.aym.acsguis.component.textarea.GuiLabel;
 import fr.aym.acsguis.component.textarea.TextComponent;
 import fr.aym.acsguis.event.listeners.mouse.IMouseClickListener;
 
 public class GuiCheckBox extends GuiPanel implements IMouseClickListener, TextComponent {
-    protected String text;
-    protected GuiCheckBoxButton checkButton;
+    protected GuiLabel checkLabel;
+    protected GuiButton checkButton;
     protected boolean isChecked;
+    protected String checkedSymbol = "x";
 
     public GuiCheckBox() {
         this("");
@@ -16,9 +18,9 @@ public class GuiCheckBox extends GuiPanel implements IMouseClickListener, TextCo
 
     public GuiCheckBox(String text) {
         super();
-        add(checkButton = new GuiCheckBoxButton(0, 0, 11, 11));
+        add(checkLabel = new GuiLabel(text));
+        add(checkButton = new GuiButton());
         setText(text);
-
         addClickListener(this);
     }
 
@@ -28,38 +30,9 @@ public class GuiCheckBox extends GuiPanel implements IMouseClickListener, TextCo
     }
 
     @Override
-    public void drawForeground(int mouseX, int mouseY, float partialTicks) {
-
-        if (text != null && !text.isEmpty()) {
-            String str = mc.fontRenderer.trimStringToWidth(text, getWidth() - (checkButton.getWidth() + 2));
-
-            if (str.length() < text.length()) {
-                str = mc.fontRenderer.trimStringToWidth(text, getWidth() - (checkButton.getWidth() + 8)) + "...";
-            }
-
-            mc.fontRenderer.drawString(str, getScreenX() + checkButton.getWidth() + 2, getScreenY() + 2, getStyle().getForegroundColor());
-            //drawString(mc.fontRenderer, str, getScreenX() + checkButton.getWidth() + 2, getScreenY() + 2, textColor);
-        }
-
-        super.drawForeground(mouseX, mouseY, partialTicks);
-    }
-
-    @Override
     public void onMouseClicked(int mouseX, int mouseY, int mouseButton) {
         setChecked(!isChecked);
         checkButton.onMouseClicked(mouseX, mouseY, mouseButton);
-    }
-
-    public class GuiCheckBoxButton extends GuiButton {
-        protected GuiCheckBoxButton(int x, int y, int width, int height) {
-            super(x, y, width, height);
-        }
-
-        @Override
-        public void drawForeground(int mouseX, int mouseY, float partialTicks) {
-            if (isChecked())
-                drawCenteredString(mc.fontRenderer, "x", getScreenX() + getWidth() / 2 + 1, getScreenY() + 1, GuiCheckBox.this.getStyle().getForegroundColor());
-        }
     }
 
     public boolean isChecked() {
@@ -68,19 +41,36 @@ public class GuiCheckBox extends GuiPanel implements IMouseClickListener, TextCo
 
     public GuiCheckBox setChecked(boolean isChecked) {
         this.isChecked = isChecked;
+        if(isChecked)
+            checkButton.setText(checkedSymbol);
+        else
+            checkButton.setText("");
         return this;
     }
 
     public GuiCheckBox setText(String text) {
-        this.text = text;
+        checkLabel.setText(text);
         return this;
     }
 
     public String getText() {
-        return text;
+        return checkLabel.getText();
     }
 
-    public GuiCheckBoxButton getCheckButton() {
+    public GuiLabel getCheckLabel() {
+        return checkLabel;
+    }
+
+    public GuiButton getCheckButton() {
         return checkButton;
+    }
+
+    public GuiCheckBox setCheckedSymbol(String checkedSymbol) {
+        this.checkedSymbol = checkedSymbol;
+        return this;
+    }
+
+    public String getCheckedSymbol() {
+        return checkedSymbol;
     }
 }

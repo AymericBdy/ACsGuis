@@ -86,10 +86,22 @@ checkbox
     color: white;
 }
 
+checkbox>label
+{
+    left: 20px;
+    width: 90px;
+    height: auto;
+    padding: 2px;
+    text-align-vertical: center;
+    text-shadow: disable;
+    color: white;
+    background-color: translucent;
+}
+
 checkbox>button
 {
     width: 11px;
-    height: 100%;
+    height: 11px;
     color: lightgray;
     border-color: gray;
     border-width: 1px;
