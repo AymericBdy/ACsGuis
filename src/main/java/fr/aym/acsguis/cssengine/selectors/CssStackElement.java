@@ -1,21 +1,18 @@
 package fr.aym.acsguis.cssengine.selectors;
 
 import fr.aym.acsguis.component.GuiComponent;
+import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
 import fr.aym.acsguis.cssengine.style.CssStyleProperty;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
 import net.minecraft.util.text.TextFormatting;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Chooses which style to apply, depending on the state of the element
  */
-public class CssStackElement
-{
+public class CssStackElement {
     private final CssStackElement parent;
     private final Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> propertyMap;
     /* Not multi-thread compatible */
@@ -33,10 +30,10 @@ public class CssStackElement
     }
 
     public void injectProperty(GuiComponent<?> component, EnumCssStyleProperties property, CssStyleProperty<?> value) {
-        if(universalSelector == null) {
+        if (universalSelector == null) {
             universalSelector = new CompoundCssSelector(new CssSelector<>(CssSelector.EnumSelectorType.A_COMPONENT, component), null, null);
             universalSelector.setId(Integer.MAX_VALUE); //Max id to override everything
-            if(!propertyMap.containsKey(universalSelector)) {
+            if (!propertyMap.containsKey(universalSelector)) {
                 propertyMap.put(universalSelector, new HashMap<>());
             }
         }
@@ -46,21 +43,20 @@ public class CssStackElement
     public void applyProperty(EnumSelectorContext context, EnumCssStyleProperties property, ComponentStyleManager to) {
         boolean out = false;//to.getOwner() instanceof GuiButton && ((GuiButton)to.getOwner()).getText().equals("Vehicles") && property == EnumCssStyleProperties.TEXTURE && context == EnumSelectorContext.NORMAL;//to.getOwner() instanceof GuiLabel && property == EnumCssStyleProperties.PADDING_LEFT;//(property == EnumCssStyleProperties.VISIBILITY) && to.getOwner() instanceof GuiButton;
         propertyMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach((e) -> {
-            if(out)
-                System.out.println("Try stack "+property+" "+context+" to "+to.getOwner()+" "+e.getKey());
-            if(e.getKey().applies(to, context))
-            {
+            if (out)
+                System.out.println("Try stack " + property + " " + context + " to " + to.getOwner() + " " + e.getKey());
+            if (e.getKey().applies(to, context)) {
                 CssStyleProperty<?> p = e.getValue().get(property);
-                if(out)
-                    System.out.println("Able to do it ! Found prop "+p);
-                if(p != null) {
+                if (out)
+                    System.out.println("Able to do it ! Found prop " + p);
+                if (p != null) {
                     matchingProperties.add(p);
                 }
             }
         });
-        if(!matchingProperties.isEmpty()) {
+        if (!matchingProperties.isEmpty()) {
             for (int i = (matchingProperties.size() - 1); i >= 0; i--) {
-                if (!matchingProperties.get(i).apply(context, to)) {
+                if (matchingProperties.get(i).apply(context, to)) {
                     matchingProperties.clear();
                     return;
                 }
@@ -68,13 +64,12 @@ public class CssStackElement
             }
             matchingProperties.clear();
         }
-        if(out)
-            System.out.println("Parents : "+getParent()+" "+to.getParent()+" "+matchingProperties);
-        if(getParent() != null && to.getParent() != null && property.inheritable)
-        {
+        if (out)
+            System.out.println("Parents : " + getParent() + " " + to.getParent() + " " + matchingProperties);
+        if (getParent() != null && to.getParent() != null && property.inheritable) {
             CssStackElement parentStack = this;
             ComponentStyleManager parentTo = to;
-            while(parentStack.getParent() != null && parentTo.getParent() != null) {
+            while (parentStack.getParent() != null && parentTo.getParent() != null) {
                 parentStack = parentStack.getParent();
                 parentTo = parentTo.getParent();
                 ComponentStyleManager finalParentTo = parentTo;
@@ -84,15 +79,15 @@ public class CssStackElement
                     if (e.getKey().applies(finalParentTo, context)) {
                         CssStyleProperty<?> p = e.getValue().get(property);
                         if (out)
-                            System.out.println("PAR Able to do it ! Found prop " + p+" for "+to.getOwner());
+                            System.out.println("PAR Able to do it ! Found prop " + p + " for " + to.getOwner());
                         if (p != null) {
                             matchingProperties.add(p);
                         }
                     }
                 });
-                if(!matchingProperties.isEmpty()) {
+                if (!matchingProperties.isEmpty()) {
                     for (int i = (matchingProperties.size() - 1); i >= 0; i--) {
-                        if (!matchingProperties.get(i).apply(context, to)) {
+                        if (matchingProperties.get(i).apply(context, to)) {
                             matchingProperties.clear();
                             return;
                         }
@@ -102,15 +97,23 @@ public class CssStackElement
                 matchingProperties.clear();
             }
         }
-        else
-            matchingProperties.clear();
+        // If we are there, the property wasn't applied: apply auto style if there is any
+        if (property.isDefaultAuto) {
+            Collection<AutoStyleHandler<?>> handlers = to.getAutoStyleHandlers();
+            for (AutoStyleHandler.Priority p : AutoStyleHandler.Priority.values()) {
+                for (AutoStyleHandler a : handlers) {
+                    if (a.getPriority(to) == p && a.getModifiedProperties(to).contains(property)) {
+                        if (a.handleProperty(property, context, to))
+                            return;
+                    }
+                }
+            }
+        }
     }
 
     public void applyAllProperties(EnumSelectorContext context, ComponentStyleManager to) {
-        for(EnumSelectorContext context1 : EnumSelectorContext.values())
-        {
-            if(context1 == context || context1.isParent(context))
-            {
+        for (EnumSelectorContext context1 : EnumSelectorContext.values()) {
+            if (context1 == context || context1.isParent(context)) {
                 for (EnumCssStyleProperties properties : EnumCssStyleProperties.values()) {
                     applyProperty(context1, properties, to);
                 }
@@ -126,14 +129,14 @@ public class CssStackElement
             l.add(TextFormatting.GOLD+"========");
         }*/
         propertyMap.forEach((sel, props) -> {
-            l.add((sel.applies(to, context) ? TextFormatting.GREEN : TextFormatting.RED)+"Selector : ");
+            l.add((sel.applies(to, context) ? TextFormatting.GREEN : TextFormatting.RED) + "Selector : ");
             sel.addProperties(l);
             l.add("Properties : ");
             props.forEach((prop, value) -> {
-                if(value.getValue() == null)
-                    l.add(prop.key+" = auto/none");
+                if (value.getValue() == null)
+                    l.add(prop.key + " = auto/none");
                 else
-                    l.add(prop.key+" = "+value.getValue().toString());
+                    l.add(prop.key + " = " + value.getValue().toString());
             });
             l.add("========");
         });

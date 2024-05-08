@@ -16,12 +16,7 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
 
     private boolean autoScroll;
 
-	public GuiScrollPane() {
-		this(0, 0, 0, 0);
-	}
-    public GuiScrollPane(int x, int y, int width, int height) {
-    	super(x, y, width, height);
-    	
+    public GuiScrollPane() {
 		xSlider = new GuiSlider(true);
 		ySlider = new GuiSlider(false);
 	    

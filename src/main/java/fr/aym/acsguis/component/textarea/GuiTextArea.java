@@ -43,10 +43,6 @@ public class GuiTextArea extends GuiComponent<TextComponentStyleManager> impleme
     protected float textScale = 1;
 
     public GuiTextArea() {
-        this(0, 0, 100, 50);
-    }
-	public GuiTextArea(int x, int y, int width, int height) {
-		super(x, y, width, height);
 		setEditable(true);
 
 		setMaxTextLength(140);
@@ -61,6 +57,10 @@ public class GuiTextArea extends GuiComponent<TextComponentStyleManager> impleme
 		addMoveListener(this);
 		addFocusListener(this);
         addWheelListener(this);
+    }
+	public GuiTextArea(String text) {
+        this();
+        setText(text);
 	}
 
     @Override
@@ -817,6 +817,10 @@ public class GuiTextArea extends GuiComponent<TextComponentStyleManager> impleme
     public GuiTextArea setEditable(boolean editable) {
         this.editable = editable;
 	    return this;
+    }
+
+    public GuiTextArea setRegex(String regex) {
+        return setRegexPattern(Pattern.compile(regex));
     }
 
     public GuiTextArea setRegexPattern(Pattern regexPattern) {

@@ -69,8 +69,8 @@ public abstract class GuiContainer extends GuiFrame implements IMouseClickListen
     
     protected final List<GuiSlot> slots = new ArrayList<GuiSlot>();
 	
-	public GuiContainer(int x, int y, int width, int height, GuiScaler scale) {
-		super(x, y, width, height, scale);
+	public GuiContainer(GuiScaler scale) {
+		super(scale);
 		addClickListener(this);
 		addExtraClickListener(this);
 		addMoveListener(this);
@@ -93,7 +93,9 @@ public abstract class GuiContainer extends GuiFrame implements IMouseClickListen
         slots.clear();
 
         for(Slot slot : ((List<Slot>)inventorySlots.inventorySlots)) {
-            GuiSlot guiSlot = new GuiSlot(slot.xPos, slot.yPos, slot);
+            GuiSlot guiSlot = new GuiSlot(slot);
+            guiSlot.getStyle().getXPos().setAbsolute(slot.xPos);
+            guiSlot.getStyle().getYPos().setAbsolute(slot.yPos);
             slots.add(guiSlot);
             add(guiSlot);
         }

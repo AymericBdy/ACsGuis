@@ -267,4 +267,8 @@ public interface ComponentStyleManager {
     int getTextureWidth();
 
     ComponentStyleManager setTextureWidth(int textureWidth);
+
+    GuiConstants.COMPONENT_DISPLAY getDisplay();
+
+    ComponentStyleManager setDisplay(GuiConstants.COMPONENT_DISPLAY display);
 }

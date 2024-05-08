@@ -5,8 +5,8 @@ import fr.aym.acsguis.component.GuiComponent;
 
 public class GuiCameraView extends GuiComponent {
 	
-	public GuiCameraView(int x, int y, int width, int height) {
-		super(x, y, width, height);
+	public GuiCameraView() {
+		super();
 	}
 
 	@Override

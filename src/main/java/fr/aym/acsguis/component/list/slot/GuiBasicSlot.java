@@ -14,19 +14,25 @@ public class GuiBasicSlot extends GuiSlot
 {
 	protected GuiLabel entryNameLabel;
 	
-	public GuiBasicSlot(GuiList list, int n, String entryName) {
-		super(list, 0, 30 * n + list.getListPaddingTop(), 0, 25, n, entryName);
+	public GuiBasicSlot(GuiList list, int entryId, String entryName) {
+		super(list, entryId, entryName);
 
-		style.getWidth().setRelative(0.5f, RELATIVE_INT);
+		//TODO THIS IS BAD
 		style.getXPos().setRelative(0.25f, RELATIVE_INT);
+		style.getYPos().setAbsolute(30 * entryId + list.getListPaddingTop());
+		style.getWidth().setRelative(0.5f, RELATIVE_INT);
+		style.getHeight().setAbsolute(25);
 
 		style.setBackgroundColor(new Color(0,0,0,0.3f).getRGB());
 		style.setBorderSize(new CssIntValue(1));
 		style.setBorderPosition(ComponentStyleManager.BORDER_POSITION.INTERNAL);
 		style.setBorderColor(new Color(206, 206, 206,255).getRGB());
 		
-		entryNameLabel = new GuiLabel(0,8, 0,9, entryName);
+		entryNameLabel = new GuiLabel(entryName);
+		//TODO THIS IS BAD
+		entryNameLabel.getStyle().getYPos().setAbsolute(8);
 		entryNameLabel.getStyle().getWidth().setRelative(1, RELATIVE_INT);
+		entryNameLabel.getStyle().getHeight().setAbsolute(9);
 		entryNameLabel.getStyle().setHorizontalTextAlignment(GuiConstants.HORIZONTAL_TEXT_ALIGNMENT.CENTER);
 		
 		add(entryNameLabel);

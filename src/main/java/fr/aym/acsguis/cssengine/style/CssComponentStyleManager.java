@@ -71,6 +71,8 @@ public class CssComponentStyleManager implements ComponentStyleManager
 
     protected Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> customStyle;
 
+    protected GuiConstants.COMPONENT_DISPLAY display = GuiConstants.COMPONENT_DISPLAY.BLOCK;
+
     public CssComponentStyleManager(GuiComponent<?> component)
     {
         this.component = component;
@@ -101,6 +103,7 @@ public class CssComponentStyleManager implements ComponentStyleManager
         }
         float sx = gui != null ? gui.getScaleX() : 1;
         float sy = gui != null ? gui.getScaleY() : 1;
+        //TODO CASCADE LAYOUT UPDATE ?
         if(getWidth().isDirty() || getHeight().isDirty())
             updateComponentSize((int) (GuiFrame.resolution.getScaledWidth()/sx), (int) (GuiFrame.resolution.getScaledHeight()/sy));
         if(getXPos().isDirty() || getYPos().isDirty())
@@ -289,6 +292,9 @@ public class CssComponentStyleManager implements ComponentStyleManager
         //System.out.println("Compute "+getOwner()+" y and from "+computedY);
         computedY = getYPos().computeValue(screenWidth, screenHeight, parentHeight, getRenderHeight());
         //System.out.println("Got "+computedY);
+
+        // IN LAYOUT : MARK POS AS AUTO DURING CSS PROPS APPLY
+        // THEN HERE COMPUTE THE ACTUAL POS
     }
 
     @Override
@@ -429,6 +435,17 @@ public class CssComponentStyleManager implements ComponentStyleManager
     @Override
     public ComponentStyleManager setTextureWidth(int textureWidth) {
         this.textureWidth = textureWidth;
+        return this;
+    }
+
+    @Override
+    public GuiConstants.COMPONENT_DISPLAY getDisplay() {
+        return display;
+    }
+
+    @Override
+    public ComponentStyleManager setDisplay(GuiConstants.COMPONENT_DISPLAY display) {
+        this.display = display;
         return this;
     }
 

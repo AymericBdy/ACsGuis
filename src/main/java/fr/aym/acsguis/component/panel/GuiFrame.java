@@ -91,18 +91,8 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	 * @since 22/09/2020 by Aym'
 	 */
 	private final GuiScaler scale;
-	
-	public GuiFrame(GuiScaler scale) {
-		this(0,0, scale);
-		style.getWidth().setRelative(1, CssValue.Unit.RELATIVE_INT);
-		style.getHeight().setRelative(1, CssValue.Unit.RELATIVE_INT);
-	}
 
-	public GuiFrame(int width, int height, GuiScaler scale) {
-		this(0, 0, width, height, scale);
-	}
-	public GuiFrame(int x, int y, int width, int height, GuiScaler scale) {
-		super(x, y, width, height);
+	public GuiFrame(GuiScaler scale) {
 		this.scale = scale;
 		this.guiScreen = new APIGuiScreen(this);
 		setFocused(true);

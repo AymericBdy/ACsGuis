@@ -16,10 +16,10 @@ import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.ABSOLU
 import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.RELATIVE_INT;
 
 public enum EnumCssStyleProperties {
-    BACKGROUND_COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setBackgroundColor(p.getValue()), "background-color", false, true),
-    COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setForegroundColor(p.getValue()), "color", false, true),
+    BACKGROUND_COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setBackgroundColor(p.getValue()), "background-color", false, false, true),
+    COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setForegroundColor(p.getValue()), "color", false, false, true),
     BORDER_COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setBorderColor(p.getValue()), "border-color"),
-    TEXTURE(CssHelper.TEXTURE_SPRITE, (ctx, p, c) -> c.setTexture(p.getValue()), "background-image", true),
+    TEXTURE(CssHelper.TEXTURE_SPRITE, (ctx, p, c) -> c.setTexture(p.getValue()), "background-image", false, true),
     VISIBILITY(CssHelper.STRING, (ctx, p, c) -> c.setVisible(!p.getValue().equals("hidden")), "visibility"),
     FONT_SIZE(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (c instanceof TextComponentStyleManager) {
@@ -44,7 +44,7 @@ public enum EnumCssStyleProperties {
         if (c instanceof TextComponentStyleManager) {
             ((TextComponentStyleManager) c).setFontFamily(p.getValue());
         }
-    }, "font-family", false, true),
+    }, "font-family", false, false, true),
     BORDER_WIDTH(CssHelper.CSS_INT, (ctx, p, c) -> c.setBorderSize(p.getValue()), "border-width"),
     BORDER_STYLE(CssHelper.STRING, (ctx, p, c) -> {
         if (!p.getValue().equals("solid")) {
@@ -57,7 +57,7 @@ public enum EnumCssStyleProperties {
         } else {
             c.setBorderPosition(ComponentStyleManager.BORDER_POSITION.EXTERNAL);
         }
-    }, "border-position", false, true),
+    }, "border-position", false, false, true),
     BACKGROUND_REPEAT(CssHelper.STRING, (ctx, p, c) -> {
         switch (p.getValue()) {
             case "repeat":
@@ -214,7 +214,7 @@ public enum EnumCssStyleProperties {
         if (c instanceof PanelStyleManager) {
             ((PanelStyleManager) c).setLayout(p.getValue());
         }
-    }, "component-layout", true),
+    }, "component-layout", false, true),
     //NOTE : for the positioning, the order is important ! And other properties as padding must have been set before for labels
     WIDTH(CssHelper.CSS_INT, (ctx, p, c) -> {
         //System.out.println("Set width of "+c.getOwner()+" to "+p.getValue());
@@ -223,7 +223,7 @@ public enum EnumCssStyleProperties {
         } else {
             c.getWidth().setAbsolute(p.getValue().intValue());
         }
-    }, "width", false, true),
+    }, "width", true),
     MAX_WIDTH(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (p.getValue().getUnit() != ABSOLUTE_INT) {
             c.getWidth().getMaxValue().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
@@ -244,7 +244,7 @@ public enum EnumCssStyleProperties {
         } else {
             c.getHeight().setAbsolute(p.getValue().intValue());
         }
-    }, "height"),
+    }, "height", true),
     MAX_HEIGHT(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (p.getValue().getUnit() != ABSOLUTE_INT) {
             c.getHeight().getMaxValue().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit());
@@ -265,28 +265,28 @@ public enum EnumCssStyleProperties {
         } else {
             c.getXPos().setAbsolute(p.getValue().intValue(), GuiConstants.ENUM_RELATIVE_POS.START);
         }
-    }, "left"),
+    }, "left", true),
     RIGHT(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (p.getValue().getUnit() != ABSOLUTE_INT) {
             c.getXPos().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit(), GuiConstants.ENUM_RELATIVE_POS.END);
         } else {
             c.getXPos().setAbsolute(p.getValue().intValue(), GuiConstants.ENUM_RELATIVE_POS.END);
         }
-    }, "right"),
+    }, "right", true),
     TOP(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (p.getValue().getUnit() != ABSOLUTE_INT) {
             c.getYPos().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit(), GuiConstants.ENUM_RELATIVE_POS.START);
         } else {
             c.getYPos().setAbsolute(p.getValue().intValue(), GuiConstants.ENUM_RELATIVE_POS.START);
         }
-    }, "top"),
+    }, "top", true),
     BOTTOM(CssHelper.CSS_INT, (ctx, p, c) -> {
         if (p.getValue().getUnit() != ABSOLUTE_INT) {
             c.getYPos().setRelative(p.getValue().intValue() / 100f, p.getValue().getUnit(), GuiConstants.ENUM_RELATIVE_POS.END);
         } else {
             c.getYPos().setAbsolute(p.getValue().intValue(), GuiConstants.ENUM_RELATIVE_POS.END);
         }
-    }, "bottom"),
+    }, "bottom", true),
     HORIZONTAL_POSITION(CssHelper.STRING, (ctx, p, c) -> {
         if (p.getValue().equals("center")) {
             c.getXPos().setRelative(0, RELATIVE_INT, GuiConstants.ENUM_RELATIVE_POS.CENTER);
@@ -311,7 +311,18 @@ public enum EnumCssStyleProperties {
         if (c instanceof GuiProgressBar.ProgressBarStyleManager) {
             ((GuiProgressBar.ProgressBarStyleManager) c).setProgressTextColor(p.getValue());
         }
-    }, "progress-bar-text-color");
+    }, "progress-bar-text-color"),
+    DISPLAY(CssHelper.STRING, (ctx, p, c) -> {
+        if (p.getType().isNone() || p.getValue().equals("none")) {
+            c.setDisplay(GuiConstants.COMPONENT_DISPLAY.NONE);
+        } else if (p.getValue().equals("block")) {
+            c.setDisplay(GuiConstants.COMPONENT_DISPLAY.BLOCK);
+        } else if (p.getValue().equals("inline")) {
+            c.setDisplay(GuiConstants.COMPONENT_DISPLAY.INLINE);
+        } else {
+            throw new IllegalArgumentException("Unsupported display value : " + p.getValue());
+        }
+    }, "display", false, true);
 
     /*
     overflow, border style, asymetric borders.....
@@ -320,21 +331,27 @@ public enum EnumCssStyleProperties {
     public final String key;
     public final DefinitionType<?> parser;
     public final CssStyleApplier<?> applyFunction;
+    public final boolean isDefaultAuto;
     public final boolean acceptsNullValue;
     public final boolean inheritable;
 
     <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key) {
-        this(parser, applyFunction, key, false, false);
+        this(parser, applyFunction, key, false);
     }
 
-    <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key, boolean acceptsNullValue) {
-        this(parser, applyFunction, key, acceptsNullValue, false);
+    <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key, boolean isDefaultAuto) {
+        this(parser, applyFunction, key, isDefaultAuto, isDefaultAuto, false);
     }
 
-    <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key, boolean acceptsNullValue, boolean inheritable) {
+    <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key, boolean isDefaultAuto, boolean acceptsNullValue) {
+        this(parser, applyFunction, key, isDefaultAuto, acceptsNullValue, false);
+    }
+
+    <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key, boolean isDefaultAuto, boolean acceptsNullValue, boolean inheritable) {
         this.applyFunction = applyFunction;
         this.key = key;
         this.parser = parser;
+        this.isDefaultAuto = isDefaultAuto;
         this.acceptsNullValue = acceptsNullValue;
         this.inheritable = inheritable;
     }

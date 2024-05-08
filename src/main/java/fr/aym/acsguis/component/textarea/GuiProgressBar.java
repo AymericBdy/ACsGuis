@@ -15,13 +15,20 @@ import java.awt.*;
 
 public class GuiProgressBar extends GuiComponent<GuiProgressBar.ProgressBarStyleManager> implements NumericComponent
 {
-	protected int minProgress, maxProgress, progress;
+	protected int minProgress, maxProgress = 100, progress;
 	protected final boolean horizontal;
 
 	protected String progressText = "";
 	
 	public GuiProgressBar() {
 		this(true);
+	}
+
+    public GuiProgressBar(boolean horizontal) {
+		this.horizontal = horizontal;
+		setMin(0);
+		setMax(100);
+		setProgress(0);
 	}
 
     @Override
@@ -33,13 +40,6 @@ public class GuiProgressBar extends GuiComponent<GuiProgressBar.ProgressBarStyle
     protected ProgressBarStyleManager createStyleManager() {
         return new ProgressBarStyleManager(this);
     }
-
-    public GuiProgressBar(boolean horizontal) {
-		this.horizontal = horizontal;
-		setMin(0);
-		setMax(100);
-		setProgress(0);
-	}
 
     @Override
     public void drawTexturedBackground(int mouseX, int mouseY, float partialTicks) {
@@ -118,9 +118,9 @@ public class GuiProgressBar extends GuiComponent<GuiProgressBar.ProgressBarStyle
         protected int fullProgressBarColor;
 
         /** Text horizontal alignment, relative to the GuiLabel {@link GuiConstants.HORIZONTAL_TEXT_ALIGNMENT} **/
-        protected GuiConstants.HORIZONTAL_TEXT_ALIGNMENT horizontalTextAlignment;
+        protected GuiConstants.HORIZONTAL_TEXT_ALIGNMENT horizontalTextAlignment = GuiConstants.HORIZONTAL_TEXT_ALIGNMENT.CENTER;
         /** Text horizontal alingment, relative to the GuiLabel {@link GuiConstants.VERTICAL_TEXT_ALIGNMENT} **/
-        protected GuiConstants.VERTICAL_TEXT_ALIGNMENT verticalTextAlignment;
+        protected GuiConstants.VERTICAL_TEXT_ALIGNMENT verticalTextAlignment = GuiConstants.VERTICAL_TEXT_ALIGNMENT.CENTER;
 
         protected int progressTextColor;
 

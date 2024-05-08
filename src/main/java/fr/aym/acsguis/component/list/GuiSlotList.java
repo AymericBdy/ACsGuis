@@ -16,7 +16,6 @@ public class GuiSlotList extends GuiPanel {
 	protected final List<GuiSlot> slots = new ArrayList<GuiSlot>();
 	
 	public GuiSlotList(GuiList list) {
-		super(0, 0, 0, 0);
 		this.list = list;
 		style.getWidth().setRelative(1, RELATIVE_INT);
 		style.setBackgroundColor(new Color(0,0,0,0).getRGB());

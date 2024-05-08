@@ -2,6 +2,7 @@ package fr.aym.acsguis.component.panel;
 
 import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.GuiComponent;
+import fr.aym.acsguis.component.layout.FlowLayout;
 import fr.aym.acsguis.component.style.PanelStyleManager;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
@@ -19,14 +20,7 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 	protected List<GuiComponent> queuedComponents = new ArrayList<GuiComponent>();
 	protected List<GuiComponent> toRemoveComponents = new ArrayList<GuiComponent>();
 
-	protected PanelLayout<?> layout;
-
-	public GuiPanel() {
-		super();
-	}
-	public GuiPanel(int x, int y, int width, int height) {
-		super(x, y, width, height);
-	}
+	protected PanelLayout<?> layout = new FlowLayout();
 
 	@Override
 	public EnumComponentType getType() {

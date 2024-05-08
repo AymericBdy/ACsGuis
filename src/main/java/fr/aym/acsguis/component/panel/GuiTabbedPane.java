@@ -74,8 +74,12 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
 			x += str.getWidth();
 		}
 
-		GuiTabbedPaneButton tabButton = new GuiTabbedPaneButton(tabsContainers.size(), x, 0, width, 20);
+		GuiTabbedPaneButton tabButton = new GuiTabbedPaneButton(tabsContainers.size());
 		tabButton.setText(tabName).getStyle().addAutoStyleHandler(this);
+		//TODO THIS IS BAD
+		tabButton.getStyle().getXPos().setAbsolute(x);
+		tabButton.getStyle().getWidth().setAbsolute(width);
+		tabButton.getStyle().getHeight().setAbsolute(20);
 		add(tabButton);
 		tabsButtons.add(tabButton);
 
@@ -124,8 +128,7 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
 	
 	public class GuiTabbedPaneButton extends GuiButton {
 		protected final int index;
-		protected GuiTabbedPaneButton(int index, int x, int y, int width, int height) {
-			super(x, y, width, height);
+		protected GuiTabbedPaneButton(int index) {
 			this.index = index;
 		}
 		

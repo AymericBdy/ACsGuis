@@ -17,15 +17,8 @@ import java.util.List;
 
 public class GuiLabel extends GuiTextArea implements AutoStyleHandler<TextComponentStyleManager> {
     public GuiLabel(String text) {
-        super(0, 0, 0, 0);
+        super(text);
         setEditable(false);
-        setText(text);
-    }
-
-    public GuiLabel(int x, int y, int width, int height, String text) {
-        super(x, y, width, height);
-        setEditable(false);
-        setText(text);
     }
 
     @Override

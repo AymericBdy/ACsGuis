@@ -21,6 +21,7 @@ import fr.aym.acsguis.event.listeners.mouse.IMouseExtraClickListener;
 import fr.aym.acsguis.event.listeners.mouse.IMouseMoveListener;
 import fr.aym.acsguis.event.listeners.mouse.IMouseWheelListener;
 import fr.aym.acsguis.utils.CircleBackground;
+import fr.aym.acsguis.utils.GuiConstants;
 import fr.aym.acsguis.utils.IGuiTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -98,23 +99,9 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
      * Creates a new component
      */
     public GuiComponent() {
-        this(0, 0, 0, 0);
-    }
-
-    /**
-     * Creates a new component this custom pos and size
-     *
-     * @deprecated Use the css to modify element size and position
-     */
-    @Deprecated
-    public GuiComponent(int x, int y, int width, int height) {
         style = createStyleManager();
         setEnabled(true);
         setVisible(true);
-        style.getXPos().setAbsolute(x);
-        style.getYPos().setAbsolute(y);
-        style.getWidth().setAbsolute(width);
-        style.getHeight().setAbsolute(height);
         setCanLooseFocus(true);
     }
 
@@ -277,7 +264,7 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
             GuiFrame.hoveringText = hoveringText;
         }
 
-        if (isHovered() && !isFocused() && !GuiFrame.hasDebugInfo) {
+        if (isHovered() && !GuiFrame.hasDebugInfo) {
             displayComponentOnDebugPane();
         }
     }
@@ -587,7 +574,7 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
     }
 
     public boolean isVisible() {
-        return style.isVisible() && (getParent() == null || getParent().isVisible());
+        return style.isVisible() && style.getDisplay() != GuiConstants.COMPONENT_DISPLAY.NONE && (getParent() == null || getParent().isVisible());
     }
 
     public boolean isEnabled() {

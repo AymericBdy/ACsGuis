@@ -15,12 +15,12 @@ import fr.aym.acsguis.component.textarea.GuiTextField;
 import fr.aym.acsguis.utils.GuiCssError;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
-import java.awt.Color;
+import java.awt.*;
+import java.util.List;
 import java.util.*;
 
 public class GuiDnxDebug extends GuiFrame {
@@ -33,9 +33,9 @@ public class GuiDnxDebug extends GuiFrame {
         //DnxCssParser.loadGui(this);
         GuiTabbedPane pane = new GuiTabbedPane();
 
-        GuiPanel general = new GuiPanel(0, 0, 0, 0);
+        GuiPanel general = new GuiPanel();
         general.setCssId("general");
-        general.add(new GuiLabel(50, 50, 0, 0, "DynamX debug - general").setCssClass("title"));
+        general.add(new GuiLabel("DynamX debug - general").setCssClass("title"));
         //Options :
         {
             GuiScrollPane pane1 = new GuiScrollPane();
@@ -125,9 +125,9 @@ public class GuiDnxDebug extends GuiFrame {
         }
         pane.addTab("General", general);
 
-        general = new GuiPanel(0, 0, 0, 0);
+        general = new GuiPanel();
         general.setCssId("terrain");
-        general.add(new GuiLabel(0, 0, 0, 0, "DynamX debug - terrain").setCssClass("title"));
+        general.add(new GuiLabel("DynamX debug - terrain").setCssClass("title"));
         int y = 0;
         {
             Map<EnumTerrainDebugOptions, GuiButton> terrainButtons = new HashMap<>();
@@ -167,7 +167,7 @@ public class GuiDnxDebug extends GuiFrame {
 
         general = new GuiPanel();
         general.setLayout(new GridLayout(-1, 20, 0, GridLayout.GridDirection.HORIZONTAL, 1));
-        general.add(new GuiLabel(0, 0, 0, 0, "DynamX debug - vehicles").setCssClass("title"));
+        general.add(new GuiLabel("DynamX debug - vehicles").setCssClass("title"));
         general.setCssId("vehicles");
         y = 0;
         {
@@ -207,7 +207,7 @@ public class GuiDnxDebug extends GuiFrame {
         }
         pane.addTab("Vehicles", general);
 
-        general = new GuiPanel(0, 0, 0, 0);
+        general = new GuiPanel();
         general.setCssId("loadinglog");
         pane.addTab(TextFormatting.GOLD + "Erreurs", general);
         general.setLayout(new GridLayout(-1, 20, 0, GridLayout.GridDirection.HORIZONTAL, 1));
@@ -229,7 +229,7 @@ public class GuiDnxDebug extends GuiFrame {
                 Minecraft.getMinecraft().addScheduledTask(() -> Minecraft.getMinecraft().displayGuiScreen(new GuiLoadingErrors().getGuiScreen()));
         });*/
 
-        general = new GuiPanel(0, 0, 0, 0);
+        general = new GuiPanel();
         general.setCssId("showcsslog");
         pane.addTab("Log CSS", general);
         pane.getTabButton(4).addClickListener((mx, my, button) -> {
@@ -241,7 +241,7 @@ public class GuiDnxDebug extends GuiFrame {
         add(pane);
 
 
-        add(new GuiLabel(0, 0, 0, 0, "Entièrement designé en CSS").setCssId("credits"));
+        add(new GuiLabel("Entièrement designé en CSS").setCssId("credits"));
 
         setCssId("lol");
         setCssCode("color: red; background-color: orange;");

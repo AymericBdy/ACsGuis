@@ -18,15 +18,11 @@ public class GuiSlot extends GuiComponent
     protected final Slot slot;
 
     public GuiSlot(Slot slot) {
-        super(0, 0, DEFAULT_SLOT_WIDTH, DEFAULT_SLOT_HEIGHT);
         this.slot = slot;
         style.setBackgroundColor(new Color(0,0,0,0).getRGB());
-    }
-
-    public GuiSlot(int x, int y, Slot slot) {
-        super(x, y, DEFAULT_SLOT_WIDTH, DEFAULT_SLOT_HEIGHT);
-        this.slot = slot;
-        style.setBackgroundColor(new Color(0,0,0,0).getRGB());
+		//TODO THIS IS BAD
+        style.getWidth().setAbsolute(DEFAULT_SLOT_WIDTH);
+        style.getHeight().setAbsolute(DEFAULT_SLOT_HEIGHT);
     }
 
     @Override

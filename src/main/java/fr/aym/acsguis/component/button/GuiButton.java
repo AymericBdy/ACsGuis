@@ -68,15 +68,6 @@ public class GuiButton extends GuiComponent<TextComponentStyleManager> implement
         setText(text);
     }
 
-    /**
-     * @deprecated Use the css to modify element size and position
-     */
-    @Deprecated
-    public GuiButton(int x, int y, int width, int height) {
-        super(x, y, width, height);
-        addClickListener(this);
-    }
-
     @Override
     public void drawTexturedBackground(int mouseX, int mouseY, float partialTicks)
     {

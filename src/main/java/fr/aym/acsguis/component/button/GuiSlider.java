@@ -34,7 +34,6 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
 	protected float step = 0.1F, wheelStep = 0.1F;
 	
 	public GuiSlider(boolean horizontal) {
-		super();
 		this.horizontal = horizontal;
 		add(sliderButton = new GuiSliderButton());
 		sliderButton.getStyle().getWidth().setRelative(1F / (horizontal ? 5 : 1), RELATIVE_INT);

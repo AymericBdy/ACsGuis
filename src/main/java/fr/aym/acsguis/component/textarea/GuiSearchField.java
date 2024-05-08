@@ -4,6 +4,7 @@ import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.panel.GuiScrollPane;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
+import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
 import net.minecraft.command.CommandBase;
@@ -49,7 +50,11 @@ public abstract class GuiSearchField extends GuiPanel
 			GuiLabel label;
 			for(final String name : names)
 			{
-				potentialMatches.add(label = new GuiLabel(0, y1, getWidth(), lineHeight, name));
+				potentialMatches.add(label = new GuiLabel(name));
+				//TODO THIS IS BAD
+				label.getStyle().getYPos().setAbsolute(y1);
+				label.getStyle().getWidth().setRelative(100, CssValue.Unit.RELATIVE_INT);
+				label.getStyle().getHeight().setAbsolute(lineHeight);
 				label.setCssClass("search_bar_match");
 				label.addClickListener((mouseX, mouseY, mouseButton) -> {
 					if(!isMultiSearch() || !field.getText().contains(","))
