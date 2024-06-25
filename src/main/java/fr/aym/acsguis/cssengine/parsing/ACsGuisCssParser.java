@@ -87,7 +87,7 @@ public class ACsGuisCssParser
     public static void addFont(ResourceLocation family, ResourceLocation location, CssFontStyle style) {
         if(fonts.containsKey(family))
             throw new IllegalStateException("Font "+family+" is already registered !");
-        if(location.getPath().endsWith(".ttf")) {
+        if(location.getPath().endsWith(".ttf") || location.getPath().endsWith(".otf")) {
             fonts.put(family, new TtfFontRenderer(location, style));
         }
         else if(location.getPath().endsWith(".png")) {
