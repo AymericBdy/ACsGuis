@@ -12,6 +12,7 @@ import fr.aym.acsguis.event.listeners.ITickListener;
 import fr.aym.acsguis.event.listeners.mouse.IMouseClickListener;
 import fr.aym.acsguis.event.listeners.mouse.IMouseMoveListener;
 import fr.aym.acsguis.event.listeners.mouse.IMouseWheelListener;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatAllowedCharacters;
@@ -84,7 +85,7 @@ public class GuiTextArea extends GuiComponent<TextComponentStyleManager> impleme
     }
 
     @Override
-    public void drawForeground(int mouseX, int mouseY, float partialTicks)
+    public void drawForeground(int mouseX, int mouseY, float partialTicks, boolean enableScissor)
     {
 		GuiAPIClientHelper.glScissor(getRenderMinX() + getPaddingLeft(), getRenderMinY() + getPaddingTop(), (getRenderMaxX() - getRenderMinX()) - (getPaddingLeft() + getPaddingRight()), (getRenderMaxY() - getRenderMinY()) - (getPaddingTop() + getPaddingBottom()));
 
@@ -103,19 +104,19 @@ public class GuiTextArea extends GuiComponent<TextComponentStyleManager> impleme
         }
         GlStateManager.scale(1f/textScale, 1f/textScale, 1);
 
-        GlStateManager.disableDepth();
+        /*GlStateManager.disableDepth();
         GlStateManager.disableAlpha();
-				/*Gui.drawRect(0, getRenderMinY(), mc.displayWidth, getRenderMinY()+10, Color.RED.getRGB());
+				Gui.drawRect(0, getRenderMinY(), mc.displayWidth, getRenderMinY()+10, Color.RED.getRGB());
 				Gui.drawRect(0, (int) y, mc.displayWidth, (int) (y+1), Color.GREEN.getRGB());
 				Gui.drawRect(0, (int) y+getStyle().getFontHeight(line), mc.displayWidth, (int) (y+getStyle().getFontHeight(line)+1), Color.BLUE.getRGB());
-				Gui.drawRect(0, (int) getRenderMinY()+getHeight()/2-1, mc.displayWidth, (int) (getRenderMinY()+getHeight()/2+1), Color.PINK.getRGB());*/
+				Gui.drawRect(0, (int) getRenderMinY()+getHeight()/2-1, mc.displayWidth, (int) (getRenderMinY()+getHeight()/2+1), Color.PINK.getRGB());
         //Gui.drawRect(0, getRenderMinY(), getMaxLineLength(), getRenderMaxX(), Color.PINK.getRGB());
         GlStateManager.enableAlpha();
-        GlStateManager.enableDepth();
+        GlStateManager.enableDepth();*/
         //TODOOLD VISUAL PLACING DEBUG
         CssFontHelper.popDrawing();
 
-        super.drawForeground(mouseX, mouseY, partialTicks);
+        super.drawForeground(mouseX, mouseY, partialTicks, enableScissor);
 	}
 
     protected void drawTextLines(List<String> lines, float scale)

@@ -209,35 +209,44 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
      * Draws this_component <br>
      * You can override drawBackground and drawForeground
      */
-    public final void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks, boolean enableScissor) {
         if (isVisible() && !MinecraftForge.EVENT_BUS.post(new ComponentRenderEvent.ComponentRenderAllEvent(this))) {
-
-            bindLayerBounds();
+            if(enableScissor)
+                bindLayerBounds();
 
             GlStateManager.translate(0, 0, getStyle().getZLevel());
             if (!MinecraftForge.EVENT_BUS.post(new ComponentRenderEvent.ComponentRenderBackgroundEvent(this))) {
-                drawBackground(mouseX, mouseY, partialTicks);
+                drawBackground(mouseX, mouseY, partialTicks, enableScissor);
+                /*GlStateManager.enableBlend();
+                GlStateManager.disableTexture2D();
+                GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+                GlStateManager.enableTexture2D();
+                GlStateManager.disableBlend();
+                GlStateManager.color(1, 1, 1, 1);*/
 
                 renderListeners.forEach(IRenderListener::onRenderBackground);
             }
             if (!MinecraftForge.EVENT_BUS.post(new ComponentRenderEvent.ComponentRenderForegroundEvent(this))) {
-                drawForeground(mouseX, mouseY, partialTicks);
+                GlStateManager.translate(0, 0, -0.02);
+                drawForeground(mouseX, mouseY, partialTicks, enableScissor);
                 renderListeners.forEach(IRenderListener::onRenderForeground);
+                GlStateManager.translate(0, 0, 0.02);
             }
             GlStateManager.translate(0, 0, -getStyle().getZLevel());
 
-            unbindLayerBounds();
-
+            if(enableScissor)
+                unbindLayerBounds();
         }
     }
 
     /**
      * Draws the component background (texture, color and borders)
      */
-    public void drawBackground(int mouseX, int mouseY, float partialTicks) {
+    public void drawBackground(int mouseX, int mouseY, float partialTicks, boolean enableScissor) {
         if (getScaledBorderSize() > 0) {
             if (style.getBorderPosition() == ComponentStyleManager.BORDER_POSITION.EXTERNAL) {
-                GuiAPIClientHelper.glScissor(getRenderMinX() - getScaledBorderSize(), getRenderMinY() - getScaledBorderSize(), getRenderMaxX() - getRenderMinX() + getScaledBorderSize() * 2, getRenderMaxY() - getRenderMinY() + getScaledBorderSize() * 2);
+                if(enableScissor)
+                    GuiAPIClientHelper.glScissor(getRenderMinX() - getScaledBorderSize(), getRenderMinY() - getScaledBorderSize(), getRenderMaxX() - getRenderMinX() + getScaledBorderSize() * 2, getRenderMaxY() - getRenderMinY() + getScaledBorderSize() * 2);
                 GuiAPIClientHelper.drawBorderedRectangle(getScreenX() - getScaledBorderSize(), getScreenY() - getScaledBorderSize(), getScreenX() + getWidth() + getScaledBorderSize(),
                         getScreenY() + getHeight() + getScaledBorderSize(), getScaledBorderSize(), style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
             } else {
@@ -245,11 +254,9 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
                         getScreenY() + getHeight(), getScaledBorderSize(), style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
             }
         } else {
-            //System.out.println("Back color of "+this+" is "+style.getBackgroundColor());
             CircleBackground.renderBackground(style.getBorderRadius(), getScreenX(), getScreenY(), getScreenX() + getWidth(), getScreenY() + getHeight(), style.getBackgroundColor());
             //GuiScreen.drawRect(getScreenX(), getScreenY(), getScreenX() + getWidth(), getScreenY() + getHeight(), style.getBackgroundColor());
         }
-
         GlStateManager.color(1, 1, 1, 1);
         drawTexturedBackground(mouseX, mouseY, partialTicks);
     }
@@ -272,7 +279,7 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
     /**
      * Draws the component foreground (child elements, text, ...)
      */
-    public void drawForeground(int mouseX, int mouseY, float partialTicks) {
+    public void drawForeground(int mouseX, int mouseY, float partialTicks, boolean enableScissor) {
         if (isHovered() && !hoveringText.isEmpty()) {
             GuiFrame.hoveringText = hoveringText;
         }

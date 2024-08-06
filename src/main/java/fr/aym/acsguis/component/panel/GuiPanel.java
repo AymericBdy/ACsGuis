@@ -199,13 +199,13 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 	}
 	
 	@Override
-	public void drawForeground(int mouseX, int mouseY, float partialTicks)
+	public void drawForeground(int mouseX, int mouseY, float partialTicks, boolean enableScissor)
 	{
 		for (GuiComponent component : getChildComponents()) {
-			component.render(mouseX, mouseY, partialTicks);
+			component.render(mouseX, mouseY, partialTicks, enableScissor);
 		}
 		
-		super.drawForeground(mouseX, mouseY, partialTicks);
+		super.drawForeground(mouseX, mouseY, partialTicks, enableScissor);
 	}
 	
 	public List<GuiComponent> getChildComponents() {

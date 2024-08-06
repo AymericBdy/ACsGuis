@@ -15,9 +15,9 @@ public class GuiCameraView extends GuiComponent {
 	}
 
 	@Override
-	public void drawBackground(int mouseX, int mouseY, float partialTicks)
+	public void drawBackground(int mouseX, int mouseY, float partialTicks, boolean enableScissor)
 	{
-		super.drawBackground(mouseX, mouseY, partialTicks);
+		super.drawBackground(mouseX, mouseY, partialTicks, enableScissor);
 		//GL11.glBindTexture(GL11.GL_TEXTURE_2D, GuiFrame.worldRenderBuffer.framebufferTexture);
 		//Gui.drawModalRectWithCustomSizedTexture(getScreenX(), getScreenY(), 0, 0, getWidth(), getHeight(), getWidth(), getHeight());
 		mc.fontRenderer.drawString("NOT FIXED", 2, 2, 0xFF0000);

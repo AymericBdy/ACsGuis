@@ -48,8 +48,8 @@ public class GuiResizableButton extends GuiButton implements IMouseMoveListener 
 	}
 	
 	@Override
-	public void drawForeground(int mouseX, int mouseY, float partialTicks) {
-		super.drawForeground(mouseX, mouseY, partialTicks);
+	public void drawForeground(int mouseX, int mouseY, float partialTicks, boolean enableScissor) {
+		super.drawForeground(mouseX, mouseY, partialTicks, enableScissor);
 		
 		if(isLeftHovered()) {
 			drawRect(getScreenX(), getScreenY(), getScreenX() + getResizeBorderSize(), getScreenY() + getHeight(), getResizeBorderColor());

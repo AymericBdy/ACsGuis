@@ -21,6 +21,7 @@ import net.minecraftforge.fml.common.ProgressManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -32,14 +33,21 @@ import static fr.aym.acsguis.api.ACsGuiApi.log;
 public class CssGuisManager implements ISelectiveResourceReloadListener {
     private final List<ResourceLocation> CSS_SHEETS = new ArrayList<>();
     private final CssHudHandler hud = new CssHudHandler();
+    private final InWorldGuisManager inWorldGuisManager = new InWorldGuisManager();
+    private AtomicBoolean isReloading = new AtomicBoolean(false);
 
     public CssGuisManager() {
         registerStyleSheetToPreload(ACsGuisCssParser.DEFAULT_STYLE_SHEET);
         MinecraftForge.EVENT_BUS.register(hud);
+        MinecraftForge.EVENT_BUS.register(inWorldGuisManager);
     }
 
     public CssHudHandler getHud() {
         return hud;
+    }
+
+    public InWorldGuisManager getInWorldGuisManager() {
+        return inWorldGuisManager;
     }
 
     /**
@@ -49,6 +57,8 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
      * @param location The style sheet to load
      */
     public void registerStyleSheetToPreload(ResourceLocation location) {
+        if(isReloading.get())
+            throw new IllegalStateException("Cannot register css sheets while reloading");
         if (!CSS_SHEETS.contains(location))
             CSS_SHEETS.add(location);
     }
@@ -64,6 +74,7 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
     public void reloadAllCssSheets(CssReloadOrigin origin) {
         log.info("Loading CSS sheets...");
         ProgressManager.ProgressBar bar = ProgressManager.push("Load CSS sheets", CSS_SHEETS.size());
+        isReloading.set(true);
         for (ResourceLocation r : CSS_SHEETS) {
             bar.step(r.toString());
             try {
@@ -71,7 +82,8 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
             } catch (Exception e) {
                 origin.handleException(r, e);
             }
-        }
+        };
+        isReloading.set(false);
         ProgressManager.pop(bar);
     }
 

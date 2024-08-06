@@ -102,9 +102,9 @@ public abstract class GuiContainer extends GuiFrame implements IMouseClickListen
     }
 
     @Override
-    public void drawForeground(int mouseX, int mouseY, float partialTicks) {
+    public void drawForeground(int mouseX, int mouseY, float partialTicks, boolean enableScissor) {
 
-        super.drawForeground(mouseX, mouseY, partialTicks);
+        super.drawForeground(mouseX, mouseY, partialTicks, enableScissor);
 
         GlStateManager.disableRescaleNormal();
         RenderHelper.disableStandardItemLighting();

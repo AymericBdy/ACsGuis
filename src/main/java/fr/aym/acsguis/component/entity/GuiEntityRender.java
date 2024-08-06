@@ -33,7 +33,7 @@ public class GuiEntityRender extends GuiComponent<ComponentStyleManager> impleme
 	}
 	
     @Override
-    public void drawForeground(int mouseX, int mouseY, float partialTicks)
+    public void drawForeground(int mouseX, int mouseY, float partialTicks, boolean enableScissor)
     {
         if(entity != null) {
             float scale = (getHeight() - (paddingBottom + paddingTop)) / entity.height;
@@ -44,7 +44,7 @@ public class GuiEntityRender extends GuiComponent<ComponentStyleManager> impleme
             drawEntityOnScreen(x, y, scale, mX, mY, entity);
         }
 
-        super.drawForeground(mouseX, mouseY, partialTicks);
+        super.drawForeground(mouseX, mouseY, partialTicks, enableScissor);
     }
 
     public static void drawEntityOnScreen(int posX, int posY, float scale, float mouseX, float mouseY, EntityLivingBase ent)

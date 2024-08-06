@@ -33,6 +33,8 @@ public class GuiDnxDebug extends GuiFrame {
         //DnxCssParser.loadGui(this);
         GuiTabbedPane pane = new GuiTabbedPane();
 
+        setEnableDebugPanel(true);
+
         GuiPanel general = new GuiPanel(0, 0, 0, 0);
         general.setCssId("general");
         general.add(new GuiLabel(50, 50, 0, 0, "DynamX debug - general").setCssClass("title"));

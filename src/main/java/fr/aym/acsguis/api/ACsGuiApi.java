@@ -2,6 +2,7 @@ package fr.aym.acsguis.api;
 
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.cssengine.CssGuisManager;
+import fr.aym.acsguis.cssengine.InWorldGuisManager;
 import fr.aym.acsguis.event.CssReloadEvent;
 import fr.aym.acsguis.sqript.NoSqriptSupport;
 import fr.aym.acsguis.sqript.SqriptCompatiblity;
@@ -71,7 +72,7 @@ public class ACsGuiApi implements ACsGuiApiService {
                 sqriptSupport = new SqriptCompatiblity();
             }
         } else if (event instanceof FMLInitializationEvent) {
-            ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new CssGuisManager());
+            ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(manager);
         }
     }
 
@@ -120,6 +121,10 @@ public class ACsGuiApi implements ACsGuiApiService {
      */
     public static void closeHudGui() {
         manager.getHud().setCurrentHUD(null);
+    }
+
+    public static InWorldGuisManager getInWorldGuisManager() {
+        return manager.getInWorldGuisManager();
     }
 
     /**

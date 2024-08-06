@@ -72,6 +72,7 @@ public enum EnumCssStyleProperties {
                 c.setRepeatBackgroundX(false);
                 c.setRepeatBackgroundY(true);
                 break;
+            case "no-repeat":
             case "none":
                 c.setRepeatBackgroundX(false);
                 c.setRepeatBackgroundY(false);

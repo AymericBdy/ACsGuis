@@ -158,7 +158,7 @@ public class GuiButton extends GuiComponent<TextComponentStyleManager> implement
     }
 
     @Override
-    public void drawForeground(int mouseX, int mouseY, float partialTicks)
+    public void drawForeground(int mouseX, int mouseY, float partialTicks, boolean enableScissor)
     {
         if(getText() != null && !getText().isEmpty()) {
             float scale = (float)(getStyle().getFontSize())/mc.fontRenderer.FONT_HEIGHT;
@@ -177,7 +177,7 @@ public class GuiButton extends GuiComponent<TextComponentStyleManager> implement
             GlStateManager.scale(1f/scale, 1f/scale, 1);
         }
 
-        super.drawForeground(mouseX, mouseY, partialTicks);
+        super.drawForeground(mouseX, mouseY, partialTicks, enableScissor);
     }
 
     protected int getTextX(GuiTextureSprite renderIconTexture)

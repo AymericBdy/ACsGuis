@@ -203,7 +203,9 @@ public class GuiAPIClientHelper {
     }
 
     public static void drawBorderedRectangle(float left, float top, float right, float bottom, float borderSize, int backgroundColor, int borderColor, int borderRadius) {
+        //GlStateManager.translate(0, 0, 0.01);
         CircleBackground.renderBorder(borderRadius, left, top, right, bottom, borderSize, borderColor);
+        //GlStateManager.translate(0, 0, -0.01);
         CircleBackground.renderBackground(borderRadius, (int) (left + borderSize), (int) (top + borderSize),
                 (int) (right - borderSize), (int) (bottom - borderSize), backgroundColor);
     }

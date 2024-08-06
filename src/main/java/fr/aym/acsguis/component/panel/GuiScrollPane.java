@@ -61,7 +61,7 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
 	}
 	
     @Override
-    public void drawForeground(int mouseX, int mouseY, float partialTicks)
+    public void drawForeground(int mouseX, int mouseY, float partialTicks, boolean enableScissor)
     {
         if(-xSlider.getValue() != lastScrollAmountX || -ySlider.getValue() != lastScrollAmountY) {
 
@@ -75,7 +75,7 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
             lastScrollAmountY = (int) -ySlider.getValue();
         }
 
-        super.drawForeground(mouseX, mouseY, partialTicks);
+        super.drawForeground(mouseX, mouseY, partialTicks, enableScissor);
     }
 
     /**

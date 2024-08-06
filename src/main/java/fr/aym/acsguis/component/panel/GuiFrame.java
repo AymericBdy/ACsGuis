@@ -14,9 +14,9 @@ import fr.aym.acsguis.cssengine.style.CssPanelStyleManager;
 import fr.aym.acsguis.event.listeners.IKeyboardListener;
 import fr.aym.acsguis.component.layout.GridLayout;
 import fr.aym.acsguis.component.layout.GuiScaler;
+import fr.aym.acsguis.utils.ACsScaledResolution;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -33,7 +33,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	/**The instance of the GuiScreen linked to this GuiFrame**/
 	protected final APIGuiScreen guiScreen;
 	
-	public static ScaledResolution resolution = new ScaledResolution(GuiComponent.mc);
+	public static ACsScaledResolution resolution = new ACsScaledResolution(GuiComponent.mc);
 	//MAY BE USED World render public static final Framebuffer worldRenderBuffer = new Framebuffer(GuiComponent.mc.displayWidth, GuiComponent.mc.displayHeight, true);
 	
 	protected boolean pauseGame = true;
@@ -242,7 +242,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 		@Override
 		public void setWorldAndResolution(Minecraft mc, int width, int height) {
 			super.setWorldAndResolution(mc, width, height);
-			resolution = new ScaledResolution(mc);
+			resolution = new ACsScaledResolution(mc, width, height);
 			frame.resize(this, width, height);
 			debugPane.resize(this, width, height);
 			debugPane.updateSlidersVisibility();
@@ -295,6 +295,11 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 		@Override
 		public void drawScreen(int mouseX, int mouseY, float partialTicks)
 		{
+			drawScreen(mouseX, mouseY, partialTicks, true);
+		}
+
+		public void drawScreen(int mouseX, int mouseY, float partialTicks, boolean enableScissor)
+		{
 			//updateWorldRenderBuffer();
 			hoveringText = null;
 			
@@ -316,7 +321,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 			GlStateManager.scale(scaleX, scaleY, 1);
 			GuiAPIClientHelper.setCurrentScissorScaling(scaleX, scaleY);
 			frame.scale.onApplyScale(scaleX, scaleY);
-			frame.render(mouseX, mouseY, partialTicks);
+			frame.render(mouseX, mouseY, partialTicks, enableScissor);
 			frame.scale.onRemoveScale(scaleX, scaleY);
 			GuiAPIClientHelper.resetScissorScaling();
 			GL11.glScalef(1/scaleX, 1/scaleY, 1);
@@ -328,7 +333,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 				GuiAPIClientHelper.drawHoveringText(hoveringText, mouseX, mouseY);
 
 			if(debugPane.getChildComponents().size() > 2)
-				debugPane.render(mouseX, mouseY, partialTicks);
+				debugPane.render(mouseX, mouseY, partialTicks, enableScissor);
 			//if(hoveringDebugText != null && !hoveringDebugText.isEmpty())
 			//	GuiAPIClientHelper.drawHoveringText(hoveringDebugText, mouseX, mouseY);
 		}
@@ -343,7 +348,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 		}
 		
 		@Override
-		protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
+		public void mouseClicked(int mouseX, int mouseY, int mouseButton)
 		{
 			mouseX /= scaleX;
 			mouseY /= scaleY;
@@ -357,7 +362,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 			lastPressedY = mouseY;
 		}
 		@Override
-		protected void mouseReleased(int mouseX, int mouseY, int state)
+		public void mouseReleased(int mouseX, int mouseY, int state)
 		{
 			mouseX /= scaleX;
 			mouseY /= scaleY;
@@ -367,7 +372,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 		}
 		
 		@Override
-		protected void keyTyped(char typedChar, int keyCode)
+		public void keyTyped(char typedChar, int keyCode)
 		{
 			if(allowDebugInGui() && Keyboard.isKeyDown(Keyboard.KEY_K))
 			{

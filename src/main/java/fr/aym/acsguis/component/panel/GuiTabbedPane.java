@@ -43,9 +43,9 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
 	}
 
 	@Override
-	public void drawBackground(int mouseX, int mouseY, float partialTicks)
+	public void drawBackground(int mouseX, int mouseY, float partialTicks, boolean enableScissor)
 	{
-		super.drawBackground(mouseX, mouseY, partialTicks);
+		super.drawBackground(mouseX, mouseY, partialTicks, enableScissor);
 		
 		/*for(String str : tabsContainers.keySet()) {
 			GuiPanel tabContainer = tabsContainers.get(str);

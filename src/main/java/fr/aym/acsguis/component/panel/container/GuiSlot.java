@@ -35,9 +35,9 @@ public class GuiSlot extends GuiComponent
     }
 
     @Override
-    public void drawForeground(int mouseX, int mouseY, float partialTicks) {
+    public void drawForeground(int mouseX, int mouseY, float partialTicks, boolean enableScissor) {
 
-        super.drawForeground(mouseX, mouseY, partialTicks);
+        super.drawForeground(mouseX, mouseY, partialTicks, enableScissor);
 
         GuiContainer container = ((GuiContainer) getParent());
 
