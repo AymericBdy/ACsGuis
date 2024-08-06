@@ -384,10 +384,8 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
             style.update(getGui());
 
             if (this instanceof GuiPanel) {
-
-                ((GuiPanel) this).flushComponentsQueue();
                 ((GuiPanel) this).flushRemovedComponents();
-
+                ((GuiPanel) this).flushComponentsQueue();
                 ((GuiPanel) this).getChildComponents().forEach(GuiComponent::tick);
             }
         } else {
@@ -470,9 +468,27 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
      */
     public final void mouseClicked(int mouseX, int mouseY, int mouseButton, boolean canBePressed) {
         if (canInteract() && !MinecraftForge.EVENT_BUS.post(new ComponentMouseEvent.ComponentMouseClickEvent(this, mouseX, mouseY, mouseButton))) {
+            if (this instanceof GuiPanel) {
+                boolean canBePressed1 = canBePressed;
+                for (GuiComponent<?> component : ((GuiPanel) this).getReversedChildComponents()) {
+                    component.mouseClicked(mouseX, mouseY, mouseButton, canBePressed1);
+                    if (component.isPressed()) {
+                        canBePressed1 = false;
+                    }
+                }
+                System.out.println("Panel click. Can be pressed : " + canBePressed + " " + canBePressed1 + " " + isHovered() + " " + this);
+                if (isHovered() && canBePressed && !canBePressed1) {
+                    // If a child has been pressed
+                    setFocused(true);
+                    System.out.println("Set Pressed ? " + clickListeners.isEmpty() + " " + extraClickListeners.isEmpty() + " " + this);
+                    setPressed(true);
+                    return;
+                }
+            }
             if (isHovered() && canBePressed) {
                 setFocused(true);
-                setPressed(true);
+                System.out.println("Click. Can be pressed : " + canBePressed + " " + isHovered() + " " + this + " " + clickListeners.isEmpty() + " " + extraClickListeners.isEmpty());
+                setPressed(!(this instanceof GuiPanel) || !clickListeners.isEmpty() || !extraClickListeners.isEmpty());
 
                 for (IFocusListener focusListener : focusListeners) {
                     focusListener.onFocus();
@@ -499,16 +515,6 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
                     }
                 }
                 setPressed(false);
-            }
-
-            if (this instanceof GuiPanel) {
-                boolean canBePressed1 = canBePressed;
-                for (GuiComponent<?> component : ((GuiPanel) this).getReversedChildComponents()) {
-                    component.mouseClicked(mouseX, mouseY, mouseButton, canBePressed1);
-                    if (component.isPressed()) {
-                        canBePressed1 = false;
-                    }
-                }
             }
         } else {
             if (canLooseFocus()) {

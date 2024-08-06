@@ -19,6 +19,39 @@ public class GuiTextureSprite implements IGuiTexture {
     private final GuiTextureLoader loader;
 
     /**
+     * <strong>Note: </strong> If atlasWidth and height are 0, this method loads the texture with a custom texture loader! Dynamic textures not supported with this mechanism. <br>
+     *
+     * @param atlasTexture  The texture location
+     * @param textureU      Sprite U
+     * @param textureV      Sprite V
+     * @param textureWidth  Sprite width
+     * @param textureHeight Sprite height
+     * @param atlasWidth    The width of the texture file (0 to load the texture with a custom loader and fill it automatically)
+     * @param atlasHeight   The height of the texture file (0 to load the texture with a custom loader and fill it automatically)
+     */
+    public GuiTextureSprite(ResourceLocation atlasTexture, int textureU, int textureV, int textureWidth, int textureHeight, int atlasWidth, int atlasHeight) {
+        this.atlasTexture = atlasTexture;
+        this.textureU = textureU;
+        this.textureV = textureV;
+        this.textureWidth = textureWidth;
+        this.textureHeight = textureHeight;
+        this.atlasWidth = atlasWidth;
+        this.atlasHeight = atlasHeight;
+        if (atlasWidth == 0 && atlasHeight == 0) {
+            if (atlasTexture.getNamespace().startsWith("http")) {
+                loader = new HttpGuiTextureLoader(atlasTexture);
+            } else {
+                loader = new GuiTextureLoader(atlasTexture);
+            }
+        } else {
+            loader = null;
+        }
+    }
+
+    /**
+     * <strong>Note: </strong> This method loads the texture with a custom texture loader! Dynamic textures not supported here <br>
+     * The atlasWidth and atlasHeight are automatically read from the loaded texture file
+     *
      * @param atlasTexture  The texture location
      * @param textureU      Sprite U
      * @param textureV      Sprite V
@@ -26,22 +59,13 @@ public class GuiTextureSprite implements IGuiTexture {
      * @param textureHeight Sprite height
      */
     public GuiTextureSprite(ResourceLocation atlasTexture, int textureU, int textureV, int textureWidth, int textureHeight) {
-        this.atlasTexture = atlasTexture;
-        this.textureU = textureU;
-        this.textureV = textureV;
-        this.textureWidth = textureWidth;
-        this.textureHeight = textureHeight;
-
-        //System.out.println("Texture is " + atlasTexture + " " + atlasTexture.getNamespace());
-        if (atlasTexture.getNamespace().startsWith("http")) {
-            loader = new HttpGuiTextureLoader(atlasTexture);
-        } else {
-            loader = new GuiTextureLoader(atlasTexture);
-        }
+        this(atlasTexture, textureU, textureV, textureWidth, textureHeight, 0, 0);
     }
 
     /**
-     * Sets u and v to 0, sets width and height to the entire texture
+     * <strong>Note: </strong> This method loads the texture with a custom texture loader! Dynamic textures not supported here <br>
+     * The atlasWidth and atlasHeight are automatically read from the loaded texture file <br>
+     * Sets u and v to 0, sets width and height to the entire texture (atlas width and height)
      *
      * @param location The texture location
      */
@@ -64,7 +88,7 @@ public class GuiTextureSprite implements IGuiTexture {
      * @param height        The total height to draw on screen
      */
     public void drawSprite(int x, int y, int spriteWidth, int spriteHeight, int uOffset, int vOffset, int textureWidth, int textureHeight, int width, int height) {
-        if (atlasWidth == 0 && atlasHeight == 0) {//Not loaded
+        if (atlasWidth == 0 && atlasHeight == 0 && loader != null) {//Not loaded
             Minecraft.getMinecraft().renderEngine.loadTexture(atlasTexture, loader);
             atlasWidth = loader.atlasWidth;
             atlasHeight = loader.atlasHeight;
