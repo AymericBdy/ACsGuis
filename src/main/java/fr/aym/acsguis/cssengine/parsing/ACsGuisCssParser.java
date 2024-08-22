@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class handles loading of all loaded css content, and keeps it in cache
@@ -38,7 +39,7 @@ public class ACsGuisCssParser
     /**
      * Holds all css properties, sorted by sheet name, selector and property type
      */
-    private static final Map<ResourceLocation, Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>>> cssStyleSheets = new HashMap<>();
+    private static final Map<ResourceLocation, Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>>> cssStyleSheets = new ConcurrentHashMap<>(); //Set to concurrent to avoid concurrent modification exceptions when reloading css for a gui while showing a hud
     /**
      * Holds all css fonts, sorted by name
      */

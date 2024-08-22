@@ -245,11 +245,8 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
                         getScreenY() + getHeight(), getScaledBorderSize(), style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
             }
         } else {
-            //System.out.println("Back color of "+this+" is "+style.getBackgroundColor());
             CircleBackground.renderBackground(style.getBorderRadius(), getScreenX(), getScreenY(), getScreenX() + getWidth(), getScreenY() + getHeight(), style.getBackgroundColor());
-            //GuiScreen.drawRect(getScreenX(), getScreenY(), getScreenX() + getWidth(), getScreenY() + getHeight(), style.getBackgroundColor());
         }
-
         GlStateManager.color(1, 1, 1, 1);
         drawTexturedBackground(mouseX, mouseY, partialTicks);
     }
@@ -476,18 +473,15 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
                         canBePressed1 = false;
                     }
                 }
-                System.out.println("Panel click. Can be pressed : " + canBePressed + " " + canBePressed1 + " " + isHovered() + " " + this);
                 if (isHovered() && canBePressed && !canBePressed1) {
                     // If a child has been pressed
                     setFocused(true);
-                    System.out.println("Set Pressed ? " + clickListeners.isEmpty() + " " + extraClickListeners.isEmpty() + " " + this);
                     setPressed(true);
                     return;
                 }
             }
             if (isHovered() && canBePressed) {
                 setFocused(true);
-                System.out.println("Click. Can be pressed : " + canBePressed + " " + isHovered() + " " + this + " " + clickListeners.isEmpty() + " " + extraClickListeners.isEmpty());
                 setPressed(!(this instanceof GuiPanel) || !clickListeners.isEmpty() || !extraClickListeners.isEmpty());
 
                 for (IFocusListener focusListener : focusListeners) {

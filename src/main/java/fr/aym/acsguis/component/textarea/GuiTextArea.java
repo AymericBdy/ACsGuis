@@ -49,7 +49,7 @@ public class GuiTextArea extends GuiComponent<TextComponentStyleManager> impleme
 		super(x, y, width, height);
 		setEditable(true);
 
-		setMaxTextLength(140);
+		setMaxTextLength(200);
 		cursorIndex = 0;
 		selectionEndIndex = 0;
 		lineScrollOffsetX = 0;
