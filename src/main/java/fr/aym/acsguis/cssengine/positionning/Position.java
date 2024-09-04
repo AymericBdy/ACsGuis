@@ -7,16 +7,15 @@ import net.minecraft.util.math.MathHelper;
 /**
  * A 1D position, absolute or relative to something
  */
-public class Position
-{
+public class Position {
     private float value;
     private GuiConstants.ENUM_RELATIVE_POS relativePos;
     private GuiConstants.ENUM_POSITION type;
     private boolean dirty;
 
     /**
-     * @param value The value
-     * @param type The type of value
+     * @param value       The value
+     * @param type        The type of value
      * @param relativePos The local origin of this position
      */
     public Position(float value, GuiConstants.ENUM_POSITION type, GuiConstants.ENUM_RELATIVE_POS relativePos) {
@@ -28,27 +27,26 @@ public class Position
     /**
      * Computes the value of this 1D position depending on the element and parent sizes
      *
-     * @param screenWidth The screen width
+     * @param screenWidth  The screen width
      * @param screenHeight The screen height
-     * @param parentSize The size of the parent, in the same dimension (width or height)
-     * @param elementSize The side of this element, in the same dimension (width or height)
+     * @param parentSize   The size of the parent, in the same dimension (width or height)
+     * @param elementSize  The side of this element, in the same dimension (width or height)
      * @return The real value
      */
-    public int computeValue(int screenWidth, int screenHeight, int parentSize, int elementSize)
-    {
+    public float computeValue(int screenWidth, int screenHeight, float parentSize, float elementSize) {
         //System.out.println("Compute pos from "+parentSize+" "+elementSize+" "+value+" "+relativePos+" "+type);
-        int computed = (int) value;
-        if(type == GuiConstants.ENUM_POSITION.RELATIVE)
-            computed = (int) (value*parentSize);
-        else if(type == GuiConstants.ENUM_POSITION.RELATIVE_VW)
-            computed = (int) (value * screenWidth);
-        else if(type == GuiConstants.ENUM_POSITION.RELATIVE_VH)
-            computed = (int) (value * screenHeight);
+        float computed = value;
+        if (type == GuiConstants.ENUM_POSITION.RELATIVE)
+            computed = (value * parentSize);
+        else if (type == GuiConstants.ENUM_POSITION.RELATIVE_VW)
+            computed = (value * screenWidth);
+        else if (type == GuiConstants.ENUM_POSITION.RELATIVE_VH)
+            computed = (value * screenHeight);
 
-        if(relativePos == GuiConstants.ENUM_RELATIVE_POS.END) {
+        if (relativePos == GuiConstants.ENUM_RELATIVE_POS.END) {
             computed = parentSize - computed - elementSize;
-        } else if(relativePos == GuiConstants.ENUM_RELATIVE_POS.CENTER) {
-            computed = (parentSize - elementSize)/2 - computed;
+        } else if (relativePos == GuiConstants.ENUM_RELATIVE_POS.CENTER) {
+            computed = (parentSize - elementSize) / 2 - computed;
         }
         setDirty(false);
         return computed;
@@ -57,23 +55,24 @@ public class Position
     /**
      * @return The raw value (absolute or relative)
      */
-    public float getRawValue()
-    {
+    public float getRawValue() {
         return value;
     }
 
     /**
      * Sets this position to an absolute position containing value
+     *
      * @param value a position in pixels (int)
      */
-    public void setAbsolute(float value)
-    {
+    public void setAbsolute(float value) {
         setAbsolute(value, GuiConstants.ENUM_RELATIVE_POS.START);
     }
+
     /**
      * Sets this position to an absolute position containing value
+     *
      * @param value a position in pixels (int)
-     * @param pos The local origin of this position to set
+     * @param pos   The local origin of this position to set
      */
     public void setAbsolute(float value, GuiConstants.ENUM_RELATIVE_POS pos) {
         setType(GuiConstants.ENUM_POSITION.ABSOLUTE);
@@ -84,8 +83,9 @@ public class Position
 
     /**
      * Sets this position to a relative position containing value
+     *
      * @param value relative pos (0-1)
-     * @param type The unit of the value. MUST be relative_something.
+     * @param type  The unit of the value. MUST be relative_something.
      */
     public void setRelative(float value, CssValue.Unit type) {
         setRelative(value, type, GuiConstants.ENUM_RELATIVE_POS.START);
@@ -93,26 +93,24 @@ public class Position
 
     /**
      * Sets this position to a relative position containing value
-     * @param pos The local origin of this position to set
+     *
+     * @param pos  The local origin of this position to set
      * @param type The unit of the value. MUST be relative_something.
      */
     public void setRelative(float value, CssValue.Unit type, GuiConstants.ENUM_RELATIVE_POS pos) {
-        if(type == CssValue.Unit.RELATIVE_INT &&
+        if (type == CssValue.Unit.RELATIVE_INT &&
                 type() == GuiConstants.ENUM_POSITION.RELATIVE &&
                 relativePos() != pos &&
                 relativePos() != GuiConstants.ENUM_RELATIVE_POS.CENTER &&
-                pos != GuiConstants.ENUM_RELATIVE_POS.CENTER)
-        {
+                pos != GuiConstants.ENUM_RELATIVE_POS.CENTER) {
             //System.out.println("Centering X ! "+getOwner());
             setRelativeTo(GuiConstants.ENUM_RELATIVE_POS.CENTER);
 
-            this.value = MathHelper.clamp((value-this.value)/2f, -0.5f, 0.5f);
+            this.value = MathHelper.clamp((value - this.value) / 2f, -0.5f, 0.5f);
             setDirty(true);
             //System.out.println("Rel x is "+this.relX+" "+getOwner());
-        }
-        else {
-            switch (type)
-            {
+        } else {
+            switch (type) {
                 case RELATIVE_INT:
                     setType(GuiConstants.ENUM_POSITION.RELATIVE);
                     break;
@@ -129,8 +127,7 @@ public class Position
         }
     }
 
-    public GuiConstants.ENUM_POSITION type()
-    {
+    public GuiConstants.ENUM_POSITION type() {
         return type;
     }
 

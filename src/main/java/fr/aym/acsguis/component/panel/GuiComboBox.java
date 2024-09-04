@@ -7,7 +7,7 @@ import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.button.GuiButton;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.event.listeners.IFocusListener;
 import org.lwjgl.opengl.GL11;
 
@@ -92,10 +92,10 @@ public class GuiComboBox extends GuiPanel implements TextComponent {
 	}
 
 	@Override
-	public boolean handleProperty(EnumCssStyleProperties property, EnumSelectorContext context, ComponentStyleManager target) {
-		if(property == EnumCssStyleProperties.HEIGHT && developed)
+	public boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, ComponentStyleManager target) {
+		if(property == EnumCssStyleProperty.HEIGHT && developed)
 		{
-			int comboBoxHeight = guiComboBoxButton.getStyle().getHeight().computeValue(0, 0, guiComboBoxButton.getParent().getHeight());
+			float comboBoxHeight = guiComboBoxButton.getStyle().getHeight().computeValue(0, 0, guiComboBoxButton.getParent().getHeight());
 			style.getHeight().setAbsolute(comboBoxHeight + sumEntriesButtonHeight());
 			return true;
 		}
@@ -108,16 +108,16 @@ public class GuiComboBox extends GuiPanel implements TextComponent {
 	public void developComboBox()
 	{
 		if(!isDeveloped()) {
-			int comboBoxHeight;
+			float comboBoxHeight;
 
 			if (guiComboBoxButton.getStyle().getHeight().getValue().type() == GuiConstants.ENUM_SIZE.RELATIVE) {
-				comboBoxHeight = (int) (guiComboBoxButton.getParent().getHeight() * guiComboBoxButton.getStyle().getHeight().getRawValue());
+				comboBoxHeight = guiComboBoxButton.getParent().getHeight() * guiComboBoxButton.getStyle().getHeight().getRawValue();
 			} else {
 				comboBoxHeight = guiComboBoxButton.getHeight();
 			}
 
 			//style.setHeight(comboBoxHeight + sumEntriesButtonHeight());
-			style.refreshCss(getGui(), false, "combo_deploy");
+			style.refreshCss(getGui(), false);
 			guiComboBoxButton.getStyle().getHeight().setAbsolute(comboBoxHeight);
 			
 			for (GuiEntryButton entryButton : entriesButton) {
@@ -125,7 +125,7 @@ public class GuiComboBox extends GuiPanel implements TextComponent {
 				entryButton.setVisible(true);
 			}
 
-			style.refreshCss(getGui(), false, "combo_deploy");
+			style.refreshCss(getGui(), false);
 			style.setZLevel(500);
 			developed = true;
 		}
@@ -144,7 +144,7 @@ public class GuiComboBox extends GuiPanel implements TextComponent {
 				entryButton.setVisible(false);
 			}
 
-			style.refreshCss(getGui(), false, "combo_deploy");
+			style.refreshCss(getGui(), false);
 			style.setZLevel(1);
 			developed = false;
 		}
@@ -252,7 +252,6 @@ public class GuiComboBox extends GuiPanel implements TextComponent {
 	}
 	
 	public class GuiBasicEntryButton extends GuiEntryButton {
-		
 		public GuiBasicEntryButton(int n, String entryName) {
 			super(n, entryName);
 			setBackgroundSrcBlend(GL11.GL_DST_COLOR);
@@ -288,22 +287,22 @@ public class GuiComboBox extends GuiPanel implements TextComponent {
 		}
 		
 		@Override
-		public int getRenderMinX() {
+		public float getRenderMinX() {
 			return getScreenX();
 		}
 		
 		@Override
-		public int getRenderMaxX() {
+		public float getRenderMaxX() {
 			return getScreenX() + getWidth();
 		}
 		
 		@Override
-		public int getRenderMinY() {
+		public float getRenderMinY() {
 			return getScreenY();
 		}
 		
 		@Override
-		public int getRenderMaxY() {
+		public float getRenderMaxY() {
 			return getScreenY() + getHeight();
 		}
 		

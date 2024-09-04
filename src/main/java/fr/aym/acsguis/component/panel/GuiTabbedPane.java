@@ -6,7 +6,7 @@ import fr.aym.acsguis.component.button.GuiButton;
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.event.listeners.IGuiCloseListener;
 import fr.aym.acsguis.event.listeners.IGuiOpenListener;
 import fr.aym.acsguis.event.listeners.IKeyboardListener;
@@ -119,7 +119,7 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
 			}
 		}
 		for(GuiComponent child : getChildComponents())
-			child.getStyle().refreshCss(getGui(), false, "tab_selection_change");
+			child.getStyle().refreshCss(getGui(), false);
 	}
 	
 	public class GuiTabbedPaneButton extends GuiButton {
@@ -145,19 +145,19 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
 	}
 
 	@Override
-	public boolean handleProperty(EnumCssStyleProperties property, EnumSelectorContext context, ComponentStyleManager target) {
+	public boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, ComponentStyleManager target) {
 		if(target.getOwner() instanceof GuiTabbedPaneButton)
 		{
 			switch (property) {
 				case WIDTH: {
 					int c = tabsButtons.size();
-					int w = (getWidth() - 10) / c;
+					float w = (getWidth() - 10) / c;
 					target.getWidth().setAbsolute(w);
 					return true;
 				}
 				case LEFT: {
 					int c = tabsButtons.size();
-					int w = (getWidth() - 10) / c;
+					float w = (getWidth() - 10) / c;
 					target.getXPos().setAbsolute(5 + ((GuiTabbedPaneButton) target.getOwner()).index * w);
 					return true;
 				}
@@ -177,9 +177,9 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
 			return super.handleProperty(property, context, target);
 	}
 
-	private static final List<EnumCssStyleProperties> affectedProperties = Arrays.asList(EnumCssStyleProperties.WIDTH, EnumCssStyleProperties.HEIGHT, EnumCssStyleProperties.LEFT, EnumCssStyleProperties.COLOR);
+	private static final List<EnumCssStyleProperty> affectedProperties = Arrays.asList(EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.COLOR);
 	@Override
-	public Collection<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
+	public Collection<EnumCssStyleProperty> getModifiedProperties(ComponentStyleManager target) {
 		return target.getOwner() instanceof GuiTabbedPaneButton ? affectedProperties : super.getModifiedProperties(target);
 	}
 

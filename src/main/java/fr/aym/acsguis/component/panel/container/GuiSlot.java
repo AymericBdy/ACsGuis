@@ -3,8 +3,12 @@ package fr.aym.acsguis.component.panel.container;
 import fr.aym.acsguis.api.GuiAPIClientHelper;
 import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.GuiComponent;
+import fr.aym.acsguis.component.button.GuiResizableButton;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -100,21 +104,34 @@ public class GuiSlot extends GuiComponent
         {
             if (flag)
             {
-                drawRect(getScreenX(), getScreenY(), getScreenX() + 16, getScreenY() + 16, -2130706433);
+                GuiResizableButton.drawRect(getScreenX(), getScreenY(), getScreenX() + 16, getScreenY() + 16, -2130706433);
             }
 
             if(itemstack != null)
-                GuiAPIClientHelper.drawItemStack(itemstack, getScreenX(), getScreenY());
+                GuiAPIClientHelper.drawItemStack(itemstack, (int) getScreenX(), (int) getScreenY());
         }
 
         if(isHovered() && slot.isEnabled()) { //MODIFIED FOR 1.12.2
             GlStateManager.disableDepth();
-            drawRect(getScreenX(), getScreenY(), getScreenX() + 16, getScreenY() + 16, -2130706433);
+            GuiResizableButton.drawRect(getScreenX(), getScreenY(), getScreenX() + 16, getScreenY() + 16, -2130706433);
             GlStateManager.enableDepth();
         }
     }
 
     public Slot getSlot() {
         return slot;
+    }
+
+    // FIXME MOVE
+    public void drawTexturedModalRect(float xCoord, float yCoord, TextureAtlasSprite textureSprite, int widthIn, int heightIn)
+    {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        bufferbuilder.pos((double)(xCoord + 0), (double)(yCoord + heightIn), (double)this.zLevel).tex((double)textureSprite.getMinU(), (double)textureSprite.getMaxV()).endVertex();
+        bufferbuilder.pos((double)(xCoord + widthIn), (double)(yCoord + heightIn), (double)this.zLevel).tex((double)textureSprite.getMaxU(), (double)textureSprite.getMaxV()).endVertex();
+        bufferbuilder.pos((double)(xCoord + widthIn), (double)(yCoord + 0), (double)this.zLevel).tex((double)textureSprite.getMaxU(), (double)textureSprite.getMinV()).endVertex();
+        bufferbuilder.pos((double)(xCoord + 0), (double)(yCoord + 0), (double)this.zLevel).tex((double)textureSprite.getMinU(), (double)textureSprite.getMinV()).endVertex();
+        tessellator.draw();
     }
 }

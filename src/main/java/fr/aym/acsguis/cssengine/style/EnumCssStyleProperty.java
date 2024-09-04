@@ -15,7 +15,7 @@ import java.awt.*;
 import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.ABSOLUTE_INT;
 import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.RELATIVE_INT;
 
-public enum EnumCssStyleProperties {
+public enum EnumCssStyleProperty {
     BACKGROUND_COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setBackgroundColor(p.getValue()), "background-color", false, true),
     COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setForegroundColor(p.getValue()), "color", false, true),
     BORDER_COLOR(CssHelper.COLOR, (ctx, p, c) -> c.setBorderColor(p.getValue()), "border-color"),
@@ -323,15 +323,15 @@ public enum EnumCssStyleProperties {
     public final boolean acceptsNullValue;
     public final boolean inheritable;
 
-    <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key) {
+    <T> EnumCssStyleProperty(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key) {
         this(parser, applyFunction, key, false, false);
     }
 
-    <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key, boolean acceptsNullValue) {
+    <T> EnumCssStyleProperty(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key, boolean acceptsNullValue) {
         this(parser, applyFunction, key, acceptsNullValue, false);
     }
 
-    <T> EnumCssStyleProperties(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key, boolean acceptsNullValue, boolean inheritable) {
+    <T> EnumCssStyleProperty(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key, boolean acceptsNullValue, boolean inheritable) {
         this.applyFunction = applyFunction;
         this.key = key;
         this.parser = parser;
@@ -339,8 +339,8 @@ public enum EnumCssStyleProperties {
         this.inheritable = inheritable;
     }
 
-    public static EnumCssStyleProperties fromKey(String property) {
-        for (EnumCssStyleProperties prop : values()) {
+    public static EnumCssStyleProperty fromKey(String property) {
+        for (EnumCssStyleProperty prop : values()) {
             if (prop.key.equals(property))
                 return prop;
         }

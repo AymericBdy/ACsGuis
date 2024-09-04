@@ -92,14 +92,13 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
     /**
      * @return Return the maximum effective width by by summing the child components' width
      */
-    protected int getMaxWidth()
+    protected float getMaxWidth()
     {
-        int maxWidth = getWidth();
-
-        for(GuiComponent component : getChildComponents())
+        float maxWidth = getWidth();
+        for(GuiComponent<?> component : getChildComponents())
         {
         	if(!(component instanceof GuiSlider)) {
-				int width = component.getX() + component.getWidth();
+				float width = component.getX() + component.getWidth();
 				if (width > maxWidth) {
 					maxWidth = width;
 				}
@@ -111,14 +110,13 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
     /**
      * @return Return the maximum effective height by by summing the child components' height
      */
-    protected int getMaxHeight()
+    protected float getMaxHeight()
     {
-        int maxHeight = getHeight();
-
-        for(GuiComponent component : getChildComponents())
+        float maxHeight = getHeight();
+        for(GuiComponent<?> component : getChildComponents())
         {
 			if(!(component instanceof GuiSlider)) {
-				int height = component.getY() + component.getHeight();
+				float height = component.getY() + component.getHeight();
 				//System.out.println("Cp "+component+" h" +height);
 				if (height > maxHeight) {
 					maxHeight = height;

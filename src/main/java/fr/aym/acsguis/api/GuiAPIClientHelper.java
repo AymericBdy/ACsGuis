@@ -74,7 +74,7 @@ public class GuiAPIClientHelper {
      * @param scale                   The render scale, used for different font sizes
      * @return Return the x value of the text depending on the horizontal alignment given. {@link GuiConstants.HORIZONTAL_TEXT_ALIGNMENT}
      */
-    public static float getRelativeTextX(String text, int parentWidth, GuiConstants.HORIZONTAL_TEXT_ALIGNMENT horizontalTextAlignment, ICssFont font, float scale) {
+    public static float getRelativeTextX(String text, float parentWidth, GuiConstants.HORIZONTAL_TEXT_ALIGNMENT horizontalTextAlignment, ICssFont font, float scale) {
         switch (horizontalTextAlignment) {
             case CENTER:
                 return (parentWidth - font.getWidth(text) * scale) / 2;
@@ -93,7 +93,7 @@ public class GuiAPIClientHelper {
      * @param fontSize              The font height
      * @return Return the x value of the text depending on the horizontal alignment given. {@link GuiConstants.VERTICAL_TEXT_ALIGNMENT}
      */
-    public static float getRelativeTextY(int lineIndex, int maxLines, int parentHeight, GuiConstants.VERTICAL_TEXT_ALIGNMENT verticalTextAlignment, float fontSize) {
+    public static float getRelativeTextY(int lineIndex, int maxLines, float parentHeight, GuiConstants.VERTICAL_TEXT_ALIGNMENT verticalTextAlignment, float fontSize) {
         switch (verticalTextAlignment) {
             case CENTER:
                 return (parentHeight - maxLines * fontSize) / 2 + lineIndex * fontSize;
@@ -202,7 +202,7 @@ public class GuiAPIClientHelper {
         GL11.glScissor((int) (x * f * currentScaleX), (int) (mc.displayHeight - (y + height) * f * currentScaleY), (int) MathHelper.clamp(width * f * currentScaleX, 0, Integer.MAX_VALUE), (int) MathHelper.clamp(height * f * currentScaleY, 0, Integer.MAX_VALUE));
     }
 
-    public static void drawBorderedRectangle(float left, float top, float right, float bottom, float borderSize, int backgroundColor, int borderColor, int borderRadius) {
+    public static void drawBorderedRectangle(float left, float top, float right, float bottom, float borderSize, int backgroundColor, int borderColor, float borderRadius) {
         CircleBackground.renderBorder(borderRadius, left, top, right, bottom, borderSize, borderColor);
         CircleBackground.renderBackground(borderRadius, (int) (left + borderSize), (int) (top + borderSize),
                 (int) (right - borderSize), (int) (bottom - borderSize), backgroundColor);

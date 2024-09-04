@@ -13,7 +13,7 @@ import fr.aym.acsguis.cssengine.parsing.core.CssFileVisitor;
 import fr.aym.acsguis.cssengine.selectors.CompoundCssSelector;
 import fr.aym.acsguis.cssengine.selectors.CssStackElement;
 import fr.aym.acsguis.cssengine.style.CssStyleProperty;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
@@ -39,7 +39,7 @@ public class ACsGuisCssParser
     /**
      * Holds all css properties, sorted by sheet name, selector and property type
      */
-    private static final Map<ResourceLocation, Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>>> cssStyleSheets = new ConcurrentHashMap<>(); //Set to concurrent to avoid concurrent modification exceptions when reloading css for a gui while showing a hud
+    private static final Map<ResourceLocation, Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>>> cssStyleSheets = new ConcurrentHashMap<>(); //Set to concurrent to avoid concurrent modification exceptions when reloading css for a gui while showing a hud
     /**
      * Holds all css fonts, sorted by name
      */
@@ -130,9 +130,9 @@ public class ACsGuisCssParser
     /**
      * Read a CSS 3.0 declaration from a string using UTF-8 encoding.
      */
-    public static Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> parseRawCss(GuiComponent<?> component, String css) {
+    public static Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> parseRawCss(GuiComponent<?> component, String css) {
         css = "#"+component.getCssId()+"{ \n "+css+"\n }";
-        Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> data = new HashMap<>();
+        Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> data = new HashMap<>();
         CssFileVisitor visitor = new ACsGuisStringCssVisitor(component, data);
         try {
             CssFileReader.readCssFile("Css of component "+component, new ByteArrayInputStream(css.getBytes(StandardCharsets.UTF_8)), visitor);
@@ -195,7 +195,7 @@ public class ACsGuisCssParser
                 ACsGuiApi.log.warn("Parent gui frame of " + component.getOwner() + " was not found, cannot apply its style !");
             cssSheets.add(DEFAULT_STYLE_SHEET);
         }
-        Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> propertyMap = new HashMap<>();
+        Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> propertyMap = new HashMap<>();
         //Then apply the style of all sheets, keeping the same order
         for(ResourceLocation sheet : cssSheets)
         {
@@ -231,7 +231,7 @@ public class ACsGuisCssParser
     /**
      * @return all css properties, sorted by sheet name, selector and property type, used for debug
      */
-    public static Map<ResourceLocation, Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>>> getCssStyleSheets() {
+    public static Map<ResourceLocation, Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>>> getCssStyleSheets() {
         return cssStyleSheets;
     }
 }

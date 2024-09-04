@@ -16,7 +16,7 @@ public class GuiEntityRender extends GuiComponent<ComponentStyleManager> impleme
 	protected EntityLivingBase entity;
 	protected int paddingTop;
 	protected int paddingBottom;
-	protected int counter;
+	protected float counter;
 	private boolean kept;
 
     @Override
@@ -37,17 +37,17 @@ public class GuiEntityRender extends GuiComponent<ComponentStyleManager> impleme
     {
         if(entity != null) {
             float scale = (getHeight() - (paddingBottom + paddingTop)) / entity.height;
-            int x = getScreenX() + getWidth() / 2;
-            int y = getScreenY() + getHeight() - paddingBottom;
-            int mX = kept ? getScreenX() + getWidth() / 2 - mouseX : counter%mc.currentScreen.width;
-            int mY = kept ? (int) (y - mouseY - entity.getEyeHeight() * scale) : 0;
+            float x = getScreenX() + getWidth() / 2;
+            float y = getScreenY() + getHeight() - paddingBottom;
+            float mX = kept ? getScreenX() + getWidth() / 2 - mouseX : counter%mc.currentScreen.width;
+            float mY = kept ? (y - mouseY - entity.getEyeHeight() * scale) : 0;
             drawEntityOnScreen(x, y, scale, mX, mY, entity);
         }
 
         super.drawForeground(mouseX, mouseY, partialTicks);
     }
 
-    public static void drawEntityOnScreen(int posX, int posY, float scale, float mouseX, float mouseY, EntityLivingBase ent)
+    public static void drawEntityOnScreen(float posX, float posY, float scale, float mouseX, float mouseY, EntityLivingBase ent)
     {
         GlStateManager.enableColorMaterial();
         GlStateManager.pushMatrix();

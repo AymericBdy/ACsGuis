@@ -115,8 +115,8 @@ public class GuiButton extends GuiComponent<TextComponentStyleManager> implement
 
         if(getRenderIcon() != null) {
             GuiTextureSprite renderIconTexture = getRenderIcon();
-            int iconX = getIconX(renderIconTexture);
-            int iconY = getIconY(renderIconTexture);
+            float iconX = getIconX(renderIconTexture);
+            float iconY = getIconY(renderIconTexture);
             renderIconTexture.drawSprite(getScreenX() + iconX, getScreenY() + iconY, getIconWidth(), getIconHeight());
         }
 
@@ -135,7 +135,7 @@ public class GuiButton extends GuiComponent<TextComponentStyleManager> implement
         }
     }
 
-    protected int getIconX(GuiTextureSprite renderIconTexture)
+    protected float getIconX(GuiTextureSprite renderIconTexture)
     {
         if(getIconPosition() == GuiConstants.ENUM_ICON_POSITION.LEFT)
             return (getWidth() - mc.fontRenderer.getStringWidth(getText()) - getIconWidth() - getIconPadding()) / 2;
@@ -146,7 +146,7 @@ public class GuiButton extends GuiComponent<TextComponentStyleManager> implement
 
     }
 
-    protected int getIconY(GuiTextureSprite renderIconTexture)
+    protected float getIconY(GuiTextureSprite renderIconTexture)
     {
         if(getIconPosition() == GuiConstants.ENUM_ICON_POSITION.TOP)
             return (getHeight() - mc.fontRenderer.FONT_HEIGHT * 2 - getIconHeight() - getIconPadding()) / 2;
@@ -180,7 +180,7 @@ public class GuiButton extends GuiComponent<TextComponentStyleManager> implement
         super.drawForeground(mouseX, mouseY, partialTicks);
     }
 
-    protected int getTextX(GuiTextureSprite renderIconTexture)
+    protected float getTextX(GuiTextureSprite renderIconTexture)
     {
         if(getIconPosition() == GuiConstants.ENUM_ICON_POSITION.LEFT)
             return getIconX(renderIconTexture) + getIconWidth() + getIconPadding();
@@ -191,7 +191,7 @@ public class GuiButton extends GuiComponent<TextComponentStyleManager> implement
 
     }
 
-    protected int getTextY(GuiTextureSprite renderIconTexture)
+    protected float getTextY(GuiTextureSprite renderIconTexture)
     {
         if(getIconPosition() == GuiConstants.ENUM_ICON_POSITION.TOP)
             return getIconY(renderIconTexture) + getIconHeight() + getIconPadding();

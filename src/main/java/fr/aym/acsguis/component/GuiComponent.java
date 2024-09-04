@@ -10,7 +10,7 @@ import fr.aym.acsguis.cssengine.selectors.CompoundCssSelector;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.cssengine.style.CssComponentStyleManager;
 import fr.aym.acsguis.cssengine.style.CssStyleProperty;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.event.ComponentKeyboardEvent;
 import fr.aym.acsguis.event.ComponentMouseEvent;
 import fr.aym.acsguis.event.ComponentRenderEvent;
@@ -123,7 +123,7 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
      */
     public GuiComponent<T> setCssClass(@Nullable String cssClass) {
         this.cssClass = cssClass;
-        getStyle().refreshCss(getGui(), true, "set_class");
+        getStyle().refreshCss(getGui(), true);
         return this;
     }
 
@@ -141,7 +141,7 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
      */
     public GuiComponent<T> setCssId(@Nullable String cssId) {
         this.cssId = cssId;
-        getStyle().refreshCss(getGui(), true, "set_id");
+        getStyle().refreshCss(getGui(), true);
         return this;
     }
 
@@ -164,7 +164,7 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
     public GuiComponent<T> setCssCode(String cssCode) {
         if (getCssId() == null)
             throw new IllegalArgumentException("You should the css id of the element before !");
-        Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> data = ACsGuisCssParser.parseRawCss(this, cssCode);
+        Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> data = ACsGuisCssParser.parseRawCss(this, cssCode);
         getStyle().setCustomParsedStyle(data);
         return this;
     }
@@ -312,33 +312,33 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
-    public int getRenderMinX() {
+    public float getRenderMinX() {
         return getParent() != null ? Math.max(getScreenX(), getParent().getRenderMinX()) : getScreenX();
     }
 
-    public int getRenderMinY() {
+    public float getRenderMinY() {
         return getParent() != null ? Math.max(getScreenY(), getParent().getRenderMinY()) : getScreenY();
     }
 
-    public int getRenderMaxX() {
+    public float getRenderMaxX() {
         return getParent() != null ? Math.min(getScreenX() + getWidth(), getParent().getRenderMaxX()) : getScreenX() + getWidth();
     }
 
-    public int getRenderMaxY() {
+    public float getRenderMaxY() {
         return getParent() != null ? Math.min(getScreenY() + getHeight(), getParent().getRenderMaxY()) : getScreenY() + getHeight();
     }
 
     /**
      * @return X position on screen
      */
-    public int getScreenX() {
+    public float getScreenX() {
         return getX() + (getParent() != null ? getParent().getScreenX() : 0) + style.getOffsetX();
     }
 
     /**
      * @return Y position on screen
      */
-    public int getScreenY() {
+    public float getScreenY() {
         return getY() + (getParent() != null ? getParent().getScreenY() : 0) + style.getOffsetY();
     }
 
@@ -643,22 +643,22 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
     /**
      * @return X position relative to parent component (or to the screen left)
      */
-    public int getX() {
+    public float getX() {
         return style.getRenderX();
     }
 
     /**
      * @return Y position relative to parent component (or to the screen top)
      */
-    public int getY() {
+    public float getY() {
         return style.getRenderY();
     }
 
-    public int getWidth() {
+    public float getWidth() {
         return style.getRenderWidth();
     }
 
-    public int getHeight() {
+    public float getHeight() {
         return style.getRenderHeight();
     }
 
@@ -821,11 +821,11 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
         return focusListeners;
     }
 
-    public int getMinHitboxX() {
+    public float getMinHitboxX() {
 
         if (this instanceof GuiPanel) {
 
-            int renderMinX = getRenderMinX();
+            float renderMinX = getRenderMinX();
 
             for (GuiComponent<?> component : ((GuiPanel) this).getReversedChildComponents()) {
                 if (component.isVisible() && component.getMinHitboxX() < renderMinX) {
@@ -840,61 +840,46 @@ public abstract class GuiComponent<T extends ComponentStyleManager> extends Gui 
 
     }
 
-    public int getMinHitboxY() {
-
+    public float getMinHitboxY() {
         if (this instanceof GuiPanel) {
-
-            int renderMinY = getRenderMinY();
-
+            float renderMinY = getRenderMinY();
             for (GuiComponent<?> component : ((GuiPanel) this).getReversedChildComponents()) {
                 if (component.isVisible() && component.getMinHitboxY() < renderMinY) {
                     renderMinY = component.getMinHitboxY();
                 }
             }
-
             return renderMinY;
         } else {
             return getRenderMinY();
         }
-
     }
 
-    public int getMaxHitboxX() {
-
+    public float getMaxHitboxX() {
         if (this instanceof GuiPanel) {
-
-            int renderMaxX = getRenderMaxX();
-
+            float renderMaxX = getRenderMaxX();
             for (GuiComponent<?> component : ((GuiPanel) this).getReversedChildComponents()) {
                 if (component.isVisible() && component.getMaxHitboxX() > renderMaxX) {
                     renderMaxX = component.getMaxHitboxX();
                 }
             }
-
             return renderMaxX;
         } else {
             return getRenderMaxX();
         }
-
     }
 
-    public int getMaxHitboxY() {
-
+    public float getMaxHitboxY() {
         if (this instanceof GuiPanel) {
-
-            int renderMaxY = getRenderMaxY();
-
+            float renderMaxY = getRenderMaxY();
             for (GuiComponent<?> component : ((GuiPanel) this).getReversedChildComponents()) {
                 if (component.isVisible() && component.getMaxHitboxY() > renderMaxY) {
                     renderMaxY = component.getMaxHitboxY();
                 }
             }
-
             return renderMaxY;
         } else {
             return getRenderMaxY();
         }
-
     }
 
     /**

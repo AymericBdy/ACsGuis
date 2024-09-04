@@ -2,7 +2,7 @@ package fr.aym.acsguis.sqript.expressions;
 
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.style.InjectedStyleList;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.sqript.component.ComponentProperties;
 import fr.aym.acsguis.sqript.component.ParseableComponent;
 import fr.nico.sqript.compiling.ScriptException;
@@ -45,7 +45,7 @@ public class ExprCssStyle extends ScriptExpression {
             return new TypeString(property.getValueFromComponent(param.getObject()).toString());
         }
 
-        EnumCssStyleProperties properties = findCssProperty(param.getObject(), optn);
+        EnumCssStyleProperty properties = findCssProperty(param.getObject(), optn);
         if (properties != null) {
             InjectedStyleList list = param.getObject().getStyle().getInjectedStyleList();
             if (list != null && list.getPropertyMap().containsKey(properties)) {
@@ -65,8 +65,8 @@ public class ExprCssStyle extends ScriptExpression {
         return null;
     }
 
-    private EnumCssStyleProperties findCssProperty(GuiComponent<?> component, String optn) {
-        for (EnumCssStyleProperties properties : EnumCssStyleProperties.values()) {
+    private EnumCssStyleProperty findCssProperty(GuiComponent<?> component, String optn) {
+        for (EnumCssStyleProperty properties : EnumCssStyleProperty.values()) {
             if (properties.key.equals(optn)) {
                 return properties;
             }
@@ -88,11 +88,11 @@ public class ExprCssStyle extends ScriptExpression {
             return true;
         }
 
-        EnumCssStyleProperties properties = findCssProperty(param.getObject(), optn);
+        EnumCssStyleProperty properties = findCssProperty(param.getObject(), optn);
         if (properties != null) {
             param.getObject().getStyle().injectStyle(properties, to.getObject().toString());
             //System.out.println("Injection success on " + properties.key + " on " + param.getObject());
-            param.getObject().getStyle().refreshCss(param.getObject().getGui(), true, "injection");
+            param.getObject().getStyle().refreshCss(param.getObject().getGui(), true);
             return true;
         }/* else {
             System.out.println("Fail property not found");

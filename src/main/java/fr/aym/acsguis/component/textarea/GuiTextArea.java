@@ -369,15 +369,15 @@ public class GuiTextArea extends GuiComponent<TextComponentStyleManager> impleme
             lineScrollOffsetX += k - (getWidth() - (getPaddingLeft() + getPaddingRight()));
         }
 
-        int height = getHeight();//style.getVerticalSize() == GuiConstants.ENUM_SIZE.RELATIVE ? (int) (style.getRelativeHeight() * getParent().getHeight()) : getHeight();
+        float height = getHeight();//style.getVerticalSize() == GuiConstants.ENUM_SIZE.RELATIVE ? (int) (style.getRelativeHeight() * getParent().getHeight()) : getHeight();
 
         if(l <= 0) {
             lineScrollOffsetY += l;
         } else if(l >= height - (getPaddingLeft() + getPaddingRight()) - 9) {
-            lineScrollOffsetY += l - (height - (getPaddingTop() + getPaddingBottom())) + 9;
+            lineScrollOffsetY += (int) (l - (height - (getPaddingTop() + getPaddingBottom())) + 9);
         }
 
-        if(lineScrollOffsetX >= mc.fontRenderer.getStringWidth(line) && line.length() > 0) {
+        if(lineScrollOffsetX >= mc.fontRenderer.getStringWidth(line) && !line.isEmpty()) {
         	lineScrollOffsetX = mc.fontRenderer.getStringWidth(line.substring(0, line.length() - 1));
 		}
     }
@@ -418,8 +418,8 @@ public class GuiTextArea extends GuiComponent<TextComponentStyleManager> impleme
     {
         List<String> lines = getRenderedTextLines();
 
-        int d0 = MathHelper.clamp(mouseX - (getScreenX() + getPaddingLeft()), 0, Integer.MAX_VALUE) + lineScrollOffsetX;
-        int d1 = mouseY - (getScreenY() + getPaddingTop()) + lineScrollOffsetY;
+        int d0 = (int) (MathHelper.clamp(mouseX - (getScreenX() + getPaddingLeft()), 0, Integer.MAX_VALUE) + lineScrollOffsetX);
+        float d1 = mouseY - (getScreenY() + getPaddingTop()) + lineScrollOffsetY;
 
         int lineIndex = MathHelper.clamp((int) (d1 / 9.0), 0, lines.size() - 1);
 

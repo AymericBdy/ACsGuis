@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
  */
 public class CssStyleProperty<T>
 {
-    private final EnumCssStyleProperties property;
+    private final EnumCssStyleProperty property;
     private final T value;
     private final EnumStylePropertyType type;
 
@@ -21,7 +21,7 @@ public class CssStyleProperty<T>
      * @param value Raw string value, automatically parsed
      * @throws IllegalArgumentException if it cannot be parsed
      */
-    public CssStyleProperty(EnumCssStyleProperties property, CssValue value) {
+    public CssStyleProperty(EnumCssStyleProperty property, CssValue value) {
         this.property = property;
         if(value.getUnit() == CssValue.Unit.STRING) {
             this.type = EnumStylePropertyType.getTypeIfSpecial(value.stringValue());
@@ -89,7 +89,7 @@ public class CssStyleProperty<T>
     /**
      * @return The target property
      */
-    public EnumCssStyleProperties getProperty() {
+    public EnumCssStyleProperty getProperty() {
         return property;
     }
 
