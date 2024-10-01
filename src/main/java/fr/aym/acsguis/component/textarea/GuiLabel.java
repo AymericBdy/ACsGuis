@@ -7,7 +7,7 @@ import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.TextComponentStyleManager;
 import fr.aym.acsguis.cssengine.font.CssFontHelper;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.utils.GuiConstants;
 import net.minecraft.client.renderer.GlStateManager;
 
@@ -18,12 +18,14 @@ import java.util.List;
 public class GuiLabel extends GuiTextArea implements AutoStyleHandler<TextComponentStyleManager> {
     public GuiLabel(String text) {
         super(0, 0, 0, 0);
+        setMaxTextLength(Integer.MAX_VALUE);
         setEditable(false);
         setText(text);
     }
 
     public GuiLabel(int x, int y, int width, int height, String text) {
         super(x, y, width, height);
+        setMaxTextLength(Integer.MAX_VALUE);
         setEditable(false);
         setText(text);
     }
@@ -115,17 +117,17 @@ public class GuiLabel extends GuiTextArea implements AutoStyleHandler<TextCompon
     @Override
     public GuiTextArea setText(String text) {
         super.setText(text);
-        getStyle().refreshCss(getGui(), false, "set_text"); //Refresh style, for auto width and height
+        getStyle().refreshCss(getGui(), false); //Refresh style, for auto width and height
         return this;
     }
 
     @Override
-    public boolean handleProperty(EnumCssStyleProperties property, EnumSelectorContext context, TextComponentStyleManager target) {
-        if (property == EnumCssStyleProperties.WIDTH) {
+    public boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, TextComponentStyleManager target) {
+        if (property == EnumCssStyleProperty.WIDTH) {
             target.getWidth().setAbsolute((int) ((getPaddingLeft() + getPaddingRight() + 5 + mc.fontRenderer.getStringWidth(getText())) * ((float) target.getFontSize() / mc.fontRenderer.FONT_HEIGHT)));
             return true;
         }
-        if (property == EnumCssStyleProperties.HEIGHT) {
+        if (property == EnumCssStyleProperty.HEIGHT) {
             float scale = (float) (getStyle().getFontSize()) / mc.fontRenderer.FONT_HEIGHT;
             CssFontHelper.pushDrawing(target.getFontFamily(), target.getEffects());
             target.getHeight().setAbsolute((int) (getPaddingTop() + getPaddingBottom() + target.getFontHeight(getText()) * scale));
@@ -135,10 +137,10 @@ public class GuiLabel extends GuiTextArea implements AutoStyleHandler<TextCompon
         return false;
     }
 
-    private static final List<EnumCssStyleProperties> affectedProperties = Arrays.asList(EnumCssStyleProperties.WIDTH, EnumCssStyleProperties.HEIGHT);
+    private static final List<EnumCssStyleProperty> affectedProperties = Arrays.asList(EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
 
     @Override
-    public Collection<EnumCssStyleProperties> getModifiedProperties(TextComponentStyleManager target) {
+    public Collection<EnumCssStyleProperty> getModifiedProperties(TextComponentStyleManager target) {
         return affectedProperties;
     }
 }

@@ -20,10 +20,10 @@ public class Size
      * @param parentSize The size of the parent, in the same dimension (width or height)
      * @return The real value
      */
-    public int computeValue(int screenWidth, int screenHeight, int parentSize) {
-        int cVal = value.computeValue(screenWidth, screenHeight, parentSize);
-        int min = minValue.computeValue(screenWidth, screenHeight, parentSize);
-        int max = maxValue.computeValue(screenWidth, screenHeight, parentSize);
+    public float computeValue(int screenWidth, int screenHeight, float parentSize) {
+        float cVal = value.computeValue(screenWidth, screenHeight, parentSize);
+        float min = minValue.computeValue(screenWidth, screenHeight, parentSize);
+        float max = maxValue.computeValue(screenWidth, screenHeight, parentSize);
         if(min != -1)
             cVal = Math.max(min, cVal);
         if(max != -1)
@@ -117,15 +117,15 @@ public class Size
          * @param parentSize The size of the parent, in the same dimension (width or height)
          * @return The real value
          */
-        public int computeValue(int screenWidth, int screenHeight, int parentSize)
+        public float computeValue(float screenWidth, float screenHeight, float parentSize)
         {
-            int computed = (int) value;
+            float computed = value;
             if(type == GuiConstants.ENUM_SIZE.RELATIVE)
-                computed = (int) (value*parentSize);
+                computed = (value*parentSize);
             else if(type == GuiConstants.ENUM_SIZE.RELATIVE_VW)
-                computed = (int) (value * screenWidth);
+                computed = (value * screenWidth);
             else if(type == GuiConstants.ENUM_SIZE.RELATIVE_VH)
-                computed = (int) (value * screenHeight);
+                computed = (value * screenHeight);
             return computed;
         }
 

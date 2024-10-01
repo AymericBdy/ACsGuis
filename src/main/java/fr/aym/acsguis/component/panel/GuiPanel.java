@@ -7,7 +7,7 @@ import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
 import fr.aym.acsguis.cssengine.style.CssPanelStyleManager;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.component.layout.PanelLayout;
 
 import java.util.*;
@@ -61,7 +61,7 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 				if (this.layout != null)
 					c.getStyle().removeAutoStyleHandler(this.layout);
 			}
-			c.getStyle().refreshCss(getGui(), false, "layout_change");
+			c.getStyle().refreshCss(getGui(), false);
 		}
 		for(GuiComponent<?> c : childComponents)
 		{
@@ -72,7 +72,7 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 					if (this.layout != null)
 						c.getStyle().removeAutoStyleHandler(this.layout);
 				}
-				c.getStyle().refreshCss(getGui(), false, "layout_change");
+				c.getStyle().refreshCss(getGui(), false);
 			}
 		}
 		this.layout = layout;
@@ -85,10 +85,10 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 	}
 
 	@Override
-	public boolean handleProperty(EnumCssStyleProperties property, EnumSelectorContext context, ComponentStyleManager target) {
-		if(property == EnumCssStyleProperties.HEIGHT)
+	public boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, ComponentStyleManager target) {
+		if(property == EnumCssStyleProperty.HEIGHT)
 		{
-			int height = 0;
+			float height = 0;
 			for(GuiComponent<?> c : queuedComponents)
 			{
 				height = Math.max(height, c.getY() + c.getStyle().getOffsetY() + c.getHeight());
@@ -103,9 +103,9 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 		return false;
 	}
 
-	private static final List<EnumCssStyleProperties> affectedProperties = Collections.singletonList(EnumCssStyleProperties.HEIGHT);
+	private static final List<EnumCssStyleProperty> affectedProperties = Collections.singletonList(EnumCssStyleProperty.HEIGHT);
 	@Override
-	public Collection<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
+	public Collection<EnumCssStyleProperty> getModifiedProperties(ComponentStyleManager target) {
 		return affectedProperties;
 	}
 

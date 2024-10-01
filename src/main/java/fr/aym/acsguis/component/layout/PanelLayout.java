@@ -5,7 +5,7 @@ import fr.aym.acsguis.utils.GuiConstants;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,37 +25,37 @@ public interface PanelLayout<T extends ComponentStyleManager> extends AutoStyleH
     }
 
     @Override
-    default boolean handleProperty(EnumCssStyleProperties property, EnumSelectorContext context, T target) {
-        if(property == EnumCssStyleProperties.TOP)
+    default boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, T target) {
+        if(property == EnumCssStyleProperty.TOP)
         {
-            int val = getY(target);
+            float val = getY(target);
             if(val != target.getRenderY())
             {
                 target.getYPos().setAbsolute(val, GuiConstants.ENUM_RELATIVE_POS.START);
             }
             return true;
         }
-        else if(property == EnumCssStyleProperties.LEFT)
+        else if(property == EnumCssStyleProperty.LEFT)
         {
-            int val = getX(target);
+            float val = getX(target);
             if(val != target.getRenderX())
             {
                 target.getXPos().setAbsolute(val, GuiConstants.ENUM_RELATIVE_POS.START);
             }
             return true;
         }
-        else if(property == EnumCssStyleProperties.WIDTH)
+        else if(property == EnumCssStyleProperty.WIDTH)
         {
-            int val = getWidth(target);
+            float val = getWidth(target);
             if(val != target.getRenderWidth())
             {
                 target.getWidth().setAbsolute(val);
             }
             return true;
         }
-        else if(property == EnumCssStyleProperties.HEIGHT)
+        else if(property == EnumCssStyleProperty.HEIGHT)
         {
-            int val = getHeight(target);
+            float val = getHeight(target);
             if(val != target.getRenderHeight())
             {
                 target.getHeight().setAbsolute(val);
@@ -65,17 +65,17 @@ public interface PanelLayout<T extends ComponentStyleManager> extends AutoStyleH
         return false;
     }
 
-    List<EnumCssStyleProperties> modifiedProperties = Arrays.asList(EnumCssStyleProperties.TOP, EnumCssStyleProperties.LEFT, EnumCssStyleProperties.WIDTH, EnumCssStyleProperties.HEIGHT);
+    List<EnumCssStyleProperty> modifiedProperties = Arrays.asList(EnumCssStyleProperty.TOP, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
 
     @Override
-    default Collection<EnumCssStyleProperties> getModifiedProperties(T target) {
+    default Collection<EnumCssStyleProperty> getModifiedProperties(T target) {
         return modifiedProperties;
     }
 
-    int getX(T target);
-    int getY(T target);
-    int getWidth(T target);
-    int getHeight(T target);
+    float getX(T target);
+    float getY(T target);
+    float getWidth(T target);
+    float getHeight(T target);
 
     /**
      * Resets the layouts

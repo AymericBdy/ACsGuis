@@ -27,23 +27,20 @@ public class GuiSlotList extends GuiPanel {
 	}
 	
 	@Override
-	public int getHeight() {
+	public float getHeight() {
 		return list.getListPaddingBottom() + getListSlotsHeight();
 	}
 	
-	protected int getListSlotsHeight()
+	protected float getListSlotsHeight()
 	{
-		int maxHeight = 0;
-		
+		float maxHeight = 0;
 		for(GuiSlot slot : slots)
 		{
-			int h = slot.getY() + slot.getHeight();
-			
+			float h = slot.getY() + slot.getHeight();
 			if(h > maxHeight) {
 				maxHeight = h;
 			}
 		}
-		
 		return maxHeight;
 	}
 	
@@ -52,15 +49,12 @@ public class GuiSlotList extends GuiPanel {
 		for(GuiSlot slot : slots) {
 			remove(slot);
 		}
-		
 		slots.clear();
-		
 		for(int i = 0; i < list.getEntries().size(); i++) {
 			GuiSlot listSlot = getSlotInstance(i, list.getEntries().get(i));
 			slots.add(listSlot);
 			add(listSlot);
 		}
-		
 		list.updateSlidersVisibility();
 	}
 	

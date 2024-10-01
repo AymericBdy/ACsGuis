@@ -9,7 +9,7 @@ import fr.aym.acsguis.cssengine.selectors.CompoundCssSelector;
 import fr.aym.acsguis.cssengine.selectors.CssStackElement;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.cssengine.style.CssStyleProperty;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.utils.GuiConstants;
 import fr.aym.acsguis.utils.GuiTextureSprite;
 import fr.aym.acsguis.utils.IGuiTexture;
@@ -43,13 +43,13 @@ public interface ComponentStyleManager {
     /**
      * Sets custom css properties and reloads the css stack
      */
-    void setCustomParsedStyle(@Nullable Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> data);
+    void setCustomParsedStyle(@Nullable Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> data);
 
     /**
      * @return The applied custom css properties, or null
      */
     @Nullable
-    Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> getCustomParsedStyle();
+    Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> getCustomParsedStyle();
 
     /**
      * Adds an auto style handler
@@ -78,7 +78,7 @@ public interface ComponentStyleManager {
      * @param value    The new property value
      * @return this
      */
-    ComponentStyleManager injectStyle(EnumCssStyleProperties property, String value);
+    ComponentStyleManager injectStyle(EnumCssStyleProperty property, String value);
 
     /**
      * Adds this style to the element <br>
@@ -99,10 +99,19 @@ public interface ComponentStyleManager {
      * Refreshes the css of this element
      *
      * @param reloadCssStack If css stack should be reloaded (heavy)
-     * @param reason         Used for debug, identifies the caller of this function
      */
-    default void refreshCss(boolean reloadCssStack, String reason) {
-        refreshCss(getOwner().getGui(), reloadCssStack, reason);
+    default void refreshCss(boolean reloadCssStack) {
+        refreshCss(getOwner().getGui(), reloadCssStack);
+    }
+
+    /**
+     * Refreshes the css of this element (all properties)
+     *
+     * @param gui            The displayed gui
+     * @param reloadCssStack If css stack should be reloaded (heavy)
+     */
+    default void refreshCss(GuiFrame.APIGuiScreen gui, boolean reloadCssStack) {
+        refreshCss(gui, reloadCssStack, EnumCssStyleProperty.values());
     }
 
     /**
@@ -110,9 +119,9 @@ public interface ComponentStyleManager {
      *
      * @param gui            The displayed gui
      * @param reloadCssStack If css stack should be reloaded (heavy)
-     * @param reason         Used for debug, identifies the caller of this function
+     * @param properties     The properties to refresh
      */
-    void refreshCss(GuiFrame.APIGuiScreen gui, boolean reloadCssStack, String reason);
+    void refreshCss(GuiFrame.APIGuiScreen gui, boolean reloadCssStack, EnumCssStyleProperty... properties);
 
     /**
      * Reloads the css stack (heavy)
@@ -142,12 +151,12 @@ public interface ComponentStyleManager {
     /**
      * @return The computed X render pos of this component
      */
-    int getRenderX();
+    float getRenderX();
 
     /**
      * @return The computed y render pos of this component
      */
-    int getRenderY();
+    float getRenderY();
 
     /**
      * @return The width of this component
@@ -162,12 +171,12 @@ public interface ComponentStyleManager {
     /**
      * @return The computed render width of this component
      */
-    int getRenderWidth();
+    float getRenderWidth();
 
     /**
      * @return The computed render height of this component
      */
-    int getRenderHeight();
+    float getRenderHeight();
 
     /**
      * Fired when the display screen is resized <br>
@@ -183,7 +192,7 @@ public interface ComponentStyleManager {
 
     ComponentStyleManager setBorderRadius(CssValue radius);
 
-    int getBorderRadius();
+    float getBorderRadius();
 
     enum BORDER_POSITION {INTERNAL, EXTERNAL}
 
@@ -225,7 +234,7 @@ public interface ComponentStyleManager {
 
     ComponentStyleManager setBorderSize(CssValue borderSize);
 
-    int getBorderSize();
+    float getBorderSize();
 
     /**
      * Allows keeping thin border visible when the gui has a little scale (see {@link fr.aym.acsguis.component.layout.GuiScaler}) <br>

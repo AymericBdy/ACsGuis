@@ -89,40 +89,40 @@ public class GridLayout implements PanelLayout<ComponentStyleManager> {
     }
 
     @Override
-    public int getX(ComponentStyleManager target) {
+    public float getX(ComponentStyleManager target) {
         if (!cache.containsKey(target)) {
             cache.put(target, nextIndex);
             nextIndex++;
         }
         int elementsPerLine = this.elementsPerLine;
         if (direction == GridDirection.HORIZONTAL && elementsPerLine == -1) {
-            elementsPerLine = target.getParent().getRenderWidth() / getWidth(target);
+            elementsPerLine = (int) (target.getParent().getRenderWidth() / getWidth(target));
         }
-        int spacing = this.spacing.computeValue(container.getWidth(), container.getHeight(), container.getWidth());
+        float spacing = this.spacing.computeValue(container.getWidth(), container.getHeight(), container.getWidth());
         return direction == GridDirection.HORIZONTAL ? (getWidth() + spacing) * (cache.get(target) % elementsPerLine) : (getWidth() + spacing) * (cache.get(target) / elementsPerLine);
     }
 
     @Override
-    public int getY(ComponentStyleManager target) {
+    public float getY(ComponentStyleManager target) {
         if (!cache.containsKey(target)) {
             cache.put(target, nextIndex);
             nextIndex++;
         }
         int elementsPerLine = this.elementsPerLine;
         if (direction == GridDirection.VERTICAL && elementsPerLine == -1) {
-            elementsPerLine = target.getParent().getRenderHeight() / getHeight(target);
+            elementsPerLine = (int) (target.getParent().getRenderHeight() / getHeight(target));
         }
-        int spacing = this.spacing.computeValue(container.getWidth(), container.getHeight(), container.getHeight());
+        float spacing = this.spacing.computeValue(container.getWidth(), container.getHeight(), container.getHeight());
         return direction == GridDirection.VERTICAL ? (getHeight() + spacing) * (cache.get(target) % elementsPerLine) : (getHeight() + spacing) * (cache.get(target) / elementsPerLine);
     }
 
     @Override
-    public int getWidth(ComponentStyleManager target) {
+    public float getWidth(ComponentStyleManager target) {
         return getWidth();
     }
 
     @Override
-    public int getHeight(ComponentStyleManager target) {
+    public float getHeight(ComponentStyleManager target) {
         return getHeight();
     }
 
@@ -132,11 +132,11 @@ public class GridLayout implements PanelLayout<ComponentStyleManager> {
         nextIndex = 0;
     }
 
-    public int getWidth() {
+    public float getWidth() {
         return width.computeValue(GuiFrame.resolution.getScaledWidth(), GuiFrame.resolution.getScaledHeight(), container.getWidth());
     }
 
-    public int getHeight() {
+    public float getHeight() {
         return height.computeValue(GuiFrame.resolution.getScaledWidth(), GuiFrame.resolution.getScaledHeight(), container.getHeight());
     }
 

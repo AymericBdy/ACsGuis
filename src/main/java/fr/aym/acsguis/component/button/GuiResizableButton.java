@@ -3,6 +3,10 @@ package fr.aym.acsguis.component.button;
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.event.listeners.IResizableButtonListener;
 import fr.aym.acsguis.event.listeners.mouse.IMouseMoveListener;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
@@ -33,8 +37,8 @@ public class GuiResizableButton extends GuiButton implements IMouseMoveListener 
 	
 	protected int resizeBorderColor = Color.LIGHT_GRAY.getRGB();
 	
-	protected int lastWidth, lastHeight;
-	protected int lastX, lastY;
+	protected float lastWidth, lastHeight;
+	protected float lastX, lastY;
 	protected int minWidth = 4, minHeight = 4, maxWidth = Integer.MAX_VALUE, maxHeight = Integer.MAX_VALUE;
 
 	public GuiResizableButton(String text) {
@@ -87,8 +91,8 @@ public class GuiResizableButton extends GuiButton implements IMouseMoveListener 
 			setBottomHovered(isHovered() && (isBottomOutsideResizable() || isBottomInnerResizable()) && bottomHovered);
 		} else {
 			
-			int newWidth = MathHelper.clamp(getLastWidth() + (mouseX - GuiFrame.lastPressedX) * (isRightHovered() ? 1 : -1), getMinWidth(), getMaxWidth());
-			int newHeight = MathHelper.clamp(getLastHeight() + (mouseY - GuiFrame.lastPressedY) * (isBottomHovered() ? 1 : -1), getMinHeight(), getMaxHeight());
+			float newWidth = MathHelper.clamp(getLastWidth() + (mouseX - GuiFrame.lastPressedX) * (isRightHovered() ? 1 : -1), getMinWidth(), getMaxWidth());
+			float newHeight = MathHelper.clamp(getLastHeight() + (mouseY - GuiFrame.lastPressedY) * (isBottomHovered() ? 1 : -1), getMinHeight(), getMaxHeight());
 			
 			float wDelta = getWidth() - newWidth;
 			float hDelta = getHeight() - newHeight;
@@ -125,19 +129,19 @@ public class GuiResizableButton extends GuiButton implements IMouseMoveListener 
 		}
 	}
 	
-	public int getLastWidth() {
+	public float getLastWidth() {
 		return lastWidth;
 	}
 	
-	public int getLastHeight() {
+	public float getLastHeight() {
 		return lastHeight;
 	}
 	
-	public int getLastX() {
+	public float getLastX() {
 		return lastX;
 	}
 	
-	public int getLastY() {
+	public float getLastY() {
 		return lastY;
 	}
 	
@@ -306,5 +310,41 @@ public class GuiResizableButton extends GuiButton implements IMouseMoveListener 
 		this.maxHeight = maxHeight;
 		return this;
 	}
-	
+
+	//FIXME MOVE THIS
+    public static void drawRect(float left, float top, float right, float bottom, int color)
+    {
+        if (left < right)
+        {
+            float i = left;
+            left = right;
+            right = i;
+        }
+
+        if (top < bottom)
+        {
+            float j = top;
+            top = bottom;
+            bottom = j;
+        }
+
+        float f3 = (float)(color >> 24 & 255) / 255.0F;
+        float f = (float)(color >> 16 & 255) / 255.0F;
+        float f1 = (float)(color >> 8 & 255) / 255.0F;
+        float f2 = (float)(color & 255) / 255.0F;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.color(f, f1, f2, f3);
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
+        bufferbuilder.pos((double)left, (double)bottom, 0.0D).endVertex();
+        bufferbuilder.pos((double)right, (double)bottom, 0.0D).endVertex();
+        bufferbuilder.pos((double)right, (double)top, 0.0D).endVertex();
+        bufferbuilder.pos((double)left, (double)top, 0.0D).endVertex();
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+    }
 }

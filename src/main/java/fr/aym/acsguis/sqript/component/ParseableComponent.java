@@ -19,7 +19,7 @@ public enum ParseableComponent
     PANEL(GuiPanel.class, "panel", GuiPanel::new, ComponentProperties.SET_STYLE, ComponentProperties.LAYOUT, ComponentProperties.NEXT_TAB_PANE),
     TABBED_PANE(GuiTabbedPane.class, "tabbed_pane", GuiTabbedPane::new, ComponentProperties.SET_STYLE, ComponentProperties.LAYOUT),
     SCROL_PANE(GuiScrollPane.class, "scroll_pane", GuiScrollPane::new, ComponentProperties.SET_STYLE, ComponentProperties.LAYOUT, ComponentProperties.NEXT_TAB_PANE),
-    LABEL(GuiLabel.class, "label", () -> new GuiLabel("not set"), ComponentProperties.SET_STYLE, ComponentProperties.TEXT),
+    LABEL(GuiLabel.class, "label", () -> new GuiLabel("not set"), ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.MAX_TEXT_LENGTH),
     TEXT_FIELD(GuiTextField.class, "text_field", GuiTextField::new, SqriptCompatiblity.TEXT_AREA_PROPERTIES_PARSER),
     TEXT_AREA(GuiTextArea.class, "text_area", GuiTextArea::new, SqriptCompatiblity.TEXT_AREA_PROPERTIES_PARSER),
     PASSWORD_FIELD(GuiPasswordField.class, "password_field", GuiPasswordField::new, SqriptCompatiblity.TEXT_AREA_PROPERTIES_PARSER),

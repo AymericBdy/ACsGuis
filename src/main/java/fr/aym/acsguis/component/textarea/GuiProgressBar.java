@@ -3,6 +3,7 @@ package fr.aym.acsguis.component.textarea;
 import fr.aym.acsguis.api.GuiAPIClientHelper;
 import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.GuiComponent;
+import fr.aym.acsguis.component.button.GuiResizableButton;
 import fr.aym.acsguis.utils.GuiConstants;
 import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.cssengine.style.CssComponentStyleManager;
@@ -46,7 +47,7 @@ public class GuiProgressBar extends GuiComponent<GuiProgressBar.ProgressBarStyle
 
         float relProgress = (progress - minProgress) / (maxProgress - minProgress);
 
-        drawRect(getScreenX(), getScreenY(), (int) (getScreenX() + getWidth() * relProgress), getScreenY() + getHeight(), getStyle().fullProgressBarColor);
+        GuiResizableButton.drawRect(getScreenX(), getScreenY(), (int) (getScreenX() + getWidth() * relProgress), getScreenY() + getHeight(), getStyle().fullProgressBarColor);
         GL11.glColor4f(1,1,1,1);
 
         GlStateManager.enableBlend();

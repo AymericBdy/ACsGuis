@@ -4,16 +4,16 @@ import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.cssengine.parsing.core.objects.*;
 import fr.aym.acsguis.cssengine.selectors.CssStackElement;
 import fr.aym.acsguis.cssengine.style.CssStyleProperty;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class InjectedStyleList
 {
-    private final Map<EnumCssStyleProperties, CssStyleProperty<?>> propertyMap = new HashMap<>();
+    private final Map<EnumCssStyleProperty, CssStyleProperty<?>> propertyMap = new HashMap<>();
 
-    public void addProperty(EnumCssStyleProperties property, String value) {
+    public void addProperty(EnumCssStyleProperty property, String value) {
         value = value.trim();
         CssValue cssValue;
         if (!value.contains(" ") && (value.equals("0") || value.endsWith("px"))) {
@@ -40,12 +40,12 @@ public class InjectedStyleList
         propertyMap.put(property.getProperty(), property);
     }
 
-    public Map<EnumCssStyleProperties, CssStyleProperty<?>> getPropertyMap() {
+    public Map<EnumCssStyleProperty, CssStyleProperty<?>> getPropertyMap() {
         return propertyMap;
     }
 
     public void inject(GuiComponent<?> component, CssStackElement inStack) {
-        for(Map.Entry<EnumCssStyleProperties, CssStyleProperty<?>> property : propertyMap.entrySet()) {
+        for(Map.Entry<EnumCssStyleProperty, CssStyleProperty<?>> property : propertyMap.entrySet()) {
             inStack.injectProperty(component, property.getKey(), property.getValue());
         }
     }

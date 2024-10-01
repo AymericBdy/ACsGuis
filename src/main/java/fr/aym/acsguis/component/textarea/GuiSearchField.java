@@ -5,7 +5,7 @@ import fr.aym.acsguis.component.panel.GuiScrollPane;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import net.minecraft.command.CommandBase;
 
 import javax.annotation.Nullable;
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 public abstract class GuiSearchField extends GuiPanel
 {
-	private static final List<EnumCssStyleProperties> linesModifiedProperties = Arrays.asList(EnumCssStyleProperties.HEIGHT, EnumCssStyleProperties.TOP);
+	private static final List<EnumCssStyleProperty> linesModifiedProperties = Arrays.asList(EnumCssStyleProperty.HEIGHT, EnumCssStyleProperty.TOP);
 
 	private final GuiTextField field;
 	private final GuiScrollPane potentialMatches;
@@ -49,7 +49,7 @@ public abstract class GuiSearchField extends GuiPanel
 			GuiLabel label;
 			for(final String name : names)
 			{
-				potentialMatches.add(label = new GuiLabel(0, y1, getWidth(), lineHeight, name));
+				potentialMatches.add(label = new GuiLabel(0, y1, (int) getWidth(), lineHeight, name));
 				label.setCssClass("search_bar_match");
 				label.addClickListener((mouseX, mouseY, mouseButton) -> {
 					if(!isMultiSearch() || !field.getText().contains(","))
@@ -64,12 +64,12 @@ public abstract class GuiSearchField extends GuiPanel
 				int finalY = y1;
 				label.getStyle().addAutoStyleHandler(new AutoStyleHandler<ComponentStyleManager>() {
 					@Override
-					public boolean handleProperty(EnumCssStyleProperties property, EnumSelectorContext context, ComponentStyleManager target) {
-						if(property == EnumCssStyleProperties.HEIGHT) {
+					public boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, ComponentStyleManager target) {
+						if(property == EnumCssStyleProperty.HEIGHT) {
 							target.getHeight().setAbsolute(lineHeight);
 							return true;
 						}
-						else if(property == EnumCssStyleProperties.TOP) {
+						else if(property == EnumCssStyleProperty.TOP) {
 							target.getYPos().setAbsolute(finalY);
 							return true;
 						}
@@ -82,7 +82,7 @@ public abstract class GuiSearchField extends GuiPanel
 					}
 
 					@Override
-					public Collection<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
+					public Collection<EnumCssStyleProperty> getModifiedProperties(ComponentStyleManager target) {
 						return linesModifiedProperties;
 					}
 				});
@@ -90,7 +90,7 @@ public abstract class GuiSearchField extends GuiPanel
 				if(maxElementCount != -1 && y1 > maxElementCount*lineHeight)
 					break;
 			}
-			potentialMatches.getStyle().refreshCss(getGui(), false, "search_bar_upd");
+			potentialMatches.getStyle().refreshCss(getGui(), false);
 		});
 	}
 
@@ -106,7 +106,7 @@ public abstract class GuiSearchField extends GuiPanel
 	public void setRegexPattern(Pattern pattern) {field.setRegexPattern(pattern);}
 
 	@Override
-	public int getRenderMaxY()
+	public float getRenderMaxY()
 	{
 		return super.getRenderMaxY() + potentialMatches.getHeight();
 	}

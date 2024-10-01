@@ -47,8 +47,8 @@ public abstract class GuiContainer extends GuiFrame implements IMouseClickListen
     protected boolean isRightMouseClick;
     /** Used when touchscreen is enabled */
     protected ItemStack draggedStack;
-    protected int touchUpX;
-    protected int touchUpY;
+    protected float touchUpX;
+    protected float touchUpY;
     protected Slot returningStackDestSlot;
     protected long returningStackTime;
     /** Used when touchscreen is enabled */
@@ -140,7 +140,7 @@ public abstract class GuiContainer extends GuiFrame implements IMouseClickListen
             }
 
             mc.getRenderItem().zLevel = 200;
-            GuiAPIClientHelper.drawItemStack(itemstack, mouseX - getScreenX() - j2, mouseY - getScreenY() - k2);
+            GuiAPIClientHelper.drawItemStack(itemstack, (int) (mouseX - getScreenX() - j2), (int) (mouseY - getScreenY() - k2));
             mc.getRenderItem().zLevel = 0;
         }
 
@@ -154,13 +154,13 @@ public abstract class GuiContainer extends GuiFrame implements IMouseClickListen
                 this.returningStack = null;
             }
 
-            int l2 = this.returningStackDestSlot.xPos - this.touchUpX;
-            int i3 = this.returningStackDestSlot.yPos - this.touchUpY;
-            int l1 = this.touchUpX + (int)((float)l2 * f);
-            int i2 = this.touchUpY + (int)((float)i3 * f);
+            float l2 = this.returningStackDestSlot.xPos - this.touchUpX;
+            float i3 = this.returningStackDestSlot.yPos - this.touchUpY;
+            float l1 = this.touchUpX + (int)((float)l2 * f);
+            float i2 = this.touchUpY + (int)((float)i3 * f);
 
             if(itemstack != null)
-                GuiAPIClientHelper.drawItemStack(this.returningStack, l1, i2, 1, false);
+                GuiAPIClientHelper.drawItemStack(this.returningStack, (int) l1, (int) i2, 1, false);
         }
 
         GlStateManager.popMatrix();
@@ -505,10 +505,10 @@ public abstract class GuiContainer extends GuiFrame implements IMouseClickListen
      * Test if the 2D point is in a rectangle (relative to the GUI). Args : rectX, rectY, rectWidth, rectHeight, pointX,
      * pointY
      */
-    protected boolean isPointInRegion(int left, int top, int right, int bottom, int pointX, int pointY)
+    protected boolean isPointInRegion(int left, int top, int right, int bottom, int pointXI, int pointYI)
     {
-        pointX = pointX - getScreenX();
-        pointY = pointY - getScreenY();
+        float pointX = pointXI - getScreenX();
+        float pointY = pointYI - getScreenY();
         return pointX >= left - 1 && pointX < left + right + 1 && pointY >= top - 1 && pointY < top + bottom + 1;
     }
 

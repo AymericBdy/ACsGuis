@@ -3,7 +3,7 @@ package fr.aym.acsguis.cssengine.selectors;
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
 import fr.aym.acsguis.cssengine.style.CssStyleProperty;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
@@ -17,12 +17,12 @@ import java.util.Map;
 public class CssStackElement
 {
     private final CssStackElement parent;
-    private final Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> propertyMap;
+    private final Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> propertyMap;
     /* Not multi-thread compatible */
     private final List<CssStyleProperty<?>> matchingProperties = new ArrayList<>();
     private CompoundCssSelector universalSelector;
 
-    public CssStackElement(CssStackElement parent, Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> propertyMap) {
+    public CssStackElement(CssStackElement parent, Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> propertyMap) {
         this.parent = parent;
         this.propertyMap = propertyMap;
         //System.out.println("Property map is "+propertyMap);
@@ -32,7 +32,7 @@ public class CssStackElement
         return parent;
     }
 
-    public void injectProperty(GuiComponent<?> component, EnumCssStyleProperties property, CssStyleProperty<?> value) {
+    public void injectProperty(GuiComponent<?> component, EnumCssStyleProperty property, CssStyleProperty<?> value) {
         if(universalSelector == null) {
             universalSelector = new CompoundCssSelector(new CssSelector<>(CssSelector.EnumSelectorType.A_COMPONENT, component), null, null);
             universalSelector.setId(Integer.MAX_VALUE); //Max id to override everything
@@ -43,7 +43,7 @@ public class CssStackElement
         propertyMap.get(universalSelector).put(property, value);
     }
 
-    public void applyProperty(EnumSelectorContext context, EnumCssStyleProperties property, ComponentStyleManager to) {
+    public void applyProperty(EnumSelectorContext context, EnumCssStyleProperty property, ComponentStyleManager to) {
         boolean out = false;//to.getOwner() instanceof GuiButton && ((GuiButton)to.getOwner()).getText().equals("Vehicles") && property == EnumCssStyleProperties.TEXTURE && context == EnumSelectorContext.NORMAL;//to.getOwner() instanceof GuiLabel && property == EnumCssStyleProperties.PADDING_LEFT;//(property == EnumCssStyleProperties.VISIBILITY) && to.getOwner() instanceof GuiButton;
         propertyMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach((e) -> {
             if(out)
@@ -106,13 +106,13 @@ public class CssStackElement
             matchingProperties.clear();
     }
 
-    public void applyAllProperties(EnumSelectorContext context, ComponentStyleManager to) {
+    public void applyProperties(EnumSelectorContext context, ComponentStyleManager to, EnumCssStyleProperty... properties) {
         for(EnumSelectorContext context1 : EnumSelectorContext.values())
         {
             if(context1 == context || context1.isParent(context))
             {
-                for (EnumCssStyleProperties properties : EnumCssStyleProperties.values()) {
-                    applyProperty(context1, properties, to);
+                for (EnumCssStyleProperty property : properties) {
+                    applyProperty(context1, property, to);
                 }
             }
         }

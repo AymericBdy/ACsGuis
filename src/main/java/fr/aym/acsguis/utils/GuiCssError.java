@@ -9,7 +9,7 @@ import fr.aym.acsguis.component.textarea.GuiTextArea;
 import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.cssengine.selectors.CompoundCssSelector;
 import fr.aym.acsguis.cssengine.style.CssStyleProperty;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.component.layout.GuiScaler;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
@@ -71,9 +71,9 @@ public class GuiCssError extends GuiFrame
 
         summary.add(new GuiLabel(0, 0, width, 20, "Click on any css sheet to view it, then press escape to go back").getStyle().setPaddingLeft(2).setPaddingTop(2).getOwner());
         int i = 1;
-        for (Map.Entry<ResourceLocation, Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>>> entry : ACsGuisCssParser.getCssStyleSheets().entrySet()) {
+        for (Map.Entry<ResourceLocation, Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>>> entry : ACsGuisCssParser.getCssStyleSheets().entrySet()) {
             ResourceLocation res = entry.getKey();
-            Map<CompoundCssSelector, Map<EnumCssStyleProperties, CssStyleProperty<?>>> m = entry.getValue();
+            Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> m = entry.getValue();
             summary.add(new GuiLabel(0, i*22, width, 20, "+ Style sheet : " + res).getStyle().setPaddingLeft(2).setPaddingTop(2).getOwner().addClickListener((x, y, b) -> {
                 remove(summary);
 

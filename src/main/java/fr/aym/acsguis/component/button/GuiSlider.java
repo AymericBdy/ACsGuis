@@ -7,7 +7,7 @@ import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyleManager;
 import fr.aym.acsguis.cssengine.style.CssPanelStyleManager;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.event.listeners.mouse.IMouseClickListener;
 import fr.aym.acsguis.event.listeners.mouse.IMouseExtraClickListener;
 import fr.aym.acsguis.event.listeners.mouse.IMouseMoveListener;
@@ -130,7 +130,7 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
 	
 	@Override public void onMouseReleased(int mouseX, int mouseY, int mouseButton) {}
 
-    private static final List<EnumCssStyleProperties> affectedSliderProperties = Arrays.asList(EnumCssStyleProperties.LEFT, EnumCssStyleProperties.TOP);
+    private static final List<EnumCssStyleProperty> affectedSliderProperties = Arrays.asList(EnumCssStyleProperty.LEFT, EnumCssStyleProperty.TOP);
 
 	protected class GuiSliderButton extends GuiButton implements IMouseMoveListener
     {
@@ -139,13 +139,13 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
             addMoveListener(this);
             getStyle().addAutoStyleHandler(new AutoStyleHandler<ComponentStyleManager>() {
                 @Override
-                public boolean handleProperty(EnumCssStyleProperties property, EnumSelectorContext context, ComponentStyleManager target) {
-                    if(property == EnumCssStyleProperties.LEFT && horizontal)
+                public boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, ComponentStyleManager target) {
+                    if(property == EnumCssStyleProperty.LEFT && horizontal)
                     {
                         target.getXPos().setAbsolute((int) (getRelativeValue() * (GuiSlider.this.getWidth() - sliderButton.getWidth())));
                         return true;
                     }
-                    if(property == EnumCssStyleProperties.TOP && !horizontal)
+                    if(property == EnumCssStyleProperty.TOP && !horizontal)
                     {
                         target.getYPos().setAbsolute((int) (getRelativeValue() * (GuiSlider.this.getHeight() - sliderButton.getHeight())));
                         return true;
@@ -154,7 +154,7 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
                 }
 
                 @Override
-                public Collection<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
+                public Collection<EnumCssStyleProperty> getModifiedProperties(ComponentStyleManager target) {
                     return affectedSliderProperties;
                 }
             });

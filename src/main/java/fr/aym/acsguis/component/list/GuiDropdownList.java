@@ -86,7 +86,7 @@ public class GuiDropdownList extends GuiPanel implements IMouseClickListener {
     }
 
     @Override
-    public int getRenderMaxY() {
+    public float getRenderMaxY() {
         return super.getRenderMaxY() + (panel.isVisible() ? panel.getHeight() : 0);
     }
 
