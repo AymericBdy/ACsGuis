@@ -34,7 +34,7 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
     private final List<ResourceLocation> CSS_SHEETS = new ArrayList<>();
     private final CssHudHandler hud = new CssHudHandler();
     private final InWorldGuisManager inWorldGuisManager = new InWorldGuisManager();
-    private AtomicBoolean isReloading = new AtomicBoolean(false);
+    private final AtomicBoolean isReloading = new AtomicBoolean(false);
 
     public CssGuisManager() {
         registerStyleSheetToPreload(ACsGuisCssParser.DEFAULT_STYLE_SHEET);

@@ -1,11 +1,14 @@
-package fr.aym.acsguis.api;
+package fr.aym.acsguis.api.worldguis;
 
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.textarea.GuiTextArea;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.shader.Framebuffer;
@@ -28,16 +31,12 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 
-public class WorldGui
-{
-    protected static final Minecraft mc = Minecraft.getMinecraft();
+public class WorldGui {
+    public static final Minecraft mc = Minecraft.getMinecraft();
     protected final UUID id;
     protected final GuiFrame gui;
-    protected Vec3d pos;
-    protected float rotationYaw;
-    protected float rotationPitch;
+    protected WorldGuiTransform transform;
     protected double width;
     protected double height;
     protected int guiWidth;
@@ -50,35 +49,54 @@ public class WorldGui
 
     protected boolean rendered;
     protected Framebuffer framebuffer;
-    protected short renderIn;
+    protected short renderTicksRemaining;
 
-    public WorldGui(GuiFrame gui, Vec3d pos, float rotationYaw, float rotationPitch, double width, double height, int guiWidth, int guiHeight, boolean canInteract) {
-        this(UUID.randomUUID(), gui, pos, rotationYaw, rotationPitch, width, height, guiWidth, guiHeight, canInteract);
+    /**
+     * Creates a new WorldGui with a random uuid
+     *
+     * @param gui           The gui to display
+     * @param transform     The gui transform, can change dynamically
+     * @param width         The gui width (in world, unit: blocks)
+     * @param height        The gui height (in world, unit: blocks)
+     * @param guiWidth      The gui width (gui "screen" resolution, unit: pixels)
+     * @param guiHeight     The gui height (gui "screen" resolution, unit: pixels)
+     * @param canInteract   If the players can interact with this gui
+     */
+    public WorldGui(GuiFrame gui, WorldGuiTransform transform, double width, double height, int guiWidth, int guiHeight, boolean canInteract) {
+        this(UUID.randomUUID(), gui, transform, width, height, guiWidth, guiHeight, canInteract);
     }
 
-    public WorldGui(UUID id, GuiFrame gui, Vec3d pos, float rotationYaw, float rotationPitch, double width, double height, int guiWidth, int guiHeight, boolean canInteract) {
+    /**
+     * Creates a new WorldGui with the given UUID
+     *
+     * @param id            The unique id of this in world gui
+     * @param gui           The gui to display
+     * @param transform     The gui transform, can change dynamically
+     * @param width         The gui width (in world)
+     * @param height        The gui height (in world)
+     * @param guiWidth      The gui width (gui "screen" resolution, in pixels)
+     * @param guiHeight     The gui height (gui "screen" resolution, in pixels)
+     * @param canInteract   If the players can interact with this gui
+     */
+    public WorldGui(UUID id, GuiFrame gui, WorldGuiTransform transform, double width, double height, int guiWidth, int guiHeight, boolean canInteract) {
         this.id = id;
         this.gui = gui;
-        this.pos = pos;
-        this.rotationYaw = rotationYaw;
-        this.rotationPitch = rotationPitch;
+        this.transform = transform;
         this.width = width;
         this.height = height;
         this.guiWidth = guiWidth;
         this.guiHeight = guiHeight;
-        this.bounds = new AxisAlignedBB(-width/2, -height/2, 0, width/2, height/2, 0.1);
+        this.bounds = new AxisAlignedBB(-width / 2, -height / 2, 0, width / 2, height / 2, 0.1);
         this.canInteract = canInteract;
-        //TODO FIXED RESOLUTION NOT DEPENDING ON SETTINGS !!!
-        gui.getGuiScreen().setWorldAndResolution(mc, guiWidth*2, guiHeight*2);
-        //TODO REMOVE *2 EVERYWHERE
-        renderIn = 2;
+        gui.getGuiScreen().setWorldAndResolution(mc, guiWidth, guiHeight);
+        renderTicksRemaining = 2;
     }
 
     protected void setFocused(boolean focused) {
-        if(!focused) {
-            gui.getGui().mouseReleased(-100, -100, 0);
+        if (!focused) {
+            gui.getGui().mouseReleased(-1000, -1000, 0);
             Keyboard.enableRepeatEvents(false);
-            renderIn = 2;
+            renderTicksRemaining = 2;
         } else {
             KeyBinding.unPressAllKeys();
             Keyboard.enableRepeatEvents(true);
@@ -87,32 +105,31 @@ public class WorldGui
     }
 
     protected double getMouseX() {
-        return (guiWidth/2f - (rayTraceResult.hitVec.x - pos.x) * guiWidth/width);
+        return guiWidth / 2f - ((rayTraceResult.hitVec.x - transform.getPosition().x) * guiWidth / width);
     }
 
     protected double getMouseY() {
-        return (guiHeight/2f - (rayTraceResult.hitVec.y - pos.y) * guiHeight/height);
+        return guiHeight / 2f - ((rayTraceResult.hitVec.y - transform.getPosition().y) * guiHeight / height);
     }
 
     public void render(float partialTicks) {
-        if(!rendered)
+        if (!rendered)
             return;
         GlStateManager.pushMatrix();
         Entity rootPlayer = Minecraft.getMinecraft().getRenderViewEntity();
         double x = rootPlayer.lastTickPosX + (rootPlayer.posX - rootPlayer.lastTickPosX) * partialTicks;
         double y = rootPlayer.lastTickPosY + (rootPlayer.posY - rootPlayer.lastTickPosY) * partialTicks;
         double z = rootPlayer.lastTickPosZ + (rootPlayer.posZ - rootPlayer.lastTickPosZ) * partialTicks;
-        GlStateManager.translate(-x+pos.x, -y+pos.y, -z+pos.z);
-        GlStateManager.rotate(rotationYaw, 0, 1, 0);
-        GlStateManager.rotate(rotationPitch, 1, 0, 0);
+        GlStateManager.translate(-x + transform.getPosition().x, -y + transform.getPosition().y, -z + transform.getPosition().z);
+        GlStateManager.rotate(transform.getRotationYaw(), 0, 1, 0);
+        GlStateManager.rotate(transform.getRotationPitch(), 1, 0, 0);
 
-        renderDebug = true;
-        if(renderDebug) {
+        if (renderDebug) {
             GlStateManager.pushMatrix();
         }
         //GlStateManager.rotate(180, 0, 0, 1);
-        GlStateManager.translate(-width/2, -height/2, 0);
-        GlStateManager.scale(width/guiWidth, height/guiHeight, 1f/16); //TODO TESTS
+        GlStateManager.translate(-width / 2, -height / 2, 0);
+        GlStateManager.scale(width / guiWidth, height / guiHeight, 1f / 16);
         /*GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
         GlStateManager.enableDepth();
@@ -142,7 +159,7 @@ public class WorldGui
             gui.getGui().drawScreen(-100, -100, 0, false);
         }*/
 
-        if(renderDebug) {
+        if (renderDebug) {
             GlStateManager.popMatrix();
             //render bounding box
             GlStateManager.disableLighting();
@@ -153,9 +170,18 @@ public class WorldGui
 
             if (rayTraceResult != null) {
                 GlStateManager.pushMatrix();
-                GlStateManager.translate(rayTraceResult.hitVec.x - pos.x, rayTraceResult.hitVec.y - pos.y, rayTraceResult.hitVec.z - pos.z);
+                GlStateManager.translate(rayTraceResult.hitVec.x - transform.getPosition().x, rayTraceResult.hitVec.y - transform.getPosition().y, rayTraceResult.hitVec.z - transform.getPosition().z);
                 RenderGlobal.drawBoundingBox(-0.05, -0.05, -0.05, 0.05, 0.05, 0.05, 1, 0, 0, 1);
                 GlStateManager.popMatrix();
+
+                /* Not working
+                GlStateManager.pushMatrix();
+                //GlStateManager.translate(mx, my, 0);
+                GlStateManager.translate(-width / 2, -height / 2, 0);
+                GlStateManager.scale(width / guiWidth, height / guiHeight, 1f / 16);
+                GlStateManager.translate(getMouseX(), getMouseY(), 0);
+                RenderGlobal.drawBoundingBox(-0.05, -0.05, -0.05, 0.05, 0.05, 0.05, 0, 1, 0, 1);
+                GlStateManager.popMatrix();*/
             }
             RenderGlobal.drawSelectionBoundingBox(bounds, 0, 0, 1, 1);
         }
@@ -165,12 +191,12 @@ public class WorldGui
     public void tick() {
         gui.getGui().updateScreen();
 
-        if(!rendered || rayTraceResult != null || gui.getGui().isFocused() || renderIn > 0) {
-            if(framebuffer == null) {
+        if (!rendered || rayTraceResult != null || gui.getGui().isFocused() || renderTicksRemaining > 0) {
+            if (framebuffer == null) {
                 framebuffer = new Framebuffer(guiWidth*2, guiHeight*2, true);
             }
-            if(renderIn > 0)
-                renderIn--;
+            if (renderTicksRemaining > 0)
+                renderTicksRemaining--;
             framebuffer.framebufferClear();
             framebuffer.bindFramebuffer(true);
             glMatrixMode(5889);
@@ -215,19 +241,19 @@ public class WorldGui
             glDisable(GL_BLEND);
             glDisable(GL_FOG);
 
-            if(rayTraceResult != null) {
+            if (rayTraceResult != null) {
                 double mouseX = getMouseX();
                 double mouseY = getMouseY();
-                gui.getGui().drawScreen((int)mouseX, (int)mouseY, 0, false);
+                gui.getGui().drawScreen((int) mouseX, (int) mouseY, 0, false);
             } else {
                 gui.getGui().drawScreen(-100, -100, 0, false);
             }
 
-            if(Keyboard.isKeyDown(Keyboard.KEY_L) && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
+            if (Keyboard.isKeyDown(Keyboard.KEY_L) && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
                 System.out.println("Saving...");
                 // Capturez le contenu du framebuffer dans un tableau de pixels (ByteBuffer)
-                int width = guiWidth*2; // Remplacez par la largeur de votre framebuffer
-                int height = guiHeight*2; // Remplacez par la hauteur de votre framebuffer
+                int width = guiWidth; // Remplacez par la largeur de votre framebuffer
+                int height = guiHeight; // Remplacez par la hauteur de votre framebuffer
                 ByteBuffer buffer = ByteBuffer.allocateDirect(4 * width * height);
                 GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 
@@ -246,7 +272,7 @@ public class WorldGui
 
 // Sauvegardez l'image en tant que fichier PNG
                 try {
-                    File outputFile = new File("gui_de_mort.png"); // Spécifiez le chemin de votre fichier de sortie
+                    File outputFile = new File("in_world_gui_buffer.png"); // Spécifiez le chemin de votre fichier de sortie
                     ImageIO.write(image, "png", outputFile);
                     System.out.println("L'image a été sauvegardée avec succès.");
                 } catch (IOException e) {
@@ -258,9 +284,13 @@ public class WorldGui
             rendered = true;
         }
         //rotationYaw = (rotationYaw + 1) % 360;
-        if(!canInteract)
+        if (!canInteract)
             return;
-        //handle keyboard
+        handleKeyboardInput();
+        rayTraceMouseCursor();
+    }
+
+    private void handleKeyboardInput() {
         if (rayTraceResult != null && gui.getGui().isFocused() && Keyboard.isCreated()) {
             while (Keyboard.next()) {
                 int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
@@ -276,57 +306,51 @@ public class WorldGui
                 }
             }
         }
+    }
 
+    private void rayTraceMouseCursor() {
         Entity rootPlayer = Minecraft.getMinecraft().getRenderViewEntity();
         Vec3d vec3d = rootPlayer.getPositionEyes(0);
-        vec3d = vec3d.subtract(pos);
-        vec3d = vec3d.rotateYaw(-rotationYaw * 0.017453292F);
-        vec3d = vec3d.rotatePitch(rotationPitch * 0.017453292F);
-        vec3d = vec3d.add(pos);
+        vec3d = vec3d.subtract(transform.getPosition().x, transform.getPosition().y, transform.getPosition().z);
+        vec3d = vec3d.rotateYaw(-transform.getRotationYaw() * 0.017453292F);
+        vec3d = vec3d.rotatePitch(transform.getRotationPitch() * 0.017453292F);
+        vec3d = vec3d.add(transform.getPosition().x, transform.getPosition().y, transform.getPosition().z);
         Vec3d vec3d1 = rootPlayer.getLook(0);
-        vec3d1 = vec3d1.rotateYaw(-rotationYaw * 0.017453292F);
-        vec3d1 = vec3d1.rotatePitch(rotationPitch * 0.017453292F);
-        float blockReachDistance = 10;
+        vec3d1 = vec3d1.rotateYaw(-transform.getRotationYaw() * 0.017453292F);
+        vec3d1 = vec3d1.rotatePitch(transform.getRotationPitch() * 0.017453292F);
+        float blockReachDistance = 8;
         Vec3d vec3d2 = vec3d.add(vec3d1.x * blockReachDistance, vec3d1.y * blockReachDistance, vec3d1.z * blockReachDistance);
-        AxisAlignedBB boundingBox = bounds;// new AxisAlignedBB(-guiWidth/2f, -guiHeight/2f, -0.1, guiWidth/2f, guiHeight/2f, 0.1);
-        Vec3d vec3d02 = vec3d.subtract(pos.x, pos.y, pos.z);
-        Vec3d vec3d12 = vec3d2.subtract(pos.x, pos.y, pos.z);
-        RayTraceResult raytraceresult = boundingBox.calculateIntercept(vec3d02, vec3d12);
-        raytraceresult = raytraceresult == null ? null : new RayTraceResult(raytraceresult.hitVec.add(pos.x, pos.y, pos.z), raytraceresult.sideHit, new BlockPos(pos));
+        Vec3d vec3d02 = vec3d.subtract(transform.getPosition().x, transform.getPosition().y, transform.getPosition().z);
+        Vec3d vec3d12 = vec3d2.subtract(transform.getPosition().x, transform.getPosition().y, transform.getPosition().z);
+        RayTraceResult raytraceresult = bounds.calculateIntercept(vec3d02, vec3d12);
+        raytraceresult = raytraceresult == null ? null :
+                new RayTraceResult(raytraceresult.hitVec.add(transform.getPosition().x, transform.getPosition().y, transform.getPosition().z), raytraceresult.sideHit,
+                        new BlockPos(transform.getPosition().x, transform.getPosition().y, transform.getPosition().z));
 
-        if(raytraceresult != null) {
+        if (raytraceresult != null) {
             //ray trace world in front of the gui
-            /*Vec3d rayVector = raytraceresult.hitVec.subtract(vec3d);
-            rayVector = rayVector.rotatePitch(-rotationPitch * 0.017453292F);
-            rayVector = rayVector.rotateYaw(rotationYaw * 0.017453292F);
-            vec3d = rootPlayer.getPositionEyes(0);
-            RayTraceResult worldRayTrace = rootPlayer.getEntityWorld().rayTraceBlocks(vec3d, vec3d.add(rayVector), false, false, true);
-            if(worldRayTrace != null) {
-                System.out.println("Blocked");
-                raytraceresult = null;
-            }*/
             RayTraceResult res = mc.objectMouseOver;
-            if(res != null && res.hitVec.subtract(rootPlayer.getPositionEyes(0)).lengthSquared() < raytraceresult.hitVec.subtract(vec3d).lengthSquared()) {
-                System.out.println("Blocked");
+            if (res != null && res.hitVec.subtract(rootPlayer.getPositionEyes(0)).lengthSquared() < raytraceresult.hitVec.subtract(vec3d).lengthSquared()) {
+                //System.out.println("Blocked");
                 raytraceresult = null;
             }
         }
         //System.out.println(raytraceresult);
-        if(rayTraceResult != null && raytraceresult == null) {
+        if (rayTraceResult != null && raytraceresult == null) {
             setFocused(false);
         }
         rayTraceResult = raytraceresult;
     }
 
     private boolean hasTextFocus(GuiComponent<?> component) {
-        if(component instanceof GuiTextArea) {
+        if (component instanceof GuiTextArea) {
             return ((GuiTextArea) component).isEditable() && component.isPressed();
         }
-        if(!(component instanceof GuiPanel)) {
+        if (!(component instanceof GuiPanel)) {
             return false;
         }
-        for(GuiComponent<?> c : ((GuiPanel) component).getChildComponents()) {
-            if(hasTextFocus(c)) {
+        for (GuiComponent<?> c : ((GuiPanel) component).getChildComponents()) {
+            if (hasTextFocus(c)) {
                 return true;
             }
         }
@@ -334,15 +358,14 @@ public class WorldGui
     }
 
     public boolean handleMouseEvent(MouseEvent event) {
-        if(rayTraceResult == null) {
+        if (rayTraceResult == null) {
             return false;
         }
         int i = (int) (getMouseX());
         int j = (int) (getMouseY());
         int k = Mouse.getEventButton();
 
-        if (Mouse.getEventButtonState())
-        {
+        if (Mouse.getEventButtonState()) {
             /* todo support touch screen ? if (gui.getGui().mc.gameSettings.touchscreen && gui.getGui().touchValue++ > 0)
             {
                 return;
@@ -354,9 +377,7 @@ public class WorldGui
             isMouseClicked = true;
             event.setCanceled(true);
             return true;
-        }
-        else if (k != -1 && isMouseClicked)
-        {
+        } else if (k != -1 && isMouseClicked) {
             /*if (gui.getGui().mc.gameSettings.touchscreen && --gui.getGui().touchValue > 0)
             {
                 return;
@@ -396,28 +417,8 @@ public class WorldGui
         return gui;
     }
 
-    public void setPosition(Vec3d pos) {
-        this.pos = pos;
-    }
-
-    public Vec3d getPosition() {
-        return pos;
-    }
-
-    public void setRotationYaw(float rotationYaw) {
-        this.rotationYaw = rotationYaw;
-    }
-
-    public float getRotationYaw() {
-        return rotationYaw;
-    }
-
-    public void setRotationPitch(float rotationPitch) {
-        this.rotationPitch = rotationPitch;
-    }
-
-    public float getRotationPitch() {
-        return rotationPitch;
+    public WorldGuiTransform getTransform() {
+        return transform;
     }
 
     public void setCanInteract(boolean canInteract) {
@@ -426,5 +427,17 @@ public class WorldGui
 
     public boolean isCanInteract() {
         return canInteract;
+    }
+
+    public float getDistanceToUser() {
+        return rayTraceResult != null ? (float) rayTraceResult.hitVec.distanceTo(mc.getRenderViewEntity().getPositionEyes(0)) : Float.MAX_VALUE;
+    }
+
+    public void setRenderDebug(boolean renderDebug) {
+        this.renderDebug = renderDebug;
+    }
+
+    public boolean isRenderDebug() {
+        return renderDebug;
     }
 }

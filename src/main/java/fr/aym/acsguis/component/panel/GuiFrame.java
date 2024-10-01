@@ -39,6 +39,10 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	protected boolean pauseGame = true;
 	protected boolean enableRepeatEvents = true;
 	protected boolean escapeQuit = true;
+	/**
+	 * You can disable Minecraft vanilla guiScale scaling here
+	 */
+	protected boolean applyMcScale = true;
 
 	/**
 	 * Either to reload all css sheets when the gui is loaded, only for creating/debugging the gui
@@ -242,7 +246,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 		@Override
 		public void setWorldAndResolution(Minecraft mc, int width, int height) {
 			super.setWorldAndResolution(mc, width, height);
-			resolution = new ACsScaledResolution(mc, width, height);
+			resolution = new ACsScaledResolution(mc, width, height, isApplyMcScale());
 			frame.resize(this, width, height);
 			debugPane.resize(this, width, height);
 			debugPane.updateSlidersVisibility();
@@ -416,7 +420,16 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 		this.escapeQuit = escapeQuit;
 		return this;
 	}
-	
+
+	public boolean isApplyMcScale() {
+		return applyMcScale;
+	}
+
+	public GuiFrame setApplyMcScale(boolean applyMcScale) {
+		this.applyMcScale = applyMcScale;
+		return this;
+	}
+
 	public APIGuiScreen getGuiScreen() {
 		return guiScreen;
 	}
