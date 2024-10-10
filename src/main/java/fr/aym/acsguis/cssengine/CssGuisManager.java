@@ -77,17 +77,18 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
 
     private void loadGui(String loadingName, Callable<GuiFrame> guiInstance, Consumer<GuiFrame> displayGui) {
         try {
-            Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading " + loadingName + "...", true);
             GuiFrame gui = guiInstance.call();
             boolean reloadCss = gui.needsCssReload();
+            boolean showMessage = gui.showCssLoadingMessage();
+            if(showMessage) Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading " + loadingName + "...", true);
             CssReloadEvent.Pre event = null;
             if (reloadCss) {
-                Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading css...", true);
+                if(showMessage) Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading css...", true);
                 event = new CssReloadEvent.Pre(new CssReloadOrigin.HotCssReloadOrigin(this, gui));
                 if (MinecraftForge.EVENT_BUS.post(event)) return;
                 event.getReloadOrigin().loadStyles();
             }
-            Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading " + loadingName + "...", true);
+            if(showMessage) Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading " + loadingName + "...", true);
             CssReloadEvent.Pre finalEvent = event;
 
             //Don't use ThreadedLoader scheduler : it's not updated after mc launch
@@ -118,8 +119,6 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
      * @param guiInstance A function returning the gui, called by the external thread
      */
     public void asyncLoadThenShowGui(String guiName, Callable<GuiFrame> guiInstance) {
-        Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading CSS gui " + guiName + "...", true);
-
         ACsLib.getPlatform().provideService(ThreadedLoadingService.class).addTask(ThreadedLoadingService.ModLoadingSteps.NEVER, "css_load",
                 () -> loadGui("css gui " + guiName, guiInstance, gui -> Minecraft.getMinecraft().displayGuiScreen(gui.getGuiScreen())));
     }
@@ -133,7 +132,6 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
      * @see CssHudHandler
      */
     public void asyncLoadThenShowHudGui(String guiName, Callable<GuiFrame> guiInstance) {
-        Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading CSS hud " + guiName + "...", true);
         ACsLib.getPlatform().provideService(ThreadedLoadingService.class).addTask(ThreadedLoadingService.ModLoadingSteps.NEVER, "css_load",
                 () -> loadGui("css hud " + guiName, guiInstance, gui -> getHud().setCurrentHUD(gui)));
     }

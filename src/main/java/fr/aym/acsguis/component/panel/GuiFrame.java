@@ -48,6 +48,10 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	 * Enables show debug option by pressing 'K' on the keyboard while hovering a component
 	 */
 	protected boolean enableDebugPanel = false;
+
+	protected boolean showCssLoadingMessage = true;
+
+
 	
 	public static long lastClickTime;
 	public static int mouseX, mouseY;
@@ -132,8 +136,20 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 	 */
 	public boolean needsCssReload() { return needsCssReload; }
 
+
 	public void setNeedsCssReload(boolean needsCssReload) {
 		this.needsCssReload = needsCssReload;
+	}
+
+
+	/**
+	 * Shows a loading message in the overlay while the css is loading
+	 * @return true to show overlay message, false to not show it
+	 */
+	public boolean showCssLoadingMessage() { return showCssLoadingMessage; }
+
+	public void setShowCssLoadingMessage(boolean showCssLoadingMessage) {
+		this.showCssLoadingMessage = showCssLoadingMessage;
 	}
 
 	/**
