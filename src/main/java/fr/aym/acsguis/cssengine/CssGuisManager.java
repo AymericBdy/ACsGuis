@@ -145,9 +145,22 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
      * @see CssHudHandler
      */
     public void asyncLoadThenShowHudGui(String guiName, Callable<GuiFrame> guiInstance) {
+        asyncLoadThenShowHudGui(hud.getDisplayedHuds().size(), guiName, guiInstance);
+    }
+
+    /**
+     * Loads a GuiFrame in another thread, then shows it on the HUD <br>
+     * Note : the css fonts are loaded in the client thread (needs open gl)
+     *
+     * @param hudIndex    The index of the hud, used to change the display order of the huds
+     * @param guiName     The gui name, used for log messages
+     * @param guiInstance A function returning the gui, called by the external thread
+     * @see CssHudHandler
+     */
+    public void asyncLoadThenShowHudGui(int hudIndex, String guiName, Callable<GuiFrame> guiInstance) {
         Minecraft.getMinecraft().ingameGUI.setOverlayMessage("Loading CSS hud " + guiName + "...", true);
         ACsLib.getPlatform().provideService(ThreadedLoadingService.class).addTask(ThreadedLoadingService.ModLoadingSteps.NEVER, "css_load",
-                () -> loadGui("css hud " + guiName, guiInstance, gui -> getHud().setCurrentHUD(gui)));
+                () -> loadGui("css hud " + guiName, guiInstance, gui -> getHud().showHudGui(hudIndex, gui)));
     }
 
     @Override
