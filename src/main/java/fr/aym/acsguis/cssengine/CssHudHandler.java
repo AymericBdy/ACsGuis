@@ -8,58 +8,69 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Handles hud guis display
  */
-public class CssHudHandler
-{
-    private GuiFrame.APIGuiScreen currentHUD;
+public class CssHudHandler {
+    private final List<GuiFrame.APIGuiScreen> displayedHuds = new ArrayList<>();
     private int displayWidth, displayHeight;
 
-    public GuiFrame.APIGuiScreen getCurrentHUD() {
-        return currentHUD;
+    public List<GuiFrame.APIGuiScreen> getDisplayedHuds() {
+        return displayedHuds;
     }
 
-    public void setCurrentHUD(GuiFrame hud) {
-        if(currentHUD != null) {
-            currentHUD.onGuiClosed();
+    public void closeAllHudGuis() {
+        for (GuiFrame.APIGuiScreen hud : displayedHuds) {
+            hud.onGuiClosed();
         }
-        if(hud != null) {
-            currentHUD = hud.getGuiScreen();
-            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-            currentHUD.setWorldAndResolution(Minecraft.getMinecraft(), sr.getScaledWidth(), sr.getScaledHeight());
-            currentHUD.setFocused(false);
-        }
-        else
-            currentHUD = null;
+        displayedHuds.clear();
+    }
+
+    public void closeHudGui(GuiFrame hud) {
+        displayedHuds.remove(hud.getGuiScreen());
+        hud.getGuiScreen().onGuiClosed();
+    }
+
+    public void showHudGui(GuiFrame hud) {
+        showHudGui(displayedHuds.size(), hud);
+    }
+
+    public void showHudGui(int index, GuiFrame hud) {
+        GuiFrame.APIGuiScreen currentHUD = hud.getGuiScreen();
+        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+        currentHUD.setWorldAndResolution(Minecraft.getMinecraft(), sr.getScaledWidth(), sr.getScaledHeight());
+        currentHUD.setFocused(false);
+        displayedHuds.add(index, currentHUD);
     }
 
     @SubscribeEvent
     public void drawHud(RenderGameOverlayEvent.Post event) {
-        if(event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
-            if(currentHUD != null) {
-                currentHUD.drawScreen(Integer.MIN_VALUE, Integer.MIN_VALUE, event.getPartialTicks());
-            }
+        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+            if(displayedHuds.isEmpty())
+                return;
+            displayedHuds.forEach(hud -> hud.drawScreen(Integer.MIN_VALUE, Integer.MIN_VALUE, event.getPartialTicks()));
         }
     }
 
     @SubscribeEvent
     public void clientTick(TickEvent.ClientTickEvent event) {
-        if(event.phase == TickEvent.Phase.END) {
-            if(currentHUD != null) {
-                currentHUD.updateScreen();
-            }
-            if(Minecraft.getMinecraft().displayWidth != displayWidth || Minecraft.getMinecraft().displayHeight != displayHeight) {
+        if (event.phase == TickEvent.Phase.END) {
+            if(displayedHuds.isEmpty())
+                return;
+            displayedHuds.forEach(GuiFrame.APIGuiScreen::updateScreen);
+            if (Minecraft.getMinecraft().displayWidth != displayWidth || Minecraft.getMinecraft().displayHeight != displayHeight) {
                 displayWidth = Minecraft.getMinecraft().displayWidth;
                 displayHeight = Minecraft.getMinecraft().displayHeight;
-                if(currentHUD != null)
-                    currentHUD.onResize(Minecraft.getMinecraft(), displayWidth, displayHeight);
+                displayedHuds.forEach(hud -> hud.onResize(Minecraft.getMinecraft(), displayWidth, displayHeight));
             }
         }
     }
 
     @SubscribeEvent
     public void worldUnload(WorldEvent.Unload event) {
-        setCurrentHUD(null);
+        closeAllHudGuis();
     }
 }

@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -109,17 +110,37 @@ public class ACsGuiApi implements ACsGuiApiService {
     }
 
     /**
-     * @return the currently displayed hud gui
+     * Loads a GuiFrame in another thread, then shows it on the HUD <br>
+     * A hud gui is only a visual gui, you can't interact with it <br>
+     * Note : the css fonts are loaded in the client thread (it needs open gl)
+     *
+     * @param hudIndex    The index of the hud, used to change the display order of the huds
+     * @param guiName     The gui name, used for log messages
+     * @param guiInstance A function returning the gui, called by the external thread
      */
-    public static GuiFrame.APIGuiScreen getDisplayHudGui() {
-        return manager.getHud().getCurrentHUD();
+    public static void asyncLoadThenShowHudGui(int hudIndex, String guiName, Callable<GuiFrame> guiInstance) {
+        manager.asyncLoadThenShowHudGui(guiName, guiInstance);
     }
 
     /**
-     * Closes the currently displayed hud gui
+     * @return the list of currently displayed hud guis
      */
-    public static void closeHudGui() {
-        manager.getHud().setCurrentHUD(null);
+    public static List<GuiFrame.APIGuiScreen> getDisplayHudGuis() {
+        return manager.getHud().getDisplayedHuds();
+    }
+
+    /**
+     * Closes the given hud gui
+     */
+    public static void closeHudGui(GuiFrame hud) {
+        manager.getHud().closeHudGui(hud);
+    }
+
+    /**
+     * Closes all the currently displayed hud guis
+     */
+    public static void closeAllHudGuis() {
+        manager.getHud().closeAllHudGuis();
     }
 
     /**
