@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class CssHudHandler {
     private final List<GuiFrame.APIGuiScreen> displayedHuds = new ArrayList<>();
-    private int displayWidth, displayHeight;
+    private int displayWidth, displayHeight, guiScale;
 
     public List<GuiFrame.APIGuiScreen> getDisplayedHuds() {
         return displayedHuds;
@@ -27,6 +27,16 @@ public class CssHudHandler {
             hud.onGuiClosed();
         }
         displayedHuds.clear();
+    }
+
+    public boolean closeHudGui(Class<? extends GuiFrame> hudFrameClass) {
+        return displayedHuds.removeIf(hud -> {
+            if (hudFrameClass.isInstance(hud.getFrame())) {
+                hud.onGuiClosed();
+                return true;
+            }
+            return false;
+        });
     }
 
     public void closeHudGui(GuiFrame hud) {
@@ -41,7 +51,10 @@ public class CssHudHandler {
     public void showHudGui(int index, GuiFrame hud) {
         GuiFrame.APIGuiScreen currentHUD = hud.getGuiScreen();
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        currentHUD.setWorldAndResolution(Minecraft.getMinecraft(), sr.getScaledWidth(), sr.getScaledHeight());
+        ScaledResolution scaledresolution = new ScaledResolution(Minecraft.getMinecraft());
+        int i = scaledresolution.getScaledWidth();
+        int j = scaledresolution.getScaledHeight();
+        currentHUD.setWorldAndResolution(Minecraft.getMinecraft(), i, j);
         currentHUD.setFocused(false);
         displayedHuds.add(index, currentHUD);
     }
@@ -49,7 +62,7 @@ public class CssHudHandler {
     @SubscribeEvent
     public void drawHud(RenderGameOverlayEvent.Post event) {
         if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
-            if(displayedHuds.isEmpty())
+            if (displayedHuds.isEmpty())
                 return;
             displayedHuds.forEach(hud -> hud.drawScreen(Integer.MIN_VALUE, Integer.MIN_VALUE, event.getPartialTicks()));
         }
@@ -58,13 +71,17 @@ public class CssHudHandler {
     @SubscribeEvent
     public void clientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            if(displayedHuds.isEmpty())
+            if (displayedHuds.isEmpty())
                 return;
             displayedHuds.forEach(GuiFrame.APIGuiScreen::updateScreen);
-            if (Minecraft.getMinecraft().displayWidth != displayWidth || Minecraft.getMinecraft().displayHeight != displayHeight) {
+            if (Minecraft.getMinecraft().displayWidth != displayWidth || Minecraft.getMinecraft().displayHeight != displayHeight || Minecraft.getMinecraft().gameSettings.guiScale != guiScale) {
                 displayWidth = Minecraft.getMinecraft().displayWidth;
                 displayHeight = Minecraft.getMinecraft().displayHeight;
-                displayedHuds.forEach(hud -> hud.onResize(Minecraft.getMinecraft(), displayWidth, displayHeight));
+                guiScale = Minecraft.getMinecraft().gameSettings.guiScale;
+                ScaledResolution scaledresolution = new ScaledResolution(Minecraft.getMinecraft());
+                int i = scaledresolution.getScaledWidth();
+                int j = scaledresolution.getScaledHeight();
+                displayedHuds.forEach(hud -> hud.onResize(Minecraft.getMinecraft(), i, j));
             }
         }
     }

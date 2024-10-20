@@ -131,10 +131,12 @@ public class ACsGuiApi implements ACsGuiApiService {
     }
 
     /**
-     * Closes the given hud gui
+     * Closes all the hud guis of the given class
+     *
+     * @return true if a gui was closed
      */
-    public static void closeHudGui(GuiFrame hud) {
-        manager.getHud().closeHudGui(hud);
+    public static boolean closeHudGui(Class<? extends GuiFrame> hudFrameClass) {
+        return manager.getHud().closeHudGui(hudFrameClass);
     }
 
     /**
