@@ -35,7 +35,7 @@ public class GuiDropdownList extends GuiPanel implements IMouseClickListener {
     }
 
     public void setElements(List<String> elements) {
-        panel.removeAllChilds();
+        panel.removeAllChildren();
         for (String s : elements) {
             panel.add(new GuiLabel(s).addClickListener((mouseX, mouseY, mouseButton) -> {
                 selectedElement = s;

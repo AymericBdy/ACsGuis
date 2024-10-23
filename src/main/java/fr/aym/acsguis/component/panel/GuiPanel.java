@@ -14,16 +14,18 @@ import java.util.*;
 
 public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoStyleHandler<ComponentStyleManager> {
 	
-	protected List<GuiComponent> childComponents = new ArrayList<GuiComponent>();
+	protected List<GuiComponent<?>> childComponents = new ArrayList<>();
 	
-	protected List<GuiComponent> queuedComponents = new ArrayList<GuiComponent>();
-	protected List<GuiComponent> toRemoveComponents = new ArrayList<GuiComponent>();
+	protected List<GuiComponent<?>> queuedComponents = new ArrayList<>();
+	protected List<GuiComponent<?>> toRemoveComponents = new ArrayList<>();
 
 	protected PanelLayout<?> layout;
 
 	public GuiPanel() {
 		super();
 	}
+
+	@Deprecated
 	public GuiPanel(int x, int y, int width, int height) {
 		super(x, y, width, height);
 	}
@@ -55,24 +57,20 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 			return;
 		for(GuiComponent<?> c : queuedComponents)
 		{
-			if(dif) {
-				if (layout != null)
-					c.getStyle().addAutoStyleHandler(layout);
-				if (this.layout != null)
-					c.getStyle().removeAutoStyleHandler(this.layout);
-			}
-			c.getStyle().refreshCss(getGui(), false);
+            if (layout != null)
+                c.getStyle().addAutoStyleHandler(layout);
+            if (this.layout != null)
+                c.getStyle().removeAutoStyleHandler(this.layout);
+            c.getStyle().refreshCss(getGui(), false);
 		}
 		for(GuiComponent<?> c : childComponents)
 		{
 			if(!toRemoveComponents.contains(c)) {
-				if(dif) {
-					if (layout != null)
-						c.getStyle().addAutoStyleHandler(layout);
-					if (this.layout != null)
-						c.getStyle().removeAutoStyleHandler(this.layout);
-				}
-				c.getStyle().refreshCss(getGui(), false);
+                if (layout != null)
+                    c.getStyle().addAutoStyleHandler(layout);
+                if (this.layout != null)
+                    c.getStyle().removeAutoStyleHandler(this.layout);
+                c.getStyle().refreshCss(getGui(), false);
 			}
 		}
 		this.layout = layout;
@@ -115,7 +113,7 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 	 * with its parent.
 	 * @param component The child component
 	 */
-	public GuiPanel add(GuiComponent component) {
+	public GuiPanel add(GuiComponent<?> component) {
 		component.setParent(this);
 		if(layout != null)
 			component.getStyle().addAutoStyleHandler(layout);
@@ -123,12 +121,12 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 		return this;
 	}
 	
-	public GuiPanel remove(GuiComponent component) {
+	public GuiPanel remove(GuiComponent<?> component) {
 		toRemoveComponents.add(component);
 		return this;
 	}
 
-    public void removeAllChilds()
+    public void removeAllChildren()
     {
     	if(layout != null)
     		layout.clear();
@@ -136,22 +134,22 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
     	toRemoveComponents.addAll(childComponents);
     }
 	
-    public List<GuiComponent> getQueuedComponents()
+    public List<GuiComponent<?>> getQueuedComponents()
     {
 		return queuedComponents;
 	}
 
-	public List<GuiComponent> getToRemoveComponents() {
+	public List<GuiComponent<?>> getToRemoveComponents() {
 		return toRemoveComponents;
 	}
 
 	public void flushComponentsQueue()
 	{
-		Iterator<GuiComponent> queuedComponentsIterator = queuedComponents.iterator();
+		Iterator<GuiComponent<?>> queuedComponentsIterator = queuedComponents.iterator();
 		
 		while(queuedComponentsIterator.hasNext())
 		{
-			GuiComponent component = queuedComponentsIterator.next();
+			GuiComponent<?> component = queuedComponentsIterator.next();
 			if(getStyle().getCssStack() != null)
 				component.getStyle().reloadCssStack();
 			component.resize(getGui(), GuiFrame.resolution.getScaledWidth(), GuiFrame.resolution.getScaledHeight());
@@ -168,7 +166,7 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 			}
 		}
 		
-		Collections.sort(getChildComponents());
+		Collections.sort((List) getChildComponents());
 	}
 
 	@Override
@@ -179,11 +177,11 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 
 	public void flushRemovedComponents()
 	{
-		Iterator<GuiComponent> toRemoveComponentsIterator = toRemoveComponents.iterator();
+		Iterator<GuiComponent<?>> toRemoveComponentsIterator = toRemoveComponents.iterator();
 		
 		while (toRemoveComponentsIterator.hasNext())
 		{
-			GuiComponent component = toRemoveComponentsIterator.next();
+			GuiComponent<?> component = toRemoveComponentsIterator.next();
 			getChildComponents().remove(component);
 			
 			toRemoveComponentsIterator.remove();
@@ -201,19 +199,19 @@ public class GuiPanel extends GuiComponent<PanelStyleManager> implements AutoSty
 	@Override
 	public void drawForeground(int mouseX, int mouseY, float partialTicks, boolean enableScissor)
 	{
-		for (GuiComponent component : getChildComponents()) {
+		for (GuiComponent<?> component : getChildComponents()) {
 			component.render(mouseX, mouseY, partialTicks, enableScissor);
 		}
 		
 		super.drawForeground(mouseX, mouseY, partialTicks, enableScissor);
 	}
 	
-	public List<GuiComponent> getChildComponents() {
+	public List<GuiComponent<?>> getChildComponents() {
 		return childComponents;
 	}
 	
-	public List<GuiComponent> getReversedChildComponents() {
-		List<GuiComponent> components = new ArrayList<>();
+	public List<GuiComponent<?>> getReversedChildComponents() {
+		List<GuiComponent<?>> components = new ArrayList<>();
 		if(getChildComponents() != null) {
 			components.addAll(getChildComponents());
 			Collections.reverse(components);

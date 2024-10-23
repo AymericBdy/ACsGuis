@@ -246,7 +246,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 		@Override
 		public void setWorldAndResolution(Minecraft mc, int width, int height) {
 			super.setWorldAndResolution(mc, width, height);
-			resolution = new ACsScaledResolution(mc, width, height, isApplyMcScale());
+			resolution = new ACsScaledResolution(mc, mc.displayWidth, mc.displayHeight, isApplyMcScale());
 			frame.resize(this, width, height);
 			debugPane.resize(this, width, height);
 			debugPane.updateSlidersVisibility();

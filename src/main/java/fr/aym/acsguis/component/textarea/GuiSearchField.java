@@ -43,7 +43,7 @@ public abstract class GuiSearchField extends GuiPanel
 			List<String> names = CommandBase.getListOfStringsMatchingLastWord(new String[] {txt}, getAvaibleNames());
 			names.remove(txt);
 
-			potentialMatches.removeAllChilds();
+			potentialMatches.removeAllChildren();
 			potentialMatches.setVisible(showPotentialMatches=(!names.isEmpty() && !txt.isEmpty()));
 			int y1 = 0;
 			GuiLabel label;
@@ -58,7 +58,7 @@ public abstract class GuiSearchField extends GuiPanel
 					{
 						field.setText(field.getText().substring(0, field.getText().lastIndexOf(",")+1) + name);
 					}
-					potentialMatches.removeAllChilds();
+					potentialMatches.removeAllChildren();
 					potentialMatches.setVisible(showPotentialMatches=false);
 				});
 				int finalY = y1;
