@@ -34,7 +34,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 
     /**
      * The instance of the GuiScreen linked to this GuiFrame
-     **/
+     */
     protected final APIGuiScreen guiScreen;
 
     private ACsScaledResolution resolution = new ACsScaledResolution(GuiComponent.mc);
@@ -180,6 +180,23 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
     public GuiFrame enableRepeatEvents(boolean enableRepeatEvents) {
         this.enableRepeatEvents = enableRepeatEvents;
         return this;
+    }
+
+    /**
+     * Directly handles keyboard events from GuiScreen.handleKeyboardInput
+     *
+     * @param keyPressed If the key is pressed (or released)
+     * @param keyCode    The key code
+     * @param typedChar  The typed char
+     */
+    public void onKeyboardEvent(boolean keyPressed, int keyCode, char typedChar) {
+        if (allowDebugInGui() && keyCode == Keyboard.KEY_K) {
+            hasDebugInfo = false;
+            return;
+        }
+        if (keyCode == 0 && typedChar >= ' ' || keyPressed) {
+            this.keyTyped(typedChar, keyCode);
+        }
     }
 
     public boolean doubleClick() {
@@ -374,11 +391,9 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
         }
 
         @Override
-        public void keyTyped(char typedChar, int keyCode) {
-            if (allowDebugInGui() && Keyboard.isKeyDown(Keyboard.KEY_K)) {
-                hasDebugInfo = false;
-            }
-            frame.keyTyped(typedChar, keyCode);
+        public void handleKeyboardInput() throws IOException {
+            frame.onKeyboardEvent(Keyboard.getEventKeyState(), Keyboard.getEventKey(), Keyboard.getEventCharacter());
+            this.mc.dispatchKeypresses();
         }
 
         @Override

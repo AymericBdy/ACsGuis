@@ -81,22 +81,24 @@ public class ACsGuisCssParser
     /**
      * Registers a font
      *
-     * @param family Font name (in css code)
+     * @param family   Font name (in css code)
      * @param location Font file location, for the moment, only .ttf file are supported
-     * @param style Custom font style, as specified in css code, see {@link CssFontStyle}
+     * @param style    Custom font style, as specified in css code, see {@link CssFontStyle}
      */
     public static void addFont(ResourceLocation family, ResourceLocation location, CssFontStyle style) {
-        if(fonts.containsKey(family))
-            throw new IllegalStateException("Font "+family+" is already registered !");
-        if(location.getPath().endsWith(".ttf") || location.getPath().endsWith(".otf")) {
-            fonts.put(family, new TtfFontRenderer(location, style));
+        if (fonts.containsKey(family)) {
+            ACsGuiApi.log.warn("Ignoring attempt to register font " + family + " at " + location + ": this font is already registered! " +
+                    "If you set custom properties, these will be ignored.");
+            return;
         }
-        else if(location.getPath().endsWith(".png")) {
+        if (location.getPath().endsWith(".ttf") || location.getPath().endsWith(".otf")) {
+            fonts.put(family, new TtfFontRenderer(location, style));
+            return;
+        }
+        if (location.getPath().endsWith(".png")) {
             throw new UnsupportedOperationException("Png fonts will be supported soon !");
         }
-        else {
-            throw new UnsupportedOperationException("Unsupported font format for "+location);
-        }
+        throw new UnsupportedOperationException("Unsupported font format for " + location);
     }
 
     /**
@@ -114,17 +116,16 @@ public class ACsGuisCssParser
         try {
             inputStream = getResource(location);
         } catch (Exception e) {
-            throw new RuntimeException("Cannot load css resource "+location, e);
+            throw new RuntimeException("Cannot load css resource " + location, e);
         }
         cssStyleSheets.put(location, new HashMap<>());
         CssFileVisitor visitor = new ACsGuisCssVisitor(location, cssStyleSheets.get(location));
         try {
             CssFileReader.readCssFile(location.toString(), inputStream, visitor);
         } catch (Exception e) {
-            throw new RuntimeException("Cannot load css resource "+location, e);
+            throw new RuntimeException("Cannot load css resource " + location, e);
         }
-        ACsGuiApi.log.info("[CSS] Loaded css style sheet "+location);
-        //System.out.println("Got style : "+cssStyleSheets);
+        ACsGuiApi.log.info("[CSS] Loaded css style sheet " + location);
     }
 
     /**
@@ -135,10 +136,10 @@ public class ACsGuisCssParser
         Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> data = new HashMap<>();
         CssFileVisitor visitor = new ACsGuisStringCssVisitor(component, data);
         try {
-            CssFileReader.readCssFile("Css of component "+component, new ByteArrayInputStream(css.getBytes(StandardCharsets.UTF_8)), visitor);
+            CssFileReader.readCssFile("Css of component " + component, new ByteArrayInputStream(css.getBytes(StandardCharsets.UTF_8)), visitor);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Cannot load css code "+css, e);
+            throw new RuntimeException("Cannot load css code " + css, e);
         }
         //ACsGuiApi.log.debug("[CSS] Parsed style "+css);
         //System.out.println("Got style : "+cssStyleSheets);
@@ -152,22 +153,18 @@ public class ACsGuisCssParser
         List<IResourcePack> list = new ArrayList<>();
         list.addAll((Collection<? extends IResourcePack>) ReflectionHelper.findField(FMLClientHandler.class, "resourcePackList").get(FMLClientHandler.instance()));
 
-        for (ResourcePackRepository.Entry resourcepackrepository$entry : Minecraft.getMinecraft().getResourcePackRepository().getRepositoryEntries())
-        {
-            if(resourcepackrepository$entry.getResourcePack().getResourceDomains().contains(location.getNamespace()))
+        for (ResourcePackRepository.Entry resourcepackrepository$entry : Minecraft.getMinecraft().getResourcePackRepository().getRepositoryEntries()) {
+            if (resourcepackrepository$entry.getResourcePack().getResourceDomains().contains(location.getNamespace()))
                 list.add(resourcepackrepository$entry.getResourcePack());
         }
 
-        if (Minecraft.getMinecraft().getResourcePackRepository().getServerResourcePack() != null && Minecraft.getMinecraft().getResourcePackRepository().getServerResourcePack().getResourceDomains().contains(location.getNamespace()))
-        {
+        if (Minecraft.getMinecraft().getResourcePackRepository().getServerResourcePack() != null && Minecraft.getMinecraft().getResourcePackRepository().getServerResourcePack().getResourceDomains().contains(location.getNamespace())) {
             list.add(Minecraft.getMinecraft().getResourcePackRepository().getServerResourcePack());
         }
 
-        for (int i = list.size() - 1; i >= 0; --i)
-        {
+        for (int i = list.size() - 1; i >= 0; --i) {
             IResourcePack iresourcepack1 = list.get(i);
-            if (iresourcepack1.resourceExists(location))
-            {
+            if (iresourcepack1.resourceExists(location)) {
                 return iresourcepack1.getInputStream(location);
             }
         }
@@ -176,8 +173,8 @@ public class ACsGuisCssParser
 
     /**
      * Computes the style to apply to the given css element, checking properties of parent elements <br>
-     *     The return {@link CssStackElement} will choose which style to apply, depending on the state of the element <br>
-     *     A call to this method <i>may</i> be heavy, depending on the css code behind it
+     * The return {@link CssStackElement} will choose which style to apply, depending on the state of the element <br>
+     * A call to this method <i>may</i> be heavy, depending on the css code behind it
      */
     public static CssStackElement getStyleFor(ComponentStyle component) {
         List<ResourceLocation> cssSheets = new ArrayList<>();
@@ -185,27 +182,25 @@ public class ACsGuisCssParser
         GuiComponent parent = component.getOwner();
         while(parent.getParent() != null)
             parent = parent.getParent();
-        if(parent instanceof GuiFrame) {
-            if(((GuiFrame) parent).usesDefaultStyle())
+        if (parent instanceof GuiFrame) {
+            if (((GuiFrame) parent).usesDefaultStyle())
                 cssSheets.add(DEFAULT_STYLE_SHEET);
             cssSheets.addAll(((GuiFrame) parent).getCssStyles());
-        }
-        else {
-            if(parent.getCssId() == null || !parent.getCssId().equals("css_debug_pane"))
+        } else {
+            if (parent.getCssId() == null || !parent.getCssId().equals("css_debug_pane"))
                 ACsGuiApi.log.warn("Parent gui frame of " + component.getOwner() + " was not found, cannot apply its style !");
             cssSheets.add(DEFAULT_STYLE_SHEET);
         }
         Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> propertyMap = new HashMap<>();
         //Then apply the style of all sheets, keeping the same order
-        for(ResourceLocation sheet : cssSheets)
-        {
-            if(!cssStyleSheets.containsKey(sheet))
-                ACsGuiApi.log.warn("Style sheet "+sheet+" not loaded !");
+        for (ResourceLocation sheet : cssSheets) {
+            if (!cssStyleSheets.containsKey(sheet))
+                ACsGuiApi.log.warn("Style sheet " + sheet + " not loaded !");
             else
                 //Apply style of the sheet, in the css code order
                 cssStyleSheets.get(sheet).entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach((e) -> {
-                    if(e.getKey().applies(component, null)) {
-                        if(!propertyMap.containsKey(e.getKey()))
+                    if (e.getKey().applies(component, null)) {
+                        if (!propertyMap.containsKey(e.getKey()))
                             propertyMap.put(e.getKey(), new HashMap<>());
                         propertyMap.get(e.getKey()).putAll(e.getValue());
                     }

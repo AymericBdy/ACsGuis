@@ -151,10 +151,12 @@ public class GuiAPIClientHelper {
             }
 
             text = text.substring(line.length() + off);
+            line = line.replaceAll("\n", "").replaceAll("\t", "    ");
             renderedLines.add(line);
             totalHeight += fontHeight;
         }
         if (renderedLines.isEmpty()) {
+            text = text.replaceAll("\n", "").replaceAll("\t", "    ");
             renderedLines.add(text);
         }
         return renderedLines;
@@ -338,6 +340,7 @@ public class GuiAPIClientHelper {
                 lastLine += "...";
             }
             if (lines.isEmpty()) {
+                lastLine = lastLine.replaceAll("\n", "").replaceAll("\t", "    ");
                 lines.add(lastLine);
             } else {
                 lines.set(lines.size() - 1, lastLine);
