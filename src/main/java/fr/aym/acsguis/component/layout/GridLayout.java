@@ -138,6 +138,11 @@ public class GridLayout implements PanelLayout<InternalComponentStyle> {
     }
 
     @Override
+    public void onChildSizeChange(InternalComponentStyle child) {
+
+    }
+
+    @Override
     public void setContainer(GuiPanel container) {
         if (this.container != null)
             throw new IllegalArgumentException("Layout already used in " + this.container);

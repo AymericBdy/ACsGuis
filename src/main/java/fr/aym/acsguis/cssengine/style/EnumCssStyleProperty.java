@@ -310,8 +310,8 @@ public enum EnumCssStyleProperty {
             c.setDisplay(GuiConstants.COMPONENT_DISPLAY.NONE);
         } else if (p.getValue().equals("block")) {
             c.setDisplay(GuiConstants.COMPONENT_DISPLAY.BLOCK);
-        } else if (p.getValue().equals("inline")) {
-            c.setDisplay(GuiConstants.COMPONENT_DISPLAY.INLINE);
+        } else if (p.getValue().equals("inline") || p.getValue().equals("inline-block")) {
+            c.setDisplay(GuiConstants.COMPONENT_DISPLAY.INLINE_BLOCK);
         } else {
             throw new IllegalArgumentException("Unsupported display value : " + p.getValue());
         }

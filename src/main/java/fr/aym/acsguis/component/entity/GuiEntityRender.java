@@ -89,9 +89,9 @@ public class GuiEntityRender extends GuiComponent implements IMouseExtraClickLis
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public boolean tick() {
         counter+=1;
+        return super.tick();
     }
 
     public GuiEntityRender setPaddingTop(int paddingTop) {

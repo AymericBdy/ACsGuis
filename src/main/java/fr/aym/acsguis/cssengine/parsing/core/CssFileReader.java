@@ -34,7 +34,6 @@ public class CssFileReader {
      * @throws CssException If an error occurs while reading the css
      */
     public static void readCssFile(String sheetName, InputStream inputStream, CssFileVisitor visitor) throws CssException {
-        //TODO REWRITE WITH BUFFERED READER (optimization)
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         int lineNumber = 0;
         CssObject currentObject = null;
@@ -142,7 +141,7 @@ public class CssFileReader {
         if (!value.contains(" ") && (value.equals("0") || value.endsWith("px"))) {
             cssValue = new CssIntValue(Integer.parseInt(value.replace("px", "")));
         } else if (!value.contains(" ") && value.endsWith("%")) {
-            cssValue = new CssRelativeValue(Integer.parseInt(value.replace("%", "")), CssValue.Unit.RELATIVE_INT);
+            cssValue = new CssRelativeValue(Integer.parseInt(value.replace("%", "")), CssValue.Unit.RELATIVE_TO_PARENT);
         } else if (!value.contains(" ") && value.endsWith("vw")) {
             cssValue = new CssRelativeValue(Integer.parseInt(value.replace("vw", "")), CssValue.Unit.RELATIVE_TO_WINDOW_WIDTH);
         } else if (!value.contains(" ") && value.endsWith("vh")) {

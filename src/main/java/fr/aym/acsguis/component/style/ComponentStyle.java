@@ -144,6 +144,8 @@ public interface ComponentStyle {
 
     GuiConstants.COMPONENT_DISPLAY getDisplay();
 
+    void notifyOfChildSizeChange(InternalComponentStyle child);
+
     enum BORDER_POSITION {INTERNAL, EXTERNAL}
 
     /**

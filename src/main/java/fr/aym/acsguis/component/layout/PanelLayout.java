@@ -68,5 +68,7 @@ public interface PanelLayout<T extends InternalComponentStyle> extends AutoStyle
      */
     void clear();
 
+    void onChildSizeChange(T child);
+
     void setContainer(GuiPanel container);
 }

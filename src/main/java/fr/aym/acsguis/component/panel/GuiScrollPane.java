@@ -71,9 +71,12 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
     }
 
     @Override
-    public void flushRemovedComponents() {
-        super.flushRemovedComponents();
+    public boolean flushRemovedComponents() {
+        if (!super.flushRemovedComponents()) {
+            return false;
+        }
         updateSlidersVisibility();
+        return true;
     }
 
     /**
@@ -125,14 +128,16 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
     }
 
     @Override
-    public void flushComponentsQueue() {
-        int oldSize = getChildComponents().size();
-        super.flushComponentsQueue();
+    public boolean flushComponentsQueue() {
+        if (!super.flushComponentsQueue()) {
+            return false;
+        }
         this.updateSlidersVisibility();
-        if (autoScroll && oldSize != getChildComponents().size()) {
+        if (autoScroll) {
             xSlider.setValue(xSlider.getMax());
             ySlider.setValue(ySlider.getMax());
         }
+        return true;
     }
 
     public void scrollXBy(double d) {
@@ -153,6 +158,7 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
 
     @Override
     public void onComponentChildSizeUpdate() {
+        // TODO SORT UP
         // updateSlidersVisibility();
     }
 }

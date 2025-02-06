@@ -98,9 +98,9 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
         selectedTab = tabIndex;
         for (int i = 0; i < tabsContainers.size(); i++) {
             if (i == tabIndex) {
-                ((InternalComponentStyle) tabsContainers.get(i)).setVisible(true);
+                ((InternalComponentStyle) tabsContainers.get(i).getStyle()).setVisible(true);
             } else {
-               ((InternalComponentStyle) tabsContainers.get(i)).setVisible(false);
+               ((InternalComponentStyle) tabsContainers.get(i).getStyle()).setVisible(false);
             }
         }
         /*for (GuiComponent child : getChildComponents()) {

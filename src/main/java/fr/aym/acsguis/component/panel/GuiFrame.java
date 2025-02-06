@@ -14,6 +14,7 @@ import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
 import fr.aym.acsguis.cssengine.style.CssPanelStyle;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
+import fr.aym.acsguis.cssengine.v2.GuiOrchestrator;
 import fr.aym.acsguis.event.listeners.IKeyboardListener;
 import fr.aym.acsguis.utils.ACsScaledResolution;
 import fr.aym.acsguis.utils.ComponentRenderContext;
@@ -257,10 +258,15 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
     public class APIGuiScreen extends GuiScreen {
         private float scaleX = 1, scaleY = 1;
         protected final GuiFrame frame;
+        private final GuiOrchestrator orchestrator = new GuiOrchestrator(this);
 
         APIGuiScreen(GuiFrame frame) {
             this.frame = frame;
             frame.guiOpen();
+        }
+
+        public GuiOrchestrator getOrchestrator() {
+            return orchestrator;
         }
 
         @Override
@@ -321,6 +327,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
         }
 
         public void drawScreen(int mouseX, int mouseY, float partialTicks, ComponentRenderContext renderContext) {
+            orchestrator.processQueue();
             //updateWorldRenderBuffer();
             hoveringText = null;
 

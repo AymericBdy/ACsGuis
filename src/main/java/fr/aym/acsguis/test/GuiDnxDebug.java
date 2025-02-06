@@ -246,7 +246,6 @@ public class GuiDnxDebug extends GuiFrame {
         pane.selectTab(0);
         add(pane);
 
-
         add(new GuiLabel("Entièrement designé en CSS").setCssId("credits"));
 
         setCssId("lol");

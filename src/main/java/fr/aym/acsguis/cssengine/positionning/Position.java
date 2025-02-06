@@ -42,7 +42,6 @@ public class Position implements ReadablePosition {
     public float computeValue(InternalComponentStyle componentStyle, int screenWidth, int screenHeight, float parentSize, float elementSize) {
         if (positionFunction != null) {
             positionFunction.apply(componentStyle, this);
-            positionFunction = null;
         }
         float computed = value;
         if (type == GuiConstants.ENUM_POSITION.RELATIVE)

@@ -199,6 +199,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
      */
     public void render(int mouseX, int mouseY, float partialTicks, ComponentRenderContext renderContext) {
         if (!isVisible() || MinecraftForge.EVENT_BUS.post(new ComponentRenderEvent.ComponentRenderAllEvent(this))) {
+            style.update(getGui());
             return;
         }
         bindLayerBounds(renderContext);
@@ -217,6 +218,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         }
         GlStateManager.translate(0, 0, -getStyle().getZLevel());
         unbindLayerBounds(renderContext);
+        style.update(getGui());
     }
 
     /**
@@ -374,10 +376,9 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     /**
      * Updates the component
      */
-    public void tick() {
+    public boolean tick() {
         if (!isVisible() || MinecraftForge.EVENT_BUS.post(new ComponentStateEvent.ComponentTickEvent(this))) {
-            style.update(getGui());
-            return;
+            return false;
         }
         tickListeners.forEach(ITickListener::onTick);
         GuiFrame frame = getGui().getFrame();
@@ -386,13 +387,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
                 extraClickListener.onMousePressed(frame.mouseX, frame.mouseY, frame.mouseButton);
             }
         }
-        style.update(getGui());
-        if (!(this instanceof GuiPanel)) {
-            return;
-        }
-        ((GuiPanel) this).flushRemovedComponents();
-        ((GuiPanel) this).flushComponentsQueue();
-        ((GuiPanel) this).getChildComponents().forEach(GuiComponent::tick);
+        return true;
     }
 
     /**

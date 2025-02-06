@@ -197,7 +197,7 @@ public class WorldGui {
     public void tick() {
         gui.getGui().updateScreen();
 
-        if (!rendered || rayTraceResult != null || gui.getGui().isFocused() || renderTicksRemaining > 0) {
+        if (!rendered || rayTraceResult != null || gui.getGui().isFocused() || renderTicksRemaining > 0 || gui.getGui().getOrchestrator().hasUpdates()) {
             if (framebuffer == null) {
                 framebuffer = new Framebuffer(guiWidth*2, guiHeight*2, true);
             }

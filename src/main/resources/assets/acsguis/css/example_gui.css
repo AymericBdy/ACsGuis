@@ -35,11 +35,32 @@
     background-color: green;
 }
 
+.inline_labels:hover, .inline_buttons:hover {
+    width: 300px;
+}
+
 .inline_labels2 {
     display: inline;
     background-color: blue;
+    border: none;
 }
 
 .block_labels2 {
     background-color: red;
+    border: none;
+}
+
+.inline_labels2:hover {
+    height: 50px;
+    border: 1px gray;
+}
+
+.block_labels2:hover {
+    height: 50px;
+    border: 1px gray;
+}
+
+.block_labels:hover {
+    height: 50px;
+    border: 1px gray;
 }

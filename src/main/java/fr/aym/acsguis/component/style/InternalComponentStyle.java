@@ -1,12 +1,17 @@
 package fr.aym.acsguis.component.style;
 
+import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
 import fr.aym.acsguis.cssengine.positionning.Position;
 import fr.aym.acsguis.cssengine.positionning.Size;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.utils.GuiConstants;
 import fr.aym.acsguis.utils.IGuiTexture;
 
 public interface InternalComponentStyle extends ComponentStyle {
+    //reload css
+    boolean refreshStyleInternal(GuiFrame.APIGuiScreen gui, EnumCssStyleProperty... properties);
+
     InternalComponentStyle setForegroundColor(int color);
 
     InternalComponentStyle setBorderRadius(CssValue radius);
@@ -35,6 +40,10 @@ public interface InternalComponentStyle extends ComponentStyle {
     InternalComponentStyle setShouldRescaleBorder(boolean inverseScreenScale);
 
     InternalComponentStyle setBorderColor(int borderColor);
+
+    void updateComponentSize(int screenWidth, int screenHeight);
+
+    void updateComponentPosition(int screenWidth, int screenHeight);
 
     InternalComponentStyle setVisible(boolean enabled);
 

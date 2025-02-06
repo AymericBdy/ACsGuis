@@ -128,9 +128,9 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
         return toRemoveComponents;
     }
 
-    public void flushComponentsQueue() {
+    public boolean flushComponentsQueue() {
         if (queuedComponents.isEmpty()) {
-            return;
+            return false;
         }
         Iterator<GuiComponent> queuedComponentsIterator = queuedComponents.iterator();
         while (queuedComponentsIterator.hasNext()) {
@@ -148,23 +148,21 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
             }
         }
         Collections.sort((List) getChildComponents());
+        return true;
     }
 
     @Override
     public void resize(GuiFrame.APIGuiScreen gui, int screenWidth, int screenHeight) {
+        if (getLayout() != null) {
+            getLayout().clear();
+        }
         super.resize(gui, screenWidth, screenHeight);
         this.getReversedChildComponents().forEach(component -> component.resize(gui, screenWidth, screenHeight));
-        /*
-        TODO USELESS SI PANEL LISTEN CHANGEMENTS DE TAILLE DES ENFANTS
-        if(getLayout() != null) {
-            getLayout().clear();
-            getStyle().refreshStyle(gui, getLayout().getModifiedProperties());
-        }*/
     }
 
-    public void flushRemovedComponents() {
+    public boolean flushRemovedComponents() {
         if (toRemoveComponents.isEmpty()) {
-            return;
+            return false;
         }
         Iterator<GuiComponent> toRemoveComponentsIterator = toRemoveComponents.iterator();
         while (toRemoveComponentsIterator.hasNext()) {
@@ -175,6 +173,10 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
                 ((GuiPanel) component).flushRemovedComponents();
             }
         }
+        if(getLayout() != null) {
+            getLayout().clear();
+        }
+        return true;
     }
 
     @Override
@@ -182,8 +184,18 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
         for (GuiComponent component : getChildComponents()) {
             component.render(mouseX, mouseY, partialTicks, enableScissor);
         }
-
         super.drawForeground(mouseX, mouseY, partialTicks, enableScissor);
+    }
+
+    @Override
+    public boolean tick() {
+        if (!super.tick()) {
+            return false;
+        }
+        this.flushRemovedComponents();
+        this.flushComponentsQueue();
+        this.getChildComponents().forEach(GuiComponent::tick);
+        return true;
     }
 
     public List<GuiComponent> getChildComponents() {

@@ -34,8 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * This class handles loading of all loaded css content, and keeps it in cache
  */
-public class ACsGuisCssParser
-{
+public class ACsGuisCssParser {
     /**
      * Holds all css properties, sorted by sheet name, selector and property type
      */
@@ -132,7 +131,7 @@ public class ACsGuisCssParser
      * Read a CSS 3.0 declaration from a string using UTF-8 encoding.
      */
     public static Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> parseRawCss(GuiComponent component, String css) {
-        css = "#"+component.getCssId()+"{ \n "+css+"\n }";
+        css = "#" + component.getCssId() + "{ \n " + css + "\n }";
         Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> data = new HashMap<>();
         CssFileVisitor visitor = new ACsGuisStringCssVisitor(component, data);
         try {
@@ -180,36 +179,40 @@ public class ACsGuisCssParser
         List<ResourceLocation> cssSheets = new ArrayList<>();
         //First retrieve the css sheets used in this gui, so find the gui
         GuiComponent parent = component.getOwner();
-        while(parent.getParent() != null)
+        while (parent.getParent() != null) {
             parent = parent.getParent();
+        }
         if (parent instanceof GuiFrame) {
-            if (((GuiFrame) parent).usesDefaultStyle())
+            if (((GuiFrame) parent).usesDefaultStyle()) {
                 cssSheets.add(DEFAULT_STYLE_SHEET);
+            }
             cssSheets.addAll(((GuiFrame) parent).getCssStyles());
         } else {
-            if (parent.getCssId() == null || !parent.getCssId().equals("css_debug_pane"))
+            if (parent.getCssId() == null || !parent.getCssId().equals("css_debug_pane")) {
                 ACsGuiApi.log.warn("Parent gui frame of " + component.getOwner() + " was not found, cannot apply its style !");
+            }
             cssSheets.add(DEFAULT_STYLE_SHEET);
         }
         Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> propertyMap = new HashMap<>();
         //Then apply the style of all sheets, keeping the same order
         for (ResourceLocation sheet : cssSheets) {
-            if (!cssStyleSheets.containsKey(sheet))
+            if (!cssStyleSheets.containsKey(sheet)) {
                 ACsGuiApi.log.warn("Style sheet " + sheet + " not loaded !");
-            else
-                //Apply style of the sheet, in the css code order
-                cssStyleSheets.get(sheet).entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach((e) -> {
-                    if (e.getKey().applies(component, null)) {
-                        if (!propertyMap.containsKey(e.getKey()))
-                            propertyMap.put(e.getKey(), new HashMap<>());
-                        propertyMap.get(e.getKey()).putAll(e.getValue());
-                    }
-                });
+                continue;
+            }
+            //Apply style of the sheet, in the css code order
+            cssStyleSheets.get(sheet).entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach((e) -> {
+                if (e.getKey().applies(component, null)) {
+                    if (!propertyMap.containsKey(e.getKey()))
+                        propertyMap.put(e.getKey(), new HashMap<>());
+                    propertyMap.get(e.getKey()).putAll(e.getValue());
+                }
+            });
         }
         //if(component.getOwner() instanceof GuiPanel && component.getOwner().getCssClass() != null && component.getOwner().getCssId() != null)
         //System.out.println("WDH GET PROP FOR "+component.getOwner()+" / "+component.getOwner().getCssId()+" / "+component.getOwner().getCssClass()+" / "+propertyMap+" / "+cssSheets);
 
-        if(component.getCustomizer().getCustomParsedStyle() != null) {
+        if (component.getCustomizer().getCustomParsedStyle() != null) {
             //Apply custom style, with higher priority
             component.getCustomizer().getCustomParsedStyle().entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach((e) -> {
                 if (e.getKey().applies(component, null)) {

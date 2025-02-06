@@ -2,8 +2,6 @@ package fr.aym.acsguis.cssengine.style;
 
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.panel.GuiFrame;
-import fr.aym.acsguis.component.panel.GuiPanel;
-import fr.aym.acsguis.component.panel.GuiScrollPane;
 import fr.aym.acsguis.component.style.ComponentStyle;
 import fr.aym.acsguis.component.style.ComponentStyleCustomizer;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
@@ -117,40 +115,30 @@ public class CssComponentStyle implements InternalComponentStyle {
         cssStack = null;
     }
 
-    @Override //reload css
+    @Override
     public void refreshStyle(GuiFrame.APIGuiScreen gui, EnumCssStyleProperty... properties) {
+        gui.getOrchestrator().scheduleRefresh(this, properties);
+    }
+
+    @Override
+    public boolean refreshStyleInternal(GuiFrame.APIGuiScreen gui, EnumCssStyleProperty... properties) {
         if (cssStack == null && (getParent() == null || getParent().getCssStack() != null)) {
             reloadCssStack();
         }
         if (cssStack == null) {
-            return;
+            return false;
         }
         //Anticipate and apply the new context now
-        lastContext = component.getState();
+        if (lastContext != component.getState()) {
+            if (properties.length != EnumCssStyleProperty.values().length) {
+                properties = EnumCssStyleProperty.values();
+            }
+            lastContext = component.getState();
+        }
 
         //update
         cssStack.applyProperties(getContext(), this, properties);
-        int sx = gui != null ? (int) (gui.getFrame().getResolution().getScaledWidth() / gui.getScaleX()) : 1;
-        int sy = gui != null ? (int) (gui.getFrame().getResolution().getScaledHeight() / gui.getScaleY()) : 1;
-        updateComponentSize(sx, sy);
-        updateComponentPosition(sx, sy);
-
-        //refresh children
-        if (!(component instanceof GuiPanel)) {
-            return;
-        }
-        for (GuiComponent c : ((GuiPanel) component).getChildComponents()) {
-            if (!((GuiPanel) component).getToRemoveComponents().contains(c)) {
-                if (c.getStyle().getCssStack() == null) {
-                    c.getStyle().reloadCssStack();
-                }
-                c.getStyle().refreshStyle(getOwner().getGui(), properties);
-            }
-        }
-        //TODO PAS OUF
-        if (component instanceof GuiScrollPane) {
-            ((GuiScrollPane) component).updateSlidersVisibility();
-        }
+        return true;
     }
 
     @Override
@@ -192,13 +180,21 @@ public class CssComponentStyle implements InternalComponentStyle {
      * @param screenWidth  scaled mc screen with
      * @param screenHeight scaled mc screen height
      */
+    @Override
     public void updateComponentSize(int screenWidth, int screenHeight) {
         float parentWidth = component.getParent() != null ? component.getParent().getWidth() : screenWidth;
-        computedWidth = width.computeValue(screenWidth, screenHeight, parentWidth);
+        float newWidth = width.computeValue(screenWidth, screenHeight, parentWidth);
 
         float parentHeight = component.getParent() != null ? component.getParent().getHeight() : screenHeight;
-        computedHeight = height.computeValue(screenWidth, screenHeight, parentHeight);
-     //   System.out.println("Set height " + computedHeight + " on " + component + " " + component.hashCode());
+        float newHeight = height.computeValue(screenWidth, screenHeight, parentHeight);
+        //   System.out.println("Set height " + computedHeight + " on " + component + " " + component.hashCode());
+        if(newWidth != computedWidth || newHeight != computedHeight) {
+            if(getParent() != null) {
+                getParent().notifyOfChildSizeChange(this);
+            }
+            computedWidth = newWidth;
+            computedHeight = newHeight;
+        }
 
         if (relBorderSize != -1)
             this.borderSize = (int) (relBorderSize * getRenderWidth());
@@ -206,6 +202,7 @@ public class CssComponentStyle implements InternalComponentStyle {
             this.borderRadius = (int) (relBorderRadius * getRenderWidth());
 
         if (component.getParent() instanceof IChildSizeUpdateListener) {
+            //TODO SORT UP
             ((IChildSizeUpdateListener) component.getParent()).onComponentChildSizeUpdate();
         }
 
@@ -234,6 +231,7 @@ public class CssComponentStyle implements InternalComponentStyle {
      * @param screenWidth  scaled mc screen with
      * @param screenHeight scaled mc screen height
      */
+    @Override
     public void updateComponentPosition(int screenWidth, int screenHeight) {
         float parentWidth = component.getParent() != null ? component.getParent().getWidth() : screenWidth;
         float parentHeight = component.getParent() != null ? component.getParent().getHeight() : screenHeight;
@@ -247,6 +245,11 @@ public class CssComponentStyle implements InternalComponentStyle {
     }
 
     @Override
+    public void notifyOfChildSizeChange(InternalComponentStyle child) {
+        // do nothing, this is for panels
+    }
+
+    @Override
     public IGuiTexture getTexture() {
         return texture;
     }
@@ -254,7 +257,7 @@ public class CssComponentStyle implements InternalComponentStyle {
     @Override
     public void resize(GuiFrame.APIGuiScreen gui) {
         if (getCssStack() != null) {
-            refreshStyle(gui);
+            refreshStyle(gui, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.TOP, EnumCssStyleProperty.RIGHT, EnumCssStyleProperty.BOTTOM, EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
         }
     }
 

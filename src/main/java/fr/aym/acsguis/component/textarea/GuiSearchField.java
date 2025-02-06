@@ -129,13 +129,13 @@ public abstract class GuiSearchField extends GuiPanel {
     }
 
     @Override
-    public void tick() {
+    public boolean tick() {
 		/* Seems to create bugs...
 		if(showPotentialMatches)
 			getStyle().setZLevel(499);
 		else
 			getStyle().setZLevel(-20);*/
-        super.tick();
+        return super.tick();
     }
 
     @Override

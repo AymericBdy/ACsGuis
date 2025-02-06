@@ -22,5 +22,5 @@ public class GuiConstants
     public enum HORIZONTAL_TEXT_ALIGNMENT { CENTER, LEFT, RIGHT, JUSTIFY }
     public enum VERTICAL_TEXT_ALIGNMENT { CENTER, TOP, BOTTOM }
 
-    public enum COMPONENT_DISPLAY { BLOCK, INLINE, NONE }
+    public enum COMPONENT_DISPLAY { BLOCK, INLINE_BLOCK, NONE }
 }
