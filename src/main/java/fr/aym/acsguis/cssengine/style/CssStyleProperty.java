@@ -64,6 +64,9 @@ public class CssStyleProperty<T> {
                     return true;
                 }
             case NORMAL:
+                if (property.applyFunction == null) {
+                    throw new IllegalArgumentException("Property " + property + " can't be used in classic styles. This is reserved to style overrides.");
+                }
                 ((CssStyleApplier<T>) property.applyFunction).apply(this, to);
                 return true;
             case AUTO:

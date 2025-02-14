@@ -38,7 +38,7 @@ public class ACsGuisCssParser {
     /**
      * Holds all css properties, sorted by sheet name, selector and property type
      */
-    private static final Map<ResourceLocation, Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>>> cssStyleSheets = new ConcurrentHashMap<>(); //Set to concurrent to avoid concurrent modification exceptions when reloading css for a gui while showing a hud
+    private static final Map<ResourceLocation, Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>>> cssStyleSheets = new HashMap<>(); //Set to concurrent to avoid concurrent modification exceptions when reloading css for a gui while showing a hud
     /**
      * Holds all css fonts, sorted by name
      */
@@ -117,12 +117,15 @@ public class ACsGuisCssParser {
         } catch (Exception e) {
             throw new RuntimeException("Cannot load css resource " + location, e);
         }
-        cssStyleSheets.put(location, new HashMap<>());
-        CssFileVisitor visitor = new ACsGuisCssVisitor(location, cssStyleSheets.get(location));
+        Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> styles = new HashMap<>();
+        CssFileVisitor visitor = new ACsGuisCssVisitor(location, styles);
         try {
             CssFileReader.readCssFile(location.toString(), inputStream, visitor);
         } catch (Exception e) {
             throw new RuntimeException("Cannot load css resource " + location, e);
+        }
+        synchronized (cssStyleSheets) {
+            cssStyleSheets.put(location, styles);
         }
         ACsGuiApi.log.info("[CSS] Loaded css style sheet " + location);
     }
@@ -194,20 +197,22 @@ public class ACsGuisCssParser {
             cssSheets.add(DEFAULT_STYLE_SHEET);
         }
         Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> propertyMap = new HashMap<>();
-        //Then apply the style of all sheets, keeping the same order
-        for (ResourceLocation sheet : cssSheets) {
-            if (!cssStyleSheets.containsKey(sheet)) {
-                ACsGuiApi.log.warn("Style sheet " + sheet + " not loaded !");
-                continue;
-            }
-            //Apply style of the sheet, in the css code order
-            cssStyleSheets.get(sheet).entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach((e) -> {
-                if (e.getKey().applies(component, null)) {
-                    if (!propertyMap.containsKey(e.getKey()))
-                        propertyMap.put(e.getKey(), new HashMap<>());
-                    propertyMap.get(e.getKey()).putAll(e.getValue());
+        synchronized (cssStyleSheets) {
+            //Then apply the style of all sheets, keeping the same order
+            for (ResourceLocation sheet : cssSheets) {
+                if (!cssStyleSheets.containsKey(sheet)) {
+                    ACsGuiApi.log.warn("Style sheet " + sheet + " not loaded !");
+                    continue;
                 }
-            });
+                //Apply style of the sheet, in the css code order
+                cssStyleSheets.get(sheet).entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach((e) -> {
+                    if (e.getKey().applies(component, null)) {
+                        if (!propertyMap.containsKey(e.getKey()))
+                            propertyMap.put(e.getKey(), new HashMap<>());
+                        propertyMap.get(e.getKey()).putAll(e.getValue());
+                    }
+                });
+            }
         }
         //if(component.getOwner() instanceof GuiPanel && component.getOwner().getCssClass() != null && component.getOwner().getCssId() != null)
         //System.out.println("WDH GET PROP FOR "+component.getOwner()+" / "+component.getOwner().getCssId()+" / "+component.getOwner().getCssClass()+" / "+propertyMap+" / "+cssSheets);

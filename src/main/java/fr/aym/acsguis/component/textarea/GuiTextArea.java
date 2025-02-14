@@ -78,9 +78,12 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
     protected InternalComponentStyle createStyleManager() {
         return new CssTextComponentStyle(this) {
             @Override
-            public void updateComponentSize(int screenWidth, int screenHeight) {
-                super.updateComponentSize(screenWidth, screenHeight);
-                clearCachedTextLines();
+            public boolean updateComponentSize(int screenWidth, int screenHeight) {
+                if(super.updateComponentSize(screenWidth, screenHeight)) {
+                    clearCachedTextLines();
+                    return true;
+                }
+                return false;
             }
         };
     }

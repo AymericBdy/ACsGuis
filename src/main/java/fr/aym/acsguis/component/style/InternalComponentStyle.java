@@ -41,7 +41,7 @@ public interface InternalComponentStyle extends ComponentStyle {
 
     InternalComponentStyle setBorderColor(int borderColor);
 
-    void updateComponentSize(int screenWidth, int screenHeight);
+    boolean updateComponentSize(int screenWidth, int screenHeight);
 
     void updateComponentPosition(int screenWidth, int screenHeight);
 

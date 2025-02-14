@@ -124,8 +124,9 @@ public class FlowLayout implements PanelLayout<InternalComponentStyle> {
         lastWidth = 0;
         lastHeight = 0;
         maxLineHeight = 0;
+        //TODO REMOVE -< CSSPANELSTYLE
         // this will update sliders visibility for scroll panes
-        container.getStyle().refreshStyle(gui, EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
+        //container.getStyle().refreshStyle(gui, EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
     }
 
     @Override

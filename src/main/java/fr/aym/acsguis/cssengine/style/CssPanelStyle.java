@@ -39,21 +39,25 @@ public class CssPanelStyle extends CssComponentStyle implements PanelStyle {
     }
 
     @Override
-    public void updateComponentSize(int screenWidth, int screenHeight) {
-        super.updateComponentSize(screenWidth, screenHeight);
+    public boolean updateComponentSize(int screenWidth, int screenHeight) {
+        boolean change = super.updateComponentSize(screenWidth, screenHeight);
 
-        System.out.println("Panel size update " + panel + " TO " + computedWidth + " " + computedHeight + " from " + screenWidth + " " + screenHeight + " " + getWidth().getValue().getRawValue() + " " + getHeight().getValue().getRawValue() + " " + getWidth().getValue().type() + " " + getHeight().getValue().type());
+      //  System.out.println("Panel size update " + panel + " TO " + computedWidth + " " + computedHeight + " from " + screenWidth + " " + screenHeight + " " + getWidth().getValue().getRawValue() + " " + getHeight().getValue().getRawValue() + " " + getWidth().getValue().type() + " " + getHeight().getValue().type());
 
         //TODO PAS OUF
-        if (panel instanceof GuiScrollPane) {
-            ((GuiScrollPane) panel).updateSlidersVisibility();
+        if (change && panel instanceof GuiScrollPane) {
+            ((GuiScrollPane) panel).updateSlidersVisibility2();
         }
+        return change;
     }
 
     @Override
     public void notifyOfChildSizeChange(InternalComponentStyle child) {
         if (panel.getLayout() != null) {
             ((PanelLayout<InternalComponentStyle>) panel.getLayout()).onChildSizeChange(child);
+
+            // this will update sliders visibility for scroll panes
+            refreshStyle(getOwner().getGui(), EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
         }
     }
 }

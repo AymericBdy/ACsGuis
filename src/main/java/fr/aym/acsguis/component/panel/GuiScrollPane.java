@@ -3,13 +3,13 @@ package fr.aym.acsguis.component.panel;
 import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.button.GuiSlider;
+import fr.aym.acsguis.component.layout.FlowLayout;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
-import fr.aym.acsguis.component.textarea.IChildSizeUpdateListener;
 import fr.aym.acsguis.event.listeners.IResizeListener;
 import fr.aym.acsguis.event.listeners.mouse.IMouseWheelListener;
 import fr.aym.acsguis.utils.ComponentRenderContext;
 
-public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IResizeListener, IChildSizeUpdateListener {
+public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
     protected int lastScrollAmountX;
     protected int lastScrollAmountY;
     protected final GuiSlider xSlider;
@@ -25,8 +25,15 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
         add(ySlider);
 
         addWheelListener(this);
-        addResizeListener(this);
+
+        widthFlowLayout();
     }
+
+    /*@Override
+    public GuiScrollPane widthFlowLayout() {
+        this.setLayout(new FlowLayout());
+        return this;
+    }*/
 
     @Override
     public EnumComponentType getType() {
@@ -51,8 +58,12 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
     }
 
     @Override
-    public void onResize(int width, int height) {
-        //updateSlidersVisibility();
+    public void render(int mouseX, int mouseY, float partialTicks, ComponentRenderContext renderContext) {
+        if(dirtySliders) {
+          //  System.out.println("slide visibles?");
+            updateSlidersVisibility();
+        }
+        super.render(mouseX, mouseY, partialTicks, renderContext);
     }
 
     @Override
@@ -79,6 +90,13 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
         return true;
     }
 
+    private boolean dirtySliders;
+
+    //TODO CLEAN
+    public void updateSlidersVisibility2() {
+        dirtySliders = true;
+    }
+
     /**
      * Hide the sliders if the maximum effective size is inferior to the rendered size
      * {@link #getMaxWidth()}, {@link #getMaxHeight()}
@@ -89,8 +107,10 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
         // System.out.println(childComponents + " // " + queuedComponents);
         xSlider.setMax(getMaxWidth() - getWidth());
         ySlider.setMax(mxh - getHeight());
+    //    System.out.println(getWidth() + "/" + getMaxWidth() + " " + getHeight() + "/" + mxh);
         ((InternalComponentStyle) xSlider.getStyle()).setVisible(getMaxWidth() - getWidth() > 0);
         ((InternalComponentStyle) ySlider.getStyle()).setVisible(mxh - getHeight() > 0);
+        dirtySliders = false;
     }
 
     /**
@@ -154,11 +174,5 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener, IRes
 
     public GuiSlider getySlider() {
         return ySlider;
-    }
-
-    @Override
-    public void onComponentChildSizeUpdate() {
-        // TODO SORT UP
-        // updateSlidersVisibility();
     }
 }

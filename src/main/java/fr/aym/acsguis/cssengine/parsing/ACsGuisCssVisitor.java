@@ -57,8 +57,9 @@ public class ACsGuisCssVisitor implements CssFileVisitor {
 
     private void mapProperty(CssProperty declaration, Map<EnumCssStyleProperty, CssStyleProperty<?>> propertyMap) {
         EnumCssStyleProperty prop = EnumCssStyleProperty.fromKey(declaration.getKey());
-        if (prop == null)
+        if (prop == null || prop.parser == null) {
             throw new IllegalArgumentException("CSS property " + declaration.getKey() + " at " + declaration.getSourceLocation() + " is not supported !");
+        }
         propertyMap.put(prop, new CssStyleProperty<>(prop, declaration.getValue()));
     }
 

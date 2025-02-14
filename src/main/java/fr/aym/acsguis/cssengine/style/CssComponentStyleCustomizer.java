@@ -159,16 +159,8 @@ public class CssComponentStyleCustomizer implements ComponentStyleCustomizer {
     }
 
     @Override
-    public ComponentStyleCustomizer setRepeatBackgroundX(boolean repeatBackgroundX) {
-        styleOverrides.put(EnumCssStyleProperty.BACKGROUND_REPEAT, style -> style.setRepeatBackgroundX(repeatBackgroundX));
-        changes.add(EnumCssStyleProperty.BACKGROUND_REPEAT);
-        return this;
-    }
-
-    @Override
-    public ComponentStyleCustomizer setRepeatBackgroundY(boolean repeatBackgroundY) {
-        //TODO KEY
-        styleOverrides.put(EnumCssStyleProperty.BACKGROUND_REPEAT, style -> style.setRepeatBackgroundX(repeatBackgroundY));
+    public ComponentStyleCustomizer setRepeatBackground(boolean repeatBackgroundX, boolean repeatBackgroundY) {
+        styleOverrides.put(EnumCssStyleProperty.BACKGROUND_REPEAT, style -> style.setRepeatBackgroundX(repeatBackgroundX).setRepeatBackgroundY(repeatBackgroundY));
         changes.add(EnumCssStyleProperty.BACKGROUND_REPEAT);
         return this;
     }
@@ -189,9 +181,8 @@ public class CssComponentStyleCustomizer implements ComponentStyleCustomizer {
 
     @Override
     public ComponentStyleCustomizer setShouldRescaleBorder(boolean inverseScreenScale) {
-        //TODO KEY
-        styleOverrides.put(EnumCssStyleProperty.Z_INDEX, style -> style.setShouldRescaleBorder(inverseScreenScale));
-        changes.add(EnumCssStyleProperty.Z_INDEX);
+        styleOverrides.put(EnumCssStyleProperty.SHOULD_RESCALE_BORDER, style -> style.setShouldRescaleBorder(inverseScreenScale));
+        changes.add(EnumCssStyleProperty.SHOULD_RESCALE_BORDER);
         return this;
     }
 
@@ -211,33 +202,29 @@ public class CssComponentStyleCustomizer implements ComponentStyleCustomizer {
 
     @Override
     public ComponentStyleCustomizer setTextureVerticalSize(GuiConstants.ENUM_SIZE textureVerticalSize) {
-        //TODO KEY
-        styleOverrides.put(EnumCssStyleProperty.Z_INDEX, style -> style.setTextureVerticalSize(textureVerticalSize));
-        changes.add(EnumCssStyleProperty.Z_INDEX);
+        styleOverrides.put(EnumCssStyleProperty.TEXTURE_VERTICAL_SIZE, style -> style.setTextureVerticalSize(textureVerticalSize));
+        changes.add(EnumCssStyleProperty.TEXTURE_VERTICAL_SIZE);
         return this;
     }
 
     @Override
     public ComponentStyleCustomizer setTextureHorizontalSize(GuiConstants.ENUM_SIZE textureHorizontalSize) {
-        //TODO KEY
-        styleOverrides.put(EnumCssStyleProperty.Z_INDEX, style -> style.setTextureHorizontalSize(textureHorizontalSize));
-        changes.add(EnumCssStyleProperty.Z_INDEX);
+        styleOverrides.put(EnumCssStyleProperty.TEXTURE_HORIZONTAL_SIZE, style -> style.setTextureHorizontalSize(textureHorizontalSize));
+        changes.add(EnumCssStyleProperty.TEXTURE_HORIZONTAL_SIZE);
         return this;
     }
 
     @Override
     public ComponentStyleCustomizer setTextureHeight(int textureHeight) {
-        //TODO KEY
-        styleOverrides.put(EnumCssStyleProperty.Z_INDEX, style -> style.setTextureHeight(textureHeight));
-        changes.add(EnumCssStyleProperty.Z_INDEX);
+        styleOverrides.put(EnumCssStyleProperty.TEXTURE_HEIGHT, style -> style.setTextureHeight(textureHeight));
+        changes.add(EnumCssStyleProperty.TEXTURE_HEIGHT);
         return this;
     }
 
     @Override
     public ComponentStyleCustomizer setTextureWidth(int textureWidth) {
-        //TODO KEY
-        styleOverrides.put(EnumCssStyleProperty.Z_INDEX, style -> style.setTextureWidth(textureWidth));
-        changes.add(EnumCssStyleProperty.Z_INDEX);
+        styleOverrides.put(EnumCssStyleProperty.TEXTURE_WIDTH, style -> style.setTextureWidth(textureWidth));
+        changes.add(EnumCssStyleProperty.TEXTURE_WIDTH);
         return this;
     }
 
@@ -277,52 +264,6 @@ public class CssComponentStyleCustomizer implements ComponentStyleCustomizer {
     @Override
     public ComponentStyleCustomizer setRelativePosition(float relativeX, float relativeY, CssValue.Unit unit) {
         return setRelativeX(relativeX, unit).setRelativeY(relativeY, unit);
-    }
-
-    @Override
-    public ComponentStyleCustomizer setXOrigin(GuiConstants.ENUM_RELATIVE_POS xOrigin) {
-        //TODO KEY
-        styleOverrides.put(EnumCssStyleProperty.RIGHT, style -> {
-            switch (style.getXPos().type()) {
-                case ABSOLUTE:
-                    style.getXPos().setAbsolute(style.getXPos().getRawValue(), xOrigin);
-                    break;
-                case RELATIVE:
-                    style.getXPos().setRelative(style.getXPos().getRawValue(), CssValue.Unit.RELATIVE_TO_PARENT, xOrigin);
-                    break;
-                case RELATIVE_VW:
-                    style.getXPos().setRelative(style.getXPos().getRawValue(), CssValue.Unit.RELATIVE_TO_WINDOW_WIDTH, xOrigin);
-                    break;
-                case RELATIVE_VH:
-                    style.getXPos().setRelative(style.getXPos().getRawValue(), CssValue.Unit.RELATIVE_TO_WINDOW_HEIGHT, xOrigin);
-                    break;
-            }
-        });
-        changes.add(EnumCssStyleProperty.RIGHT);
-        return this;
-    }
-
-    @Override
-    public ComponentStyleCustomizer setYOrigin(GuiConstants.ENUM_RELATIVE_POS yOrigin) {
-        //TODO KEY
-        styleOverrides.put(EnumCssStyleProperty.BOTTOM, style -> {
-            switch (style.getYPos().type()) {
-                case ABSOLUTE:
-                    style.getYPos().setAbsolute(style.getYPos().getRawValue(), yOrigin);
-                    break;
-                case RELATIVE:
-                    style.getYPos().setRelative(style.getYPos().getRawValue(), CssValue.Unit.RELATIVE_TO_PARENT, yOrigin);
-                    break;
-                case RELATIVE_VW:
-                    style.getYPos().setRelative(style.getYPos().getRawValue(), CssValue.Unit.RELATIVE_TO_WINDOW_WIDTH, yOrigin);
-                    break;
-                case RELATIVE_VH:
-                    style.getYPos().setRelative(style.getYPos().getRawValue(), CssValue.Unit.RELATIVE_TO_WINDOW_HEIGHT, yOrigin);
-                    break;
-            }
-        });
-        changes.add(EnumCssStyleProperty.BOTTOM);
-        return this;
     }
 
     @Override

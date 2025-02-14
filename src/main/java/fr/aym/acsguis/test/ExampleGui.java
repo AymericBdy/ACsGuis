@@ -38,7 +38,7 @@ public class ExampleGui extends GuiFrame {
         for (int i = 0; i < 8; i++) {
             lab = new GuiLabel("This is the " + i + "th label");
             lab.setCssClass("block_labels");
-            contentPane.add(lab);
+          //  contentPane.add(lab);
         }
         for (int i = 0; i < 12; i++) {
             lab = new GuiLabel("This is the " + i + "th label");

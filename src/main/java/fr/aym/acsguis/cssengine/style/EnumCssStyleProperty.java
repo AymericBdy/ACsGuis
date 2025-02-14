@@ -10,6 +10,7 @@ import fr.aym.acsguis.utils.GuiConstants;
 import net.minecraft.util.text.TextFormatting;
 import org.newdawn.slick.font.effects.ShadowEffect;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 
 import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.ABSOLUTE_INT;
@@ -315,18 +316,31 @@ public enum EnumCssStyleProperty {
         } else {
             throw new IllegalArgumentException("Unsupported display value : " + p.getValue());
         }
-    }, "display", false, true);
+    }, "display", false, true),
+    // NON-PARSEABLE PROPERTIES
+    SHOULD_RESCALE_BORDER("should-rescale-border"),
+    TEXTURE_HORIZONTAL_SIZE("texture-horizontal-size"),
+    TEXTURE_VERTICAL_SIZE("texture-vertical-size"),
+    TEXTURE_WIDTH("texture-width"),
+    TEXTURE_HEIGHT("texture-height"),
+    ;
 
     /*
     overflow, border style, asymetric borders.....
      */
 
     public final String key;
+    @Nullable
     public final DefinitionType<?> parser;
+    @Nullable
     public final CssStyleApplier<?> applyFunction;
     public final boolean isDefaultAuto;
     public final boolean acceptsNullValue;
     public final boolean inheritable;
+
+    <T> EnumCssStyleProperty(String key) {
+        this(null, null, key);
+    }
 
     <T> EnumCssStyleProperty(DefinitionType<T> parser, CssStyleApplier<T> applyFunction, String key) {
         this(parser, applyFunction, key, false, false);
@@ -351,8 +365,9 @@ public enum EnumCssStyleProperty {
 
     public static EnumCssStyleProperty fromKey(String property) {
         for (EnumCssStyleProperty prop : values()) {
-            if (prop.key.equals(property))
+            if (prop.key.equals(property) && prop.parser != null) {
                 return prop;
+            }
         }
         return null;
     }

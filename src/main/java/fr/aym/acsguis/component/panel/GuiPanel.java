@@ -2,6 +2,7 @@ package fr.aym.acsguis.component.panel;
 
 import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.GuiComponent;
+import fr.aym.acsguis.component.layout.FlowLayout;
 import fr.aym.acsguis.component.layout.PanelLayout;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
@@ -21,7 +22,12 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
     protected List<GuiComponent> queuedComponents = new ArrayList<>();
     protected List<GuiComponent> toRemoveComponents = new ArrayList<>();
 
-    protected PanelLayout<?> layout;//TODO = new FlowLayout();
+    protected PanelLayout<?> layout;// = new FlowLayout(this);
+
+    public GuiPanel widthFlowLayout()  {
+        this.setLayout(new FlowLayout());
+        return this;
+    }
 
     @Override
     public EnumComponentType getType() {
@@ -157,7 +163,7 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
             getLayout().clear();
         }
         super.resize(gui, screenWidth, screenHeight);
-        this.getReversedChildComponents().forEach(component -> component.resize(gui, screenWidth, screenHeight));
+        this.getChildComponents().forEach(component -> component.resize(gui, screenWidth, screenHeight));
     }
 
     public boolean flushRemovedComponents() {

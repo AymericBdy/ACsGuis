@@ -5,7 +5,6 @@ import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.style.ComponentStyle;
 import fr.aym.acsguis.component.style.ComponentStyleCustomizer;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
-import fr.aym.acsguis.component.textarea.IChildSizeUpdateListener;
 import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
 import fr.aym.acsguis.cssengine.positionning.Position;
@@ -128,6 +127,11 @@ public class CssComponentStyle implements InternalComponentStyle {
         if (cssStack == null) {
             return false;
         }
+
+        /*if (getOwner().getCssId() != null && getOwner().getCssId().equalsIgnoreCase("root")) {
+            System.out.println("State: " + lastContext + " " + component.getState());
+        }*/
+
         //Anticipate and apply the new context now
         if (lastContext != component.getState()) {
             if (properties.length != EnumCssStyleProperty.values().length) {
@@ -181,29 +185,30 @@ public class CssComponentStyle implements InternalComponentStyle {
      * @param screenHeight scaled mc screen height
      */
     @Override
-    public void updateComponentSize(int screenWidth, int screenHeight) {
+    public boolean updateComponentSize(int screenWidth, int screenHeight) {
         float parentWidth = component.getParent() != null ? component.getParent().getWidth() : screenWidth;
         float newWidth = width.computeValue(screenWidth, screenHeight, parentWidth);
 
         float parentHeight = component.getParent() != null ? component.getParent().getHeight() : screenHeight;
         float newHeight = height.computeValue(screenWidth, screenHeight, parentHeight);
-        //   System.out.println("Set height " + computedHeight + " on " + component + " " + component.hashCode());
-        if(newWidth != computedWidth || newHeight != computedHeight) {
-            if(getParent() != null) {
+
+        boolean temp = false;
+
+        if (newWidth != computedWidth || newHeight != computedHeight) {
+            /*System.out.println("Deeply involved " + getOwner() +" "+newWidth +" / " + computedWidth);
+            if (getParent() != null) {
                 getParent().notifyOfChildSizeChange(this);
-            }
+            }*/
+            temp = true;
             computedWidth = newWidth;
             computedHeight = newHeight;
         }
 
-        if (relBorderSize != -1)
+        if (relBorderSize != -1) {
             this.borderSize = (int) (relBorderSize * getRenderWidth());
-        if (relBorderRadius != -1)
+        }
+        if (relBorderRadius != -1) {
             this.borderRadius = (int) (relBorderRadius * getRenderWidth());
-
-        if (component.getParent() instanceof IChildSizeUpdateListener) {
-            //TODO SORT UP
-            ((IChildSizeUpdateListener) component.getParent()).onComponentChildSizeUpdate();
         }
 
         if (getTextureHorizontalSize() == GuiConstants.ENUM_SIZE.RELATIVE) {
@@ -214,15 +219,7 @@ public class CssComponentStyle implements InternalComponentStyle {
             setTextureHeight((int) (getRenderHeight() * getTextureRelativeHeight()));
         }
 
-        //refresh children
-        /*if (component instanceof GuiPanel) {
-            for (GuiComponent c : ((GuiPanel) component).getChildComponents()) {
-                if (!((GuiPanel) component).getToRemoveComponents().contains(c)) {
-                    ((CssComponentStyle) c.getStyle()).updateComponentSize(screenWidth, screenHeight);
-                    ((CssComponentStyle) c.getStyle()).updateComponentPosition(screenWidth, screenHeight);
-                }
-            }
-        }*/
+        return temp;
     }
 
     /**

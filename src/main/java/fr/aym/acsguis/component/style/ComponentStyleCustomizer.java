@@ -84,9 +84,7 @@ public interface ComponentStyleCustomizer {
 
     ComponentStyleCustomizer setZLevel(int zLevel);
 
-    ComponentStyleCustomizer setRepeatBackgroundX(boolean repeatBackgroundX);
-
-    ComponentStyleCustomizer setRepeatBackgroundY(boolean repeatBackgroundY);
+    ComponentStyleCustomizer setRepeatBackground(boolean repeatBackgroundX, boolean repeatBackgroundY);
 
     ComponentStyleCustomizer setBorderPosition(ComponentStyle.BORDER_POSITION borderPosition);
 
@@ -124,10 +122,6 @@ public interface ComponentStyleCustomizer {
     ComponentStyleCustomizer setRelativeY(float relativeY, CssValue.Unit unit);
 
     ComponentStyleCustomizer setRelativePosition(float relativeX, float relativeY, CssValue.Unit unit);
-
-    ComponentStyleCustomizer setXOrigin(GuiConstants.ENUM_RELATIVE_POS xOrigin);
-
-    ComponentStyleCustomizer setYOrigin(GuiConstants.ENUM_RELATIVE_POS yOrigin);
 
     ComponentStyleCustomizer setWidth(float width);
 
