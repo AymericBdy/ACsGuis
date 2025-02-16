@@ -1,9 +1,9 @@
 package fr.aym.acsguis.test;
 
 import fr.aym.acsguis.api.ACsGuiApi;
+import fr.aym.acsguis.api.ACsGuiBuilder;
 import fr.aym.acsguis.api.ACsGuiFrame;
 import fr.aym.acsguis.component.button.GuiButton;
-import fr.aym.acsguis.component.layout.FlowLayout;
 import fr.aym.acsguis.component.layout.GuiScaler;
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.panel.GuiScrollPane;
@@ -25,9 +25,13 @@ public class ExampleGui extends GuiFrame {
         setNeedsCssReload(true);
         setEnableDebugPanel(true);
 
-        GuiScrollPane contentPane = new GuiScrollPane();
-        contentPane.setLayout(new FlowLayout());
-        contentPane.setCssId("content");
+        ACsGuiBuilder builder = ACsGuiBuilder.beginGui(this);
+        GuiScrollPane contentPane = builder.scrollPane("content");
+
+
+        /*GuiScrollPane contentPane = new GuiScrollPane();
+        //contentPane.setLayout(new FlowLayout());
+        contentPane.setCssId("content");*/
         contentPane.addClickListener(new IMouseClickListener() {
             @Override
             public void onMouseClicked(int mouseX, int mouseY, int mouseButton) {
@@ -36,39 +40,46 @@ public class ExampleGui extends GuiFrame {
         });
         GuiLabel lab;
         for (int i = 0; i < 8; i++) {
-            lab = new GuiLabel("This is the " + i + "th label");
-            lab.setCssClass("block_labels");
+            //lab = new GuiLabel("This is the " + i + "th label");
+            //lab.setCssClasses("block_labels");
           //  contentPane.add(lab);
+            builder.label("This is the " + i + "th label", null, "block_labels");
         }
         for (int i = 0; i < 12; i++) {
-            lab = new GuiLabel("This is the " + i + "th label");
-            lab.setCssClass("inline_labels");
-            contentPane.add(lab);
+            //lab = new GuiLabel("This is the " + i + "th label");
+            //lab.setCssClasses("inline_labels");
+           // contentPane.add(lab);
+            builder.label("This is the " + i + "th label", null, "inline_labels", "inline_labels2", "inline_labels_dumb");
         }
         for (int i = 0; i < 4; i++) {
             StringBuilder hack = new StringBuilder();
             for (int j = 0 ; j < i ; j++) {
                 hack.append(j);
             }
-            lab = new GuiLabel("This is the " + i + "th label: " + hack);
-            lab.setCssClass("block_labels2");
-            contentPane.add(lab);
+            //lab = new GuiLabel("This is the " + i + "th label: " + hack);
+            //lab.setCssClasses("block_labels2");
+            //contentPane.add(lab);
+            builder.label("This is the " + i + "th label: " + hack, null, "block_labels2");
         }
         for (int i = 0; i < 13; i++) {
             StringBuilder hack = new StringBuilder();
             for (int j = 0 ; j < i ; j++) {
                 hack.append(j);
             }
-            lab = new GuiLabel("This is the " + i + "th label: " + hack);
-            lab.setCssClass("inline_labels2");
-            contentPane.add(lab);
+            //lab = new GuiLabel("This is the " + i + "th label: " + hack);
+            //lab.setCssClasses("inline_labels2");
+            //contentPane.add(lab);
+            builder.label("This is the " + i + "th label: " + hack, null, "inline_labels2");
         }
         GuiButton buttons;
         for (int i = 0; i < 8; i++) {
-            buttons = new GuiButton("This is the " + i + "th button");
-            buttons.setCssClass("inline_buttons");
-            contentPane.add(buttons);
+            //buttons = new GuiButton("This is the " + i + "th button");
+            //buttons.setCssClasses("inline_buttons");
+            //contentPane.add(buttons);
+            builder.button("This is the " + i + "th button", null, null, "inline_buttons");
         }
+        builder.endPane();
+        builder.endGui();
         /*GuiButtonWithItem buttonWithItem = new GuiButtonWithItem( new ItemStack(Items.DIAMOND));
         buttonWithItem.setCssClass("inline_buttons");
         contentPane.add(buttonWithItem);
@@ -119,7 +130,7 @@ public class ExampleGui extends GuiFrame {
         progressBar.setCssClass("progress_bar");
         contentPane.add(progressBar);*/
 
-        add(contentPane);
+        //add(contentPane);
     }
 
     @Override

@@ -30,29 +30,29 @@
 #content {
 }
 
-.inline_labels, .inline_buttons {
-    display: inline;
-    background-color: green;
-}
-
-.inline_labels:hover, .inline_buttons:hover {
-    width: 300px;
-}
-
 .inline_labels2 {
     display: inline;
     background-color: blue;
     border: none;
 }
 
-.block_labels2 {
-    background-color: red;
-    border: none;
-}
-
 .inline_labels2:hover {
     height: 50px;
     border: 1px gray;
+}
+
+.inline_labels, .inline_buttons {
+    display: inline;
+    background-color: green;
+}
+
+.inline_labels_dumb:hover, .inline_buttons:hover {
+    width: 300px;
+}
+
+.block_labels2 {
+    background-color: red;
+    border: none;
 }
 
 .block_labels2:hover {
