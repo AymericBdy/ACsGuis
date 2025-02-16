@@ -24,7 +24,7 @@ public abstract class GuiSearchField extends GuiPanel {
 
     public GuiSearchField(int lineHeight, int maxElementCount) {
         super();
-        setCssClass("search_bar1");
+        setCssClasses("search_bar1");
         add(field = new GuiTextField());
         add(potentialMatches = new GuiScrollPane());
         ((InternalComponentStyle) potentialMatches.getStyle()).setVisible(showPotentialMatches = false);
@@ -46,7 +46,7 @@ public abstract class GuiSearchField extends GuiPanel {
             for (final String name : names) {
                 potentialMatches.add(label = new GuiLabel(name));
                 label.getStyleCustomizer().setYPos(y1).setSize(getWidth(), lineHeight);
-                label.setCssClass("search_bar_match");
+                label.setCssClasses("search_bar_match");
                 label.addClickListener((mouseX, mouseY, mouseButton) -> {
                     if (!isMultiSearch() || !field.getText().contains(","))
                         field.setText(name);

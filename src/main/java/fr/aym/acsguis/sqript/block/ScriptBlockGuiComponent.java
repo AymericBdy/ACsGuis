@@ -67,7 +67,7 @@ public class ScriptBlockGuiComponent extends ScriptLoop {
         String clazz = matcher.group(7);
         //System.out.println("The class is "+clazz);
         if (clazz != null && !clazz.isEmpty()) {
-            component.setCssClass(clazz);
+            component.setCssClasses(clazz);
         }
 
         String text = matcher.group(10);

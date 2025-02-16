@@ -179,7 +179,7 @@ public class Position implements ReadablePosition {
 
     /**
      * Called after the render width and height has been computed, so that the position can depend on them <br>
-     * Used by the {@link fr.aym.acsguis.component.layout.FlowLayout}
+     * Used by the {@link fr.aym.acsguis.component.layout.FlowLayout} and {@link fr.aym.acsguis.component.panel.GuiTabbedPane}
      */
     public interface PositionUpdateFunction {
         void apply(InternalComponentStyle style, Position position);

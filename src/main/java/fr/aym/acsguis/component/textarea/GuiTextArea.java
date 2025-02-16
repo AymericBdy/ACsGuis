@@ -50,7 +50,7 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
     public GuiTextArea() {
         setEditable(true);
 
-        setMaxTextLength(200);
+        setMaxTextLength(500);
         cursorIndex = 0;
         selectionEndIndex = 0;
         lineScrollOffsetX = 0;

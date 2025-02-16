@@ -9,7 +9,7 @@ import fr.aym.acsguis.component.style.InternalComponentStyle;
 import fr.aym.acsguis.component.style.PanelStyle;
 
 public class CssPanelStyle extends CssComponentStyle implements PanelStyle {
-    private final GuiPanel panel;
+    protected final GuiPanel panel;
 
     public CssPanelStyle(GuiPanel component) {
         super(component);
@@ -39,23 +39,29 @@ public class CssPanelStyle extends CssComponentStyle implements PanelStyle {
     }
 
     @Override
-    public boolean updateComponentSize(int screenWidth, int screenHeight) {
-        boolean change = super.updateComponentSize(screenWidth, screenHeight);
-
-      //  System.out.println("Panel size update " + panel + " TO " + computedWidth + " " + computedHeight + " from " + screenWidth + " " + screenHeight + " " + getWidth().getValue().getRawValue() + " " + getHeight().getValue().getRawValue() + " " + getWidth().getValue().type() + " " + getHeight().getValue().type());
-
-        //TODO PAS OUF
-        if (change && panel instanceof GuiScrollPane) {
-            ((GuiScrollPane) panel).updateSlidersVisibility2();
-        }
-        return change;
-    }
-
-    @Override
     public void notifyOfChildSizeChange(InternalComponentStyle child) {
         if (panel.getLayout() != null) {
             ((PanelLayout<InternalComponentStyle>) panel.getLayout()).onChildSizeChange(child);
+        }
+    }
 
+    public static class CssScrollPanelStyle extends CssPanelStyle {
+        public CssScrollPanelStyle(GuiScrollPane panel) {
+            super(panel);
+        }
+
+        @Override
+        public boolean updateComponentSize(int screenWidth, int screenHeight) {
+            boolean change = super.updateComponentSize(screenWidth, screenHeight);
+            if (change) {
+                ((GuiScrollPane) panel).setSlidersNeedsUpdate();
+            }
+            return change;
+        }
+
+        @Override
+        public void notifyOfChildSizeChange(InternalComponentStyle child) {
+            super.notifyOfChildSizeChange(child);
             // this will update sliders visibility for scroll panes
             refreshStyle(getOwner().getGui(), EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
         }

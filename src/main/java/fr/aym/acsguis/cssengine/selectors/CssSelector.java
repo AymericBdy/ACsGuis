@@ -79,7 +79,7 @@ public class CssSelector<T>
                 break;
             case CLASS:
                 //System.out.println("[CLASS] "+to.getCssClass()+" "+to+" "+to.getStyle().getContext()+" "+this);
-                if(to.getCssClass() == null || !to.getCssClass().equals(target))
+                if(to.getCssClasses() == null || !to.getCssClasses().contains(target))
                     return false;
                 break;
             case A_COMPONENT:

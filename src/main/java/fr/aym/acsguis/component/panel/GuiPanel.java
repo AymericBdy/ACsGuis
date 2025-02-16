@@ -47,13 +47,13 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
      *
      * @see PanelLayout
      */
-    public void setLayout(PanelLayout<?> layout) {
+    public GuiPanel setLayout(PanelLayout<?> layout) {
         boolean dif = this.layout != layout;
         if (this.layout != null) {
             this.layout.clear();
         }
         if (!dif) {
-            return;
+            return this;
         }
         for (GuiComponent c : queuedComponents) {
             if (layout != null)
@@ -73,6 +73,7 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
         if (layout != null) {
             layout.setContainer(this);
         }
+        return this;
     }
 
     public PanelLayout<?> getLayout() {

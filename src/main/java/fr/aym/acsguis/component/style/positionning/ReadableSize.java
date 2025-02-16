@@ -1,5 +1,6 @@
 package fr.aym.acsguis.component.style.positionning;
 
+import fr.aym.acsguis.component.style.InternalComponentStyle;
 import fr.aym.acsguis.utils.GuiConstants;
 
 public interface ReadableSize {
@@ -11,7 +12,7 @@ public interface ReadableSize {
 
     ReadableSizeValue getMaxValue();
 
-    float computeValue(int screenWidth, int screenHeight, float parentSize);
+    float computeValue(InternalComponentStyle componentStyle, int screenWidth, int screenHeight, float parentSize);
 
     boolean isDirty();
 

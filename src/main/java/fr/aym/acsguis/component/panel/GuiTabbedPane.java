@@ -7,48 +7,19 @@ import fr.aym.acsguis.component.button.GuiButton;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
-import fr.aym.acsguis.event.listeners.IGuiCloseListener;
-import fr.aym.acsguis.event.listeners.IGuiOpenListener;
-import fr.aym.acsguis.event.listeners.IKeyboardListener;
-import fr.aym.acsguis.event.listeners.mouse.IMouseClickListener;
-import fr.aym.acsguis.event.listeners.mouse.IMouseExtraClickListener;
-import fr.aym.acsguis.event.listeners.mouse.IMouseMoveListener;
-import fr.aym.acsguis.event.listeners.mouse.IMouseWheelListener;
 import fr.aym.acsguis.sqript.SqriptCompatiblity;
-import fr.aym.acsguis.utils.ComponentRenderContext;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiCloseListener, IKeyboardListener, IMouseWheelListener, IMouseClickListener, IMouseExtraClickListener, IMouseMoveListener {
+public class GuiTabbedPane extends GuiPanel {
     protected List<GuiTabbedPaneButton> tabsButtons = new ArrayList<>();
     protected List<GuiPanel> tabsContainers = new ArrayList<>();
-
-    public GuiTabbedPane() {
-        addOpenListener(this);
-        addCloseListener(this);
-        addKeyboardListener(this);
-        addWheelListener(this);
-        addClickListener(this);
-        addExtraClickListener(this);
-        addMoveListener(this);
-    }
 
     @Override
     public EnumComponentType getType() {
         return EnumComponentType.TABBED_PANE;
-    }
-
-    @Override
-    public void drawBackground(int mouseX, int mouseY, float partialTicks, ComponentRenderContext enableScissor) {
-        super.drawBackground(mouseX, mouseY, partialTicks, enableScissor);
-		
-		/*for(String str : tabsContainers.keySet()) {
-			GuiPanel tabContainer = tabsContainers.get(str);
-			tabContainer.getStyle().setOffsetY(10);
-			tabContainer.render(mouseX, mouseY, partialTicks);
-		}*/
     }
 
     @Override
@@ -100,7 +71,7 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
             if (i == tabIndex) {
                 ((InternalComponentStyle) tabsContainers.get(i).getStyle()).setVisible(true);
             } else {
-               ((InternalComponentStyle) tabsContainers.get(i).getStyle()).setVisible(false);
+                ((InternalComponentStyle) tabsContainers.get(i).getStyle()).setVisible(false);
             }
         }
         /*for (GuiComponent child : getChildComponents()) {
@@ -132,10 +103,11 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
 
         @Override
         public EnumSelectorContext getState() {
-            if (GuiTabbedPane.this.selectedTab == index)
+            if (GuiTabbedPane.this.selectedTab == index) {
                 return EnumSelectorContext.ACTIVE;
-            else
+            } else {
                 return super.getState();
+            }
         }
     }
 
@@ -144,15 +116,20 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
         if (target.getOwner() instanceof GuiTabbedPaneButton) {
             switch (property) {
                 case WIDTH: {
-                    int c = tabsButtons.size();
-                    float w = (getWidth() - 10) / c;
-                    target.getWidth().setAbsolute(w);
+                    target.getWidth().setSizeFunction(((style, size) -> {
+                        int c = tabsButtons.size();
+                        float w = (getWidth() - 10) / c;
+                        size.setAbsolute(w);
+                        System.out.println("Width " + getWidth());
+                    }));
                     return true;
                 }
                 case LEFT: {
-                    int c = tabsButtons.size();
-                    float w = (getWidth() - 10) / c;
-                    target.getXPos().setAbsolute(5 + ((GuiTabbedPaneButton) target.getOwner()).index * w);
+                    target.getXPos().setPositionFunction(((style, position) -> {
+                        int c = tabsButtons.size();
+                        float w = (getWidth() - 10) / c;
+                        position.setAbsolute(5 + ((GuiTabbedPaneButton) target.getOwner()).index * w);
+                    }));
                     return true;
                 }
                 case COLOR:
@@ -173,102 +150,4 @@ public class GuiTabbedPane extends GuiPanel implements IGuiOpenListener, IGuiClo
 	public Priority getPriority(InternalComponentStyle forT) {
 		return forT.getOwner() instanceof GuiTabbedPaneButton ? Priority.PARENT : super.getPriority(forT);
 	}*/
-
-    @Override
-    public void onGuiOpen() {
-		/*for(String str : tabsContainers.keySet()) {
-			GuiPanel container = tabsContainers.get(str);
-			container.guiOpen();
-		}
-		
-		for(String str : tabsButtons.keySet()) {
-			GuiTabbedPaneButton button = tabsButtons.get(str);
-			button.guiOpen();
-		}*/
-    }
-
-    @Override
-    public void onGuiClose() {
-		/*for(String str : tabsContainers.keySet()) {
-			GuiPanel container = tabsContainers.get(str);
-			container.guiClose();
-		}
-		
-		for(String str : tabsButtons.keySet()) {
-			GuiTabbedPaneButton button = tabsButtons.get(str);
-			button.guiClose();
-		}*/
-    }
-
-    @Override
-    public void onKeyTyped(char typedChar, int keyCode) {
-		/*for(String str : tabsContainers.keySet()) {
-			GuiPanel container = tabsContainers.get(str);
-			container.keyTyped(typedChar, keyCode);
-		}*/
-    }
-
-    @Override
-    public void onMouseWheel(int dWheel) {
-		/*for(String str : tabsContainers.keySet()) {
-			GuiPanel container = tabsContainers.get(str);
-			container.mouseWheel(dWheel);
-		}*/
-    }
-
-    @Override
-    public void onMouseMoved(int mouseX, int mouseY) {
-		/*for(String str : tabsContainers.keySet()) {
-			GuiPanel container = tabsContainers.get(str);
-			container.mouseMoved(mouseX, mouseY, true);
-		}
-		
-		for(String str : tabsButtons.keySet()) {
-			GuiTabbedPaneButton button = tabsButtons.get(str);
-			button.mouseMoved(mouseX, mouseY, true);
-		}*/
-    }
-
-    @Override
-    public void onMouseReleased(int mouseX, int mouseY, int mouseButton) {
-		/*for(String str : tabsContainers.keySet()) {
-			GuiPanel container = tabsContainers.get(str);
-			container.mouseReleased(mouseX, mouseY, mouseButton);
-		}
-		
-		for(String str : tabsButtons.keySet()) {
-			GuiTabbedPaneButton button = tabsButtons.get(str);
-			button.mouseReleased(mouseX, mouseY, mouseButton);
-		}*/
-    }
-
-    @Override
-    public void onMouseClicked(int mouseX, int mouseY, int mouseButton) {
-		/*for (String str : tabsContainers.keySet()) {
-			GuiPanel container = tabsContainers.get(str);
-			container.mouseClicked(mouseX, mouseY, mouseButton, true);
-		}
-		
-		for (String str : tabsButtons.keySet()) {
-			GuiTabbedPaneButton button = tabsButtons.get(str);
-			button.mouseClicked(mouseX, mouseY, mouseButton, true);
-		}*/
-    }
-
-    @Override
-    public void onMouseHover(int mouseX, int mouseY) {
-    }
-
-    @Override
-    public void onMouseUnhover(int mouseX, int mouseY) {
-    }
-
-    @Override
-    public void onMouseDoubleClicked(int mouseX, int mouseY, int mouseButton) {
-    }
-
-    @Override
-    public void onMousePressed(int mouseX, int mouseY, int mouseButton) {
-    }
-
 }

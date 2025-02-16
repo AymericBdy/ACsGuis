@@ -187,10 +187,10 @@ public class CssComponentStyle implements InternalComponentStyle {
     @Override
     public boolean updateComponentSize(int screenWidth, int screenHeight) {
         float parentWidth = component.getParent() != null ? component.getParent().getWidth() : screenWidth;
-        float newWidth = width.computeValue(screenWidth, screenHeight, parentWidth);
+        float newWidth = width.computeValue(this, screenWidth, screenHeight, parentWidth);
 
         float parentHeight = component.getParent() != null ? component.getParent().getHeight() : screenHeight;
-        float newHeight = height.computeValue(screenWidth, screenHeight, parentHeight);
+        float newHeight = height.computeValue(this, screenWidth, screenHeight, parentHeight);
 
         boolean temp = false;
 

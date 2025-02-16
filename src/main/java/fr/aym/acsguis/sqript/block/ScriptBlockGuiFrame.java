@@ -16,7 +16,6 @@ import fr.nico.sqript.compiling.ScriptToken;
 import fr.nico.sqript.meta.Block;
 import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.*;
-import fr.nico.sqript.types.ScriptType;
 import fr.nico.sqript.types.TypeArray;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -125,7 +124,7 @@ public class ScriptBlockGuiFrame extends ScriptBlock
                         }
                     };
                     if (fieldDefined("css_class"))
-                        frame.setCssClass(getSubBlock("css_class").evaluate().getObject().toString());
+                        frame.setCssClasses(getSubBlock("css_class").evaluate().getObject().toString());
                     if (fieldDefined("css_id"))
                         frame.setCssId(getSubBlock("css_id").evaluate().getObject().toString());
                     if (fieldDefined("css_code"))

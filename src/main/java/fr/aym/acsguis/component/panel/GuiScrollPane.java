@@ -3,9 +3,8 @@ package fr.aym.acsguis.component.panel;
 import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.button.GuiSlider;
-import fr.aym.acsguis.component.layout.FlowLayout;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
-import fr.aym.acsguis.event.listeners.IResizeListener;
+import fr.aym.acsguis.cssengine.style.CssPanelStyle;
 import fr.aym.acsguis.event.listeners.mouse.IMouseWheelListener;
 import fr.aym.acsguis.utils.ComponentRenderContext;
 
@@ -16,6 +15,8 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
     protected final GuiSlider ySlider;
 
     private boolean autoScroll;
+
+    private boolean slidersNeedsUpdate;
 
     public GuiScrollPane() {
         xSlider = new GuiSlider(true);
@@ -29,11 +30,10 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
         widthFlowLayout();
     }
 
-    /*@Override
-    public GuiScrollPane widthFlowLayout() {
-        this.setLayout(new FlowLayout());
-        return this;
-    }*/
+    @Override
+    protected InternalComponentStyle createStyleManager() {
+        return new CssPanelStyle.CssScrollPanelStyle(this);
+    }
 
     @Override
     public EnumComponentType getType() {
@@ -59,8 +59,8 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks, ComponentRenderContext renderContext) {
-        if(dirtySliders) {
-          //  System.out.println("slide visibles?");
+        if (slidersNeedsUpdate) {
+            //  System.out.println("slide visibles?");
             updateSlidersVisibility();
         }
         super.render(mouseX, mouseY, partialTicks, renderContext);
@@ -86,15 +86,12 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
         if (!super.flushRemovedComponents()) {
             return false;
         }
-        updateSlidersVisibility();
+        setSlidersNeedsUpdate();
         return true;
     }
 
-    private boolean dirtySliders;
-
-    //TODO CLEAN
-    public void updateSlidersVisibility2() {
-        dirtySliders = true;
+    public void setSlidersNeedsUpdate() {
+        slidersNeedsUpdate = true;
     }
 
     /**
@@ -107,10 +104,10 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
         // System.out.println(childComponents + " // " + queuedComponents);
         xSlider.setMax(getMaxWidth() - getWidth());
         ySlider.setMax(mxh - getHeight());
-    //    System.out.println(getWidth() + "/" + getMaxWidth() + " " + getHeight() + "/" + mxh);
+        //    System.out.println(getWidth() + "/" + getMaxWidth() + " " + getHeight() + "/" + mxh);
         ((InternalComponentStyle) xSlider.getStyle()).setVisible(getMaxWidth() - getWidth() > 0);
         ((InternalComponentStyle) ySlider.getStyle()).setVisible(mxh - getHeight() > 0);
-        dirtySliders = false;
+        slidersNeedsUpdate = false;
     }
 
     /**
@@ -152,7 +149,7 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
         if (!super.flushComponentsQueue()) {
             return false;
         }
-        this.updateSlidersVisibility();
+        this.setSlidersNeedsUpdate();
         if (autoScroll) {
             xSlider.setValue(xSlider.getMax());
             ySlider.setValue(ySlider.getMax());

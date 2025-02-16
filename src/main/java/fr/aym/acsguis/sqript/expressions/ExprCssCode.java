@@ -9,8 +9,12 @@ import fr.nico.sqript.meta.Feature;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.Side;
 import fr.nico.sqript.types.ScriptType;
+import fr.nico.sqript.types.TypeArray;
 import fr.nico.sqript.types.primitive.TypeString;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Expression(name = "Modify a gui component properties",
         priority = 20,
@@ -53,7 +57,7 @@ public class ExprCssCode extends ScriptExpression {
             case 1:
                 return new TypeString(param.getObject().getCssId());
             case 2:
-                return new TypeString(param.getObject().getCssClass());
+                return new TypeArray((ArrayList) param.getObject().getCssClasses().stream().map(s -> new TypeString(s)).collect(Collectors.toList()));
             case 3:
                 if (param.getObject() instanceof TextComponent)
                     return new TypeString(((TextComponent) param.getObject()).getText());
@@ -77,7 +81,7 @@ public class ExprCssCode extends ScriptExpression {
                 isReturn = true;
                 break;
             case 2:
-                param.getObject().setCssClass(to.getObject().toString());
+                param.getObject().setCssClasses(to.getObject().toString());
                 isReturn = true;
                 break;
             case 3:
@@ -90,9 +94,9 @@ public class ExprCssCode extends ScriptExpression {
                 }
                 break;
         }
-        if(isReturn){
+        if (isReturn) {
             //Update component building context if we are compiling it
-            if(ComponentUtils.lastAddedComponent == param.getObject()) {
+            if (ComponentUtils.lastAddedComponent == param.getObject()) {
                 ComponentUtils.setComponentContext(param.getObject(), context);
             }
             return true;

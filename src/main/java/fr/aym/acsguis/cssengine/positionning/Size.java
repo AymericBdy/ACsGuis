@@ -1,5 +1,6 @@
 package fr.aym.acsguis.cssengine.positionning;
 
+import fr.aym.acsguis.component.style.InternalComponentStyle;
 import fr.aym.acsguis.component.style.positionning.ReadableSize;
 import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
 import fr.aym.acsguis.utils.GuiConstants;
@@ -12,16 +13,22 @@ public class Size implements ReadableSize {
     private final SizeValue maxValue = new SizeValue(-1, GuiConstants.ENUM_SIZE.ABSOLUTE), minValue = new SizeValue(-1, GuiConstants.ENUM_SIZE.ABSOLUTE);
     private boolean dirty;
 
+    private SizeUpdateFunction sizeFunction;
+
     /**
      * Computes the value of this 1D size, respecting min and max sizes, and depending on the parent size
      *
-     * @param screenWidth  The screen width
-     * @param screenHeight The screen height
-     * @param parentSize   The size of the parent, in the same dimension (width or height)
+     * @param componentStyle The component style
+     * @param screenWidth    The screen width
+     * @param screenHeight   The screen height
+     * @param parentSize     The size of the parent, in the same dimension (width or height)
      * @return The real value
      */
     @Override
-    public float computeValue(int screenWidth, int screenHeight, float parentSize) {
+    public float computeValue(InternalComponentStyle componentStyle, int screenWidth, int screenHeight, float parentSize) {
+        if (sizeFunction != null) {
+            sizeFunction.apply(componentStyle, this);
+        }
         float cVal = value.computeValue(screenWidth, screenHeight, parentSize);
         float min = minValue.computeValue(screenWidth, screenHeight, parentSize);
         float max = maxValue.computeValue(screenWidth, screenHeight, parentSize);
@@ -183,5 +190,17 @@ public class Size implements ReadableSize {
         public void setType(GuiConstants.ENUM_SIZE type) {
             this.type = type;
         }
+    }
+
+    public void setSizeFunction(SizeUpdateFunction sizeFunction) {
+        this.sizeFunction = sizeFunction;
+    }
+
+    /**
+     * Called after the render width and height of the parent has been computed, so that this size can depend on them <br>
+     * Used by {@link fr.aym.acsguis.component.panel.GuiTabbedPane}
+     */
+    public interface SizeUpdateFunction {
+        void apply(InternalComponentStyle style, Size size);
     }
 }

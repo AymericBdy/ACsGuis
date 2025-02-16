@@ -80,7 +80,7 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
         if (parent != null) {
             debugPane.add(new GuiButton("Parent").addClickListener((x, y, b) -> {
                 List<String> debug = new ArrayList<>();
-                debug.add(TextFormatting.AQUA + "Parent element : " + parent.getOwner().getType() + " id=" + parent.getOwner().getCssId() + " class=" + parent.getOwner().getCssClass());
+                debug.add(TextFormatting.AQUA + "Parent element : " + parent.getOwner().getType() + " id=" + parent.getOwner().getCssId() + " class=" + parent.getOwner().getCssClasses());
                 debug.add("-------------");
                 debug.addAll(ACsGuisCssParser.getStyleFor(parent).getProperties(parent.getOwner().getState(), parent));
                 //debug.add("-------------");

@@ -3,7 +3,6 @@ package fr.aym.acsguis.test;
 import fr.aym.acsguis.api.ACsGuiApi;
 import fr.aym.acsguis.api.ACsGuiFrame;
 import fr.aym.acsguis.component.button.GuiButton;
-import fr.aym.acsguis.component.button.GuiButtonWithItem;
 import fr.aym.acsguis.component.layout.GridLayout;
 import fr.aym.acsguis.component.layout.GuiScaler;
 import fr.aym.acsguis.component.list.GuiDropdownList;
@@ -15,8 +14,6 @@ import fr.aym.acsguis.component.textarea.GuiLabel;
 import fr.aym.acsguis.component.textarea.GuiTextField;
 import fr.aym.acsguis.utils.GuiCssError;
 import net.minecraft.client.Minecraft;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
@@ -32,7 +29,7 @@ public class GuiDnxDebug extends GuiFrame {
     public GuiDnxDebug() {
         super(new GuiScaler.Identity());
         getStyleCustomizer().setBackgroundColor(Color.TRANSLUCENT);
-        setCssClass("home");
+        setCssClasses("home");
         setApplyMcScale(false);
         //DnxCssParser.loadGui(this);
         GuiTabbedPane pane = new GuiTabbedPane();
@@ -41,17 +38,17 @@ public class GuiDnxDebug extends GuiFrame {
 
         GuiPanel general = new GuiPanel();
         general.setCssId("general");
-        general.add(new GuiLabel("DynamX debug - general").setCssClass("title"));
+        general.add(new GuiLabel("DynamX debug - general").setCssClasses("title"));
         //Options :
         {
             GuiScrollPane pane1 = new GuiScrollPane();
             //Render on/off
             GuiLabel label = new GuiLabel("Rendu du debug : " + (ClientDebugSystem.enableDebugDrawing ? "activé" : "désactivé"));
-            pane1.add(label.setCssClass("option-desc"));
+            pane1.add(label.setCssClasses("option-desc"));
             GuiButton b = new GuiButton();
-            pane1.add(b.setCssClass("switch-button-" + (ClientDebugSystem.enableDebugDrawing ? "on" : "off")).addClickListener((x, y, button) -> {
+            pane1.add(b.setCssClasses("switch-button-" + (ClientDebugSystem.enableDebugDrawing ? "on" : "off")).addClickListener((x, y, button) -> {
                 ClientDebugSystem.enableDebugDrawing = !ClientDebugSystem.enableDebugDrawing;
-                b.setCssClass("switch-button-" + (ClientDebugSystem.enableDebugDrawing ? "on" : "off"));
+                b.setCssClasses("switch-button-" + (ClientDebugSystem.enableDebugDrawing ? "on" : "off"));
                 label.setText("Rendu du debug : " + (ClientDebugSystem.enableDebugDrawing ? "activé" : "désactivé"));
             }));
             b.getStyleCustomizer().setYPos(0);
@@ -60,36 +57,36 @@ public class GuiDnxDebug extends GuiFrame {
             //Profiling
             boolean active = EnumTerrainDebugOptions.PROFILING.isActive(ClientDebugSystem.terrainDebugMode);
             GuiLabel label1 = new GuiLabel("Profiling : " + (active ? "activé" : "désactivé"));
-            pane1.add(label1.setCssClass("option-desc"));
+            pane1.add(label1.setCssClasses("option-desc"));
 
             GuiPanel property = new GuiPanel();
-            property.add(new GuiLabel("Test config horizontale")).add(new GuiTextField().setText("zougoulou")).setCssClass("property_horizontal");
+            property.add(new GuiLabel("Test config horizontale")).add(new GuiTextField().setText("zougoulou")).setCssClasses("property_horizontal");
             pane1.add(property);
 
-            pane1.add(new GuiPanel().add(new GuiLabel("Test config verticale")).add(new GuiTextField().setText("ngolokante")).setCssClass("property_vertical"));
+            pane1.add(new GuiPanel().add(new GuiLabel("Test config verticale")).add(new GuiTextField().setText("ngolokante")).setCssClasses("property_vertical"));
 
             GuiButton b1 = new GuiButton();
-            pane1.add(b1.setCssClass("switch-button-" + (active ? "on" : "off")).addClickListener((mx, my, button) -> {
+            pane1.add(b1.setCssClasses("switch-button-" + (active ? "on" : "off")).addClickListener((mx, my, button) -> {
                 if (EnumTerrainDebugOptions.PROFILING.isActive(ClientDebugSystem.terrainDebugMode))
                     ClientDebugSystem.terrainDebugMode = EnumTerrainDebugOptions.PROFILING.removeDebugMode(ClientDebugSystem.terrainDebugMode);
                 else
                     ClientDebugSystem.terrainDebugMode = EnumTerrainDebugOptions.PROFILING.applyDebugMode(ClientDebugSystem.terrainDebugMode);
                 boolean nactive = EnumTerrainDebugOptions.PROFILING.isActive(ClientDebugSystem.terrainDebugMode);
-                b1.setCssClass("switch-button-" + (nactive ? "on" : "off"));
+                b1.setCssClasses("switch-button-" + (nactive ? "on" : "off"));
                 label1.setText("Profiling : " + (nactive ? "activé" : "désactivé"));
             }));
             b1.getStyleCustomizer().setYPos(25);
             label1.getStyleCustomizer().setYPos(25);
 
             GuiLabel box = new GuiLabel("Recharger les packs");
-            box.setCssId("reload_packs").setCssClass("reload_button");
+            box.setCssId("reload_packs").setCssClasses("reload_button");
             box.addClickListener((x, y, bu) -> {
                 box.setEnabled(false);
                 box.setText("Indisponible ici...");
             });
             pane1.add(box);
             GuiLabel box2 = new GuiLabel("Recharger les modèles");
-            box2.setCssId("reload_models").setCssClass("reload_button");
+            box2.setCssId("reload_models").setCssClasses("reload_button");
             box2.addClickListener((x, y, bu) -> {
                 //mc.debugFeedbackTranslated("debug.reload_resourcepacks.message");
                 box2.setEnabled(false);
@@ -97,7 +94,7 @@ public class GuiDnxDebug extends GuiFrame {
             });
             pane1.add(box2);
             GuiLabel box3 = new GuiLabel("Recharger les styles css");
-            box3.setCssId("reload_css").setCssClass("reload_button");
+            box3.setCssId("reload_css").setCssClasses("reload_button");
             box3.addClickListener((x, y, bu) -> {
                 box3.setEnabled(false);
                 box3.setText("Rechargement en cours...");
@@ -110,7 +107,7 @@ public class GuiDnxDebug extends GuiFrame {
             });
             pane1.add(box3);
             GuiLabel box4 = new GuiLabel("Recharger tout");
-            box4.setCssId("reload_all").setCssClass("reload_button");
+            box4.setCssId("reload_all").setCssClasses("reload_button");
             box4.addClickListener((x, y, bu) -> {
                 box4.setEnabled(false);
                 box4.setText("Rechargement en cours...");
@@ -133,7 +130,7 @@ public class GuiDnxDebug extends GuiFrame {
 
         general = new GuiPanel();
         general.setCssId("terrain");
-        general.add(new GuiLabel("DynamX debug - terrain").setCssClass("title"));
+        general.add(new GuiLabel("DynamX debug - terrain").setCssClasses("title"));
         int y = 0;
         {
             Map<EnumTerrainDebugOptions, GuiButton> terrainButtons = new HashMap<>();
@@ -145,11 +142,11 @@ public class GuiDnxDebug extends GuiFrame {
                 boolean active = option.isActive(ClientDebugSystem.terrainDebugMode);
                 GuiLabel label1 = new GuiLabel("Debug " + option.name() + " : " + (active ? "activé" : "désactivé"));
                 terrainLabels.put(option, label1);
-                pane1.add(label1.setCssClass("option-desc"));
+                pane1.add(label1.setCssClasses("option-desc"));
 
                 GuiButton b1 = new GuiButton();
                 terrainButtons.put(option, b1);
-                pane1.add(b1.setCssClass("switch-button-" + (active ? "on" : "off")).addClickListener((mx, my, button) -> {
+                pane1.add(b1.setCssClasses("switch-button-" + (active ? "on" : "off")).addClickListener((mx, my, button) -> {
                     if (option.isActive(ClientDebugSystem.terrainDebugMode))
                         ClientDebugSystem.terrainDebugMode = option.removeDebugMode(ClientDebugSystem.terrainDebugMode);
                     else
@@ -158,7 +155,7 @@ public class GuiDnxDebug extends GuiFrame {
                         if (!noption.showOnDebugOptions)
                             continue;
                         boolean nactive = noption.isActive(ClientDebugSystem.terrainDebugMode);
-                        terrainButtons.get(noption).setCssClass("switch-button-" + (nactive ? "on" : "off"));
+                        terrainButtons.get(noption).setCssClasses("switch-button-" + (nactive ? "on" : "off"));
                         terrainLabels.get(noption).setText("Debug " + noption.name() + " : " + (nactive ? "activé" : "désactivé"));
                     }
                 }));
@@ -173,7 +170,7 @@ public class GuiDnxDebug extends GuiFrame {
 
         general = new GuiPanel();
         general.setLayout(new GridLayout(-1, 20, 0, GridLayout.GridDirection.HORIZONTAL, 1));
-        general.add(new GuiLabel("DynamX debug - vehicles").setCssClass("title"));
+        general.add(new GuiLabel("DynamX debug - vehicles").setCssClasses("title"));
         general.setCssId("vehicles");
         y = 0;
         {
@@ -187,11 +184,11 @@ public class GuiDnxDebug extends GuiFrame {
                 boolean active = option.isActive(ClientDebugSystem.entityDebugMode);
                 GuiLabel label1 = new GuiLabel("Debug " + option.name() + " : " + (active ? "activé" : "désactivé"));
                 vehicleLabels.put(option, label1);
-                pane1.add(label1.setCssClass("option-desc"));
+                pane1.add(label1.setCssClasses("option-desc"));
 
                 GuiButton b1 = new GuiButton();
                 vehicleButtons.put(option, b1);
-                pane1.add(b1.setCssClass("switch-button-" + (active ? "on" : "off")).addClickListener((mx, my, button) -> {
+                pane1.add(b1.setCssClasses("switch-button-" + (active ? "on" : "off")).addClickListener((mx, my, button) -> {
                     if (option.isActive(ClientDebugSystem.entityDebugMode))
                         ClientDebugSystem.entityDebugMode = option.removeDebugMode(ClientDebugSystem.entityDebugMode);
                     else
@@ -200,7 +197,7 @@ public class GuiDnxDebug extends GuiFrame {
                         if (noption == EnumVehicleDebugOptions.NONE)
                             continue;
                         boolean nactive = noption.isActive(ClientDebugSystem.entityDebugMode);
-                        vehicleButtons.get(noption).setCssClass("switch-button-" + (nactive ? "on" : "off"));
+                        vehicleButtons.get(noption).setCssClasses("switch-button-" + (nactive ? "on" : "off"));
                         vehicleLabels.get(noption).setText("Debug " + noption.name() + " : " + (nactive ? "activé" : "désactivé"));
                     }
                 }));

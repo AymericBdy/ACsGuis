@@ -35,6 +35,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -64,9 +65,9 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     protected String cssId;
 
     /**
-     * The css class of this_component
+     * The css classes of this_component
      */
-    protected String cssClass;
+    protected List<String> cssClasses;
 
     protected boolean enabled;
     protected boolean hovered, pressed;
@@ -107,20 +108,27 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     }
 
     /**
-     * Sets the css class of this_component, use <code>.cssId</code> in your css code to refer to this element
+     * Sets the css class of this_component, use <code>.cssClass</code> in your css code to refer to this element
      */
     public GuiComponent setCssClass(@Nullable String cssClass) {
-        this.cssClass = cssClass;
+        return cssClass == null ? setCssClasses((String) null) : setCssClasses(cssClass);
+    }
+
+    /**
+     * Sets the css classes of this_component, use <code>.cssClass</code> in your css code to refer to this element
+     */
+    public GuiComponent setCssClasses(@Nullable String... cssClasses) {
+        this.cssClasses = cssClasses != null ? Arrays.asList(cssClasses) : null;
         getStyle().resetCssStack();
         return this;
     }
 
     /**
-     * @return The css class of this_component
+     * @return The css classes of this_component
      */
     @Nullable
-    public String getCssClass() {
-        return cssClass;
+    public List<String> getCssClasses() {
+        return cssClasses;
     }
 
     /**
@@ -277,7 +285,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
      */
     public void displayComponentOnDebugPane() {
         List<String> debug = new ArrayList<>();
-        debug.add(TextFormatting.AQUA + "Element : " + getType() + " id=" + getCssId() + " class=" + getCssClass());
+        debug.add(TextFormatting.AQUA + "Element : " + getType() + " id=" + getCssId() + " class=" + getCssClasses());
         debug.add("-------------");
         debug.addAll(ACsGuisCssParser.getStyleFor(style).getProperties(getState(), style));
         //debug.add("-------------");
@@ -881,7 +889,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     public String toString() {
         return getType() + "{" +
                 "cssId='" + cssId + '\'' +
-                ", cssClass='" + cssClass + '\'' +
+                ", cssClass='" + cssClasses + '\'' +
                 '}';
     }
 

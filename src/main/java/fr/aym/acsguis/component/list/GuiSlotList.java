@@ -52,7 +52,7 @@ public class GuiSlotList extends GuiPanel {
             slots.add(listSlot);
             add(listSlot);
         }
-        list.updateSlidersVisibility();
+        list.setSlidersNeedsUpdate();
     }
 
     public void updateFocus(int n) {

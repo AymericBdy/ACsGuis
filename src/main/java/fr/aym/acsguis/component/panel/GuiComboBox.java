@@ -90,7 +90,8 @@ public class GuiComboBox extends GuiPanel implements TextComponent {
     @Override
     public boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, InternalComponentStyle target) {
         if (property == EnumCssStyleProperty.HEIGHT && developed) {
-            float comboBoxHeight = guiComboBoxButton.getStyle().getHeight().computeValue(0, 0, guiComboBoxButton.getParent().getHeight());
+            // TODO BAD, USE A SIZE FUNCTION
+            float comboBoxHeight = guiComboBoxButton.getStyle().getHeight().computeValue(target, 0, 0, guiComboBoxButton.getParent().getHeight());
             target.getHeight().setAbsolute(comboBoxHeight + sumEntriesButtonHeight());
             return true;
         }
@@ -185,7 +186,7 @@ public class GuiComboBox extends GuiPanel implements TextComponent {
             if (!isDeveloped())
                 ((InternalComponentStyle) entryButton.getStyle()).setVisible(false);
 
-            entryButton.setCssClass("combo_button");
+            entryButton.setCssClasses("combo_button");
             add(entryButton);
         }
     }
