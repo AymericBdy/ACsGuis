@@ -2,6 +2,7 @@ package fr.aym.acsguis.api;
 
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.cssengine.CssGuisManager;
+import fr.aym.acsguis.cssengine.CssHudHandler;
 import fr.aym.acsguis.cssengine.InWorldGuisManager;
 import fr.aym.acsguis.event.CssReloadEvent;
 import fr.aym.acsguis.sqript.NoSqriptSupport;
@@ -39,7 +40,7 @@ import java.util.concurrent.Callable;
 @ACsRegisteredService(name = ACsGuiApi.RES_LOC_ID, version = ACsGuiApi.VERSION, sides = Side.CLIENT, interfaceClass = ACsGuiApiService.class, initOnStartup = true)
 public class ACsGuiApi implements ACsGuiApiService {
     public static final String RES_LOC_ID = ACsGuiApiService.RES_LOC_ID;
-    public static final String VERSION = "1.3.0-wgui";
+    public static final String VERSION = "1.3.0-dev9";
     public static final Logger log = LogManager.getLogger("ACsGuis");
 
     private static ErrorManagerService errorTracker;
@@ -99,6 +100,18 @@ public class ACsGuiApi implements ACsGuiApiService {
     }
 
     /**
+     * Immediately shows the given GuiFrame on the screen <br>
+     * This doesn't support css reloading when the gui is shown. Use asyncLoadThenShowGui if you want to reload the css when displaying the gui.
+     *
+     * @param guiInstance The gui to display as interface
+     * @throws IllegalArgumentException If the gui wants to reload the css code when displayed
+     * @see CssHudHandler
+     */
+    public static void showGui(GuiFrame guiInstance) {
+        manager.showGui(guiInstance);
+    }
+
+    /**
      * Loads a GuiFrame in another thread, then shows it on the HUD <br>
      * A hud gui is only a visual gui, you can't interact with it <br>
      * Note : the css fonts are loaded in the client thread (it needs open gl)
@@ -111,6 +124,19 @@ public class ACsGuiApi implements ACsGuiApiService {
     }
 
     /**
+     * Immediately shows the given GuiFrame on the HUD <br>
+     * A hud gui is only a visual gui, you can't interact with it <br>
+     * This doesn't support css reloading when the gui is shown. Use asyncLoadThenShowHudGui if you want to reload the css when displaying the gui.
+     *
+     * @param guiInstance The gui to display on hud
+     * @throws IllegalArgumentException If the gui wants to reload the css code when displayed
+     * @see CssHudHandler
+     */
+    public static void showHudGui(GuiFrame guiInstance) {
+        manager.showHudGui(guiInstance);
+    }
+
+    /**
      * Loads a GuiFrame in another thread, then shows it on the HUD <br>
      * A hud gui is only a visual gui, you can't interact with it <br>
      * Note : the css fonts are loaded in the client thread (it needs open gl)
@@ -120,7 +146,21 @@ public class ACsGuiApi implements ACsGuiApiService {
      * @param guiInstance A function returning the gui, called by the external thread
      */
     public static void asyncLoadThenShowHudGui(int hudIndex, String guiName, Callable<GuiFrame> guiInstance) {
-        manager.asyncLoadThenShowHudGui(guiName, guiInstance);
+        manager.asyncLoadThenShowHudGui(hudIndex, guiName, guiInstance);
+    }
+
+    /**
+     * Immediately shows the given GuiFrame on the HUD <br>
+     * A hud gui is only a visual gui, you can't interact with it <br>
+     * This doesn't support css reloading when the gui is shown. Use asyncLoadThenShowHudGui if you want to reload the css when displaying the gui.
+     *
+     * @param hudIndex    The index of the hud, used to change the display order of the huds
+     * @param guiInstance The gui to display on hud
+     * @throws IllegalArgumentException If the gui wants to reload the css code when displayed
+     * @see CssHudHandler
+     */
+    public static void showHudGui(int hudIndex, GuiFrame guiInstance) {
+        manager.showHudGui(hudIndex, guiInstance);
     }
 
     /**
@@ -128,6 +168,13 @@ public class ACsGuiApi implements ACsGuiApiService {
      */
     public static List<GuiFrame.APIGuiScreen> getDisplayHudGuis() {
         return manager.getHud().getDisplayedHuds();
+    }
+
+    /**
+     * Closes the given hud gui
+     */
+    public static void closeHudGui(GuiFrame hudFrame) {
+        manager.getHud().closeHudGui(hudFrame);
     }
 
     /**
