@@ -57,10 +57,12 @@ public class CssGuisManager implements ISelectiveResourceReloadListener {
      * @param location The style sheet to load
      */
     public void registerStyleSheetToPreload(ResourceLocation location) {
-        if (isReloading.get())
+        if (isReloading.get()) {
             throw new IllegalStateException("Cannot register css sheets while reloading");
-        if (!CSS_SHEETS.contains(location))
+        }
+        if (!CSS_SHEETS.contains(location)) {
             CSS_SHEETS.add(location);
+        }
     }
 
     /**
