@@ -322,8 +322,7 @@ public enum EnumCssStyleProperty {
     TEXTURE_HORIZONTAL_SIZE("texture-horizontal-size"),
     TEXTURE_VERTICAL_SIZE("texture-vertical-size"),
     TEXTURE_WIDTH("texture-width"),
-    TEXTURE_HEIGHT("texture-height"),
-    ;
+    TEXTURE_HEIGHT("texture-height");
 
     /*
     overflow, border style, asymetric borders.....

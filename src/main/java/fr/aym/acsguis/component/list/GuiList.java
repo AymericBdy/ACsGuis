@@ -7,6 +7,10 @@ import fr.aym.acsguis.component.list.slot.GuiSlot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Might change
+ */
+@Deprecated
 public class GuiList extends GuiScrollPane {
 	
 	protected int selectedEntryId = -1;
@@ -23,7 +27,7 @@ public class GuiList extends GuiScrollPane {
 		add(slotList);
 	}
 	
-	public GuiSlot getSlotInstance(int n, String entryName) {
+	protected GuiSlot getSlotInstance(int n, String entryName) {
 		return new GuiBasicSlot(this, n, entryName);
 	}
 	

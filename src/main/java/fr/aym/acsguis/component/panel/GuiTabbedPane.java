@@ -1,19 +1,19 @@
 package fr.aym.acsguis.component.panel;
 
-import fr.aym.acsguis.api.ACsGuiApi;
 import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.button.GuiButton;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
-import fr.aym.acsguis.sqript.SqriptCompatiblity;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GuiTabbedPane extends GuiPanel {
+    public static String nextTabName = "not set";
+
     protected List<GuiTabbedPaneButton> tabsButtons = new ArrayList<>();
     protected List<GuiPanel> tabsContainers = new ArrayList<>();
 
@@ -24,8 +24,12 @@ public class GuiTabbedPane extends GuiPanel {
 
     @Override
     public GuiPanel add(GuiComponent component) {
-        if (ACsGuiApi.getSqriptSupport().isSqriptLoaded() && component instanceof GuiPanel) {
-            addTab(SqriptCompatiblity.nextPannedTabName, (GuiPanel) component);
+        if (component instanceof GuiPanel) {
+            if(nextTabName == null) {
+                throw new IllegalStateException("Set the name of the next panel first!");
+            }
+            addTab(nextTabName, (GuiPanel) component);
+            nextTabName = null;
         } else {
             super.add(component);
         }
@@ -35,7 +39,7 @@ public class GuiTabbedPane extends GuiPanel {
     public void addTab(String tabName, GuiPanel tabContainer) {
         GuiTabbedPaneButton tabButton = new GuiTabbedPaneButton(tabsContainers.size());
         tabButton.setText(tabName).getStyleCustomizer().withAutoStyles(this, EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.COLOR);
-        add(tabButton);
+        super.add(tabButton);
         tabsButtons.add(tabButton);
 
         tabContainer.setParent(this);

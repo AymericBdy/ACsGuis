@@ -14,6 +14,10 @@ import net.minecraft.item.ItemStack;
 
 import java.awt.*;
 
+/**
+ * Broken
+ */
+@Deprecated
 public class GuiSlot extends GuiComponent {
     protected static final int DEFAULT_SLOT_WIDTH = 18;
     protected static final int DEFAULT_SLOT_HEIGHT = 18;

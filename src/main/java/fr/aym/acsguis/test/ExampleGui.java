@@ -25,7 +25,7 @@ public class ExampleGui extends GuiFrame {
         setNeedsCssReload(true);
         setEnableDebugPanel(true);
 
-        ACsGuiBuilder builder = ACsGuiBuilder.beginGui(this);
+        ACsGuiBuilder builder = ACsGuiBuilder.begin(this);
         GuiScrollPane contentPane = builder.scrollPane("content");
 
 
@@ -79,7 +79,7 @@ public class ExampleGui extends GuiFrame {
             builder.button("This is the " + i + "th button", null, null, "inline_buttons");
         }
         builder.endPane();
-        builder.endGui();
+        builder.end();
         /*GuiButtonWithItem buttonWithItem = new GuiButtonWithItem( new ItemStack(Items.DIAMOND));
         buttonWithItem.setCssClass("inline_buttons");
         contentPane.add(buttonWithItem);

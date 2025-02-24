@@ -32,6 +32,10 @@ import java.util.Set;
 
 import static net.minecraft.client.gui.GuiScreen.isShiftKeyDown;
 
+/**
+ * Broken
+ */
+@Deprecated
 public abstract class GuiContainer extends GuiFrame implements IMouseClickListener, IMouseExtraClickListener, IMouseMoveListener, IKeyboardListener, IGuiCloseListener, ITickListener {
     /*
      * Copy and rehabilitated class from vanilla Minecraft.

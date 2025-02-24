@@ -8,7 +8,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class SqriptCompatiblity implements SqriptSupport
 {
-    public static String nextPannedTabName = "not set";
     public static final ComponentProperties<?, ?>[] TEXT_AREA_PROPERTIES_PARSER = new ComponentProperties[] {ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.MAX_TEXT_LENGTH, ComponentProperties.HINT_TEXT, ComponentProperties.REGEX};
 
     @Override
