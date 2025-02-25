@@ -9,6 +9,7 @@ import fr.aym.acsguis.component.layout.PanelLayout;
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.panel.GuiScrollPane;
+import fr.aym.acsguis.component.panel.GuiTabbedPane;
 import fr.aym.acsguis.component.textarea.*;
 import fr.aym.acsguis.event.listeners.mouse.IMouseClickListener;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,23 +18,32 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nullable;
 import java.util.Stack;
 
+/**
+ * Build you guis faster!
+ *
+ * <ul>
+ * <li> ACsGuiBuilder builder = ACsGuiBuilder.begin(this); </li>
+ * <li> builder.anything(things, cssId, cssClasses...); </li>
+ * <li> builder.end(); </li>
+ * </ul>
+ */
 public class ACsGuiBuilder {
     private final GuiFrame buildingGui;
-    private final Stack<GuiPanel> panelQueue = new Stack<>();
+    private final Stack<GuiPanel> panelStack = new Stack<>();
 
     private ACsGuiBuilder(GuiFrame buildingGui) {
         this.buildingGui = buildingGui;
-        panelQueue.push(buildingGui);
+        panelStack.push(buildingGui);
     }
 
-    public static ACsGuiBuilder beginGui(GuiFrame buildingGui) {
+    public static ACsGuiBuilder begin(GuiFrame buildingGui) {
         assert buildingGui != null : "Cannot begin with no gui";
         return new ACsGuiBuilder(buildingGui);
     }
 
-    public GuiFrame endGui() {
-        panelQueue.pop();
-        if (!panelQueue.isEmpty()) {
+    public GuiFrame end() {
+        panelStack.pop();
+        if (!panelStack.isEmpty()) {
             throw new IllegalStateException("You didn't end all of the panels!");
         }
         return buildingGui;
@@ -41,8 +51,8 @@ public class ACsGuiBuilder {
 
     public GuiPanel pane() {
         GuiPanel panel = new GuiPanel();
-        panelQueue.peek().add(panel);
-        panelQueue.push(panel);
+        panelStack.peek().add(panel);
+        panelStack.push(panel);
         return panel;
     }
 
@@ -68,8 +78,8 @@ public class ACsGuiBuilder {
 
     public GuiScrollPane scrollPane() {
         GuiScrollPane panel = new GuiScrollPane();
-        panelQueue.peek().add(panel);
-        panelQueue.push(panel);
+        panelStack.peek().add(panel);
+        panelStack.push(panel);
         return panel;
     }
 
@@ -94,15 +104,15 @@ public class ACsGuiBuilder {
     }
 
     public void endPane() {
-        if (panelQueue.isEmpty()) {
+        if (panelStack.isEmpty()) {
             throw new IllegalStateException("No panel to end");
         }
-        panelQueue.pop();
+        panelStack.pop();
     }
 
     public GuiLabel label(String text) {
         GuiLabel label = new GuiLabel(text);
-        panelQueue.peek().add(label);
+        panelStack.peek().add(label);
         return label;
     }
 
@@ -128,7 +138,7 @@ public class ACsGuiBuilder {
 
     public UpdatableGuiLabel updatableLabel(String text, UpdatableGuiLabel.LabelValueFunction valueFunction) {
         UpdatableGuiLabel label = new UpdatableGuiLabel(text, valueFunction);
-        panelQueue.peek().add(label);
+        panelStack.peek().add(label);
         return label;
     }
 
@@ -142,13 +152,13 @@ public class ACsGuiBuilder {
 
     public GuiTextArea textArea() {
         GuiTextArea textArea = new GuiTextArea();
-        panelQueue.peek().add(textArea);
+        panelStack.peek().add(textArea);
         return textArea;
     }
 
     public GuiTextArea textArea(String text) {
         GuiTextArea textArea = new GuiTextArea(text);
-        panelQueue.peek().add(textArea);
+        panelStack.peek().add(textArea);
         return textArea;
     }
 
@@ -162,13 +172,13 @@ public class ACsGuiBuilder {
 
     public GuiTextField textField() {
         GuiTextField textArea = new GuiTextField();
-        panelQueue.peek().add(textArea);
+        panelStack.peek().add(textArea);
         return textArea;
     }
 
     public GuiTextField textField(String text) {
         GuiTextField textArea = new GuiTextField(text);
-        panelQueue.peek().add(textArea);
+        panelStack.peek().add(textArea);
         return textArea;
     }
 
@@ -182,7 +192,7 @@ public class ACsGuiBuilder {
 
     public GuiPasswordField passwordField() {
         GuiPasswordField textArea = new GuiPasswordField();
-        panelQueue.peek().add(textArea);
+        panelStack.peek().add(textArea);
         return textArea;
     }
 
@@ -196,7 +206,7 @@ public class ACsGuiBuilder {
 
     public GuiFloatField floatField(float value, float min, float max) {
         GuiFloatField textArea = new GuiFloatField(value, min, max);
-        panelQueue.peek().add(textArea);
+        panelStack.peek().add(textArea);
         return textArea;
     }
 
@@ -210,7 +220,7 @@ public class ACsGuiBuilder {
 
     public GuiIntegerField integerField(int value, int min, int max) {
         GuiIntegerField textArea = new GuiIntegerField(value, min, max);
-        panelQueue.peek().add(textArea);
+        panelStack.peek().add(textArea);
         return textArea;
     }
 
@@ -225,7 +235,7 @@ public class ACsGuiBuilder {
     public GuiButton button(String text, IMouseClickListener clickListener) {
         GuiButton label = new GuiButton(text);
         label.addClickListener(clickListener);
-        panelQueue.peek().add(label);
+        panelStack.peek().add(label);
         return label;
     }
 
@@ -240,7 +250,7 @@ public class ACsGuiBuilder {
     public GuiButtonWithItem buttonWithItem(ItemStack icon, IMouseClickListener clickListener) {
         GuiButtonWithItem label = new GuiButtonWithItem(icon);
         label.addClickListener(clickListener);
-        panelQueue.peek().add(label);
+        panelStack.peek().add(label);
         return label;
     }
 
@@ -254,7 +264,7 @@ public class ACsGuiBuilder {
 
     public GuiCheckBox checkbox(String text) {
         GuiCheckBox label = new GuiCheckBox(text);
-        panelQueue.peek().add(label);
+        panelStack.peek().add(label);
         return label;
     }
 
@@ -281,25 +291,86 @@ public class ACsGuiBuilder {
     public GuiSlider slider(boolean horizontal, float min, float max, float step, float value) {
         GuiSlider slider = new GuiSlider(horizontal);
         slider.setMin(min).setMax(max).setStep(step).setValue(value);
-        panelQueue.peek().add(slider);
+        panelStack.peek().add(slider);
         return slider;
     }
-    // TODO ID CLASS
+
+    public GuiSlider slider(boolean horizontal, float min, float max, float step, float value, String cssId) {
+        return (GuiSlider) slider(horizontal, min, max, step, value).setCssId(cssId);
+    }
+
+    public GuiSlider slider(boolean horizontal, float min, float max, float step, float value, String cssId, String... cssClass) {
+        return (GuiSlider) slider(horizontal, min, max, step, value, cssId).setCssClasses(cssClass);
+    }
 
     public GuiEntityRender entityRender(EntityLivingBase entity) {
         GuiEntityRender label = new GuiEntityRender(entity);
-        panelQueue.peek().add(label);
+        panelStack.peek().add(label);
         return label;
     }
-    // TODO ID CLASS
+
+    public GuiEntityRender entityRender(EntityLivingBase entity, String cssId) {
+        return (GuiEntityRender) entityRender(entity).setCssId(cssId);
+    }
+
+    public GuiEntityRender entityRender(EntityLivingBase entity, String cssId, String... cssClass) {
+        return (GuiEntityRender) entityRender(entity, cssId).setCssClasses(cssClass);
+    }
+
+    public GuiTabbedPane tabbedPane() {
+        GuiTabbedPane pane = new GuiTabbedPane();
+        panelStack.peek().add(pane);
+        panelStack.push(pane);
+        return pane;
+    }
+
+    public GuiTabbedPane tabbedPane(String cssId) {
+        return (GuiTabbedPane) tabbedPane().setCssId(cssId);
+    }
+
+    public GuiTabbedPane tabbedPane(String cssId, String... cssClass) {
+        return (GuiTabbedPane) tabbedPane(cssId).setCssClasses(cssClass);
+    }
+
+    public ACsGuiBuilder nextTab(String name) {
+        GuiTabbedPane.nextTabName = name;
+        return this;
+    }
+
+    public GuiKeyLabel keybindingLabel(int keyCode) {
+        GuiKeyLabel label = new GuiKeyLabel(keyCode);
+        panelStack.peek().add(label);
+        return label;
+    }
+
+    public GuiKeyLabel keybindingLabel(int keyCode, String cssId) {
+        return (GuiKeyLabel) keybindingLabel(keyCode).setCssId(cssId);
+    }
+
+    public GuiKeyLabel keybindingLabel(int keyCode, String cssId, String... cssClass) {
+        return (GuiKeyLabel) keybindingLabel(keyCode, cssId).setCssClasses(cssClass);
+    }
+
+    public GuiProgressBar progressBar(boolean horizontal, int min, int max, float progress) {
+        GuiProgressBar slider = new GuiProgressBar(horizontal);
+        slider.setMin(min);
+        slider.setMax(max);
+        slider.setProgress(progress);
+        panelStack.peek().add(slider);
+        return slider;
+    }
+
+    public GuiProgressBar progressBar(boolean horizontal, int min, int max, float progress, String cssId) {
+        return (GuiProgressBar) progressBar(horizontal, min, max, progress).setCssId(cssId);
+    }
+
+    public GuiProgressBar progressBar(boolean horizontal, int min, int max, float progress, String cssId, String... cssClass) {
+        return (GuiProgressBar) progressBar(horizontal, min, max, progress, cssId).setCssClasses(cssClass);
+    }
 
     // TODO DROPDOWN LIST
     // TODO LIST
     // TODO SLOT LIST
     // TODO COMBO BOX
-    // TODO TABBED PANE
-
-    // TODO KEY LABEL
-    // TODO PROGRESS BAR
     // TODO SEARCH FIELD
 }

@@ -15,6 +15,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Might change
+ */
+@Deprecated
 public class GuiComboBox extends GuiPanel implements TextComponent {
     protected GuiComboBoxButton guiComboBoxButton;
 

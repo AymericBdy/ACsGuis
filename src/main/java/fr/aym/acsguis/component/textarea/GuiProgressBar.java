@@ -11,8 +11,10 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
+
 public class GuiProgressBar extends GuiComponent implements NumericComponent {
-    protected int minProgress, maxProgress = 100, progress;
+    protected int minProgress, maxProgress = 100;
+    protected float progress;
     protected final boolean horizontal;
 
     protected String progressText = "";
@@ -168,12 +170,12 @@ public class GuiProgressBar extends GuiComponent implements NumericComponent {
         }
     }
 
-    public GuiProgressBar setProgress(int progress) {
+    public GuiProgressBar setProgress(float progress) {
         this.progress = MathHelper.clamp(progress, minProgress, maxProgress);
         return this;
     }
 
-    public int getProgress() {
+    public float getProgress() {
         return progress;
     }
 

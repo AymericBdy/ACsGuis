@@ -13,6 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * Might change
+ */
+@Deprecated
 public abstract class GuiSearchField extends GuiPanel {
     private static final List<EnumCssStyleProperty> linesModifiedProperties = Arrays.asList(EnumCssStyleProperty.HEIGHT, EnumCssStyleProperty.TOP);
 

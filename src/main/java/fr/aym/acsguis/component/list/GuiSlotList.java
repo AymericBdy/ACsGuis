@@ -11,6 +11,10 @@ import java.util.List;
 
 import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.RELATIVE_TO_PARENT;
 
+/**
+ * Might change
+ */
+@Deprecated
 public class GuiSlotList extends GuiPanel {
 
     protected final GuiList list;
