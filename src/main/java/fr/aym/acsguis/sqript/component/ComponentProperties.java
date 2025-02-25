@@ -1,11 +1,13 @@
 package fr.aym.acsguis.sqript.component;
 
+import fr.aym.acsguis.api.ACsGuiBuilder;
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.button.GuiCheckBox;
 import fr.aym.acsguis.component.entity.GuiEntityRender;
 import fr.aym.acsguis.component.layout.PanelLayout;
 import fr.aym.acsguis.component.panel.GuiComboBox;
 import fr.aym.acsguis.component.panel.GuiPanel;
+import fr.aym.acsguis.component.panel.GuiTabbedPane;
 import fr.aym.acsguis.component.textarea.GuiProgressBar;
 import fr.aym.acsguis.component.textarea.GuiTextArea;
 import fr.aym.acsguis.component.textarea.NumericComponent;
@@ -70,7 +72,7 @@ public class ComponentProperties<A, B> {
             c.setCssCode(s);
     });
 
-    public static final ComponentProperties<GuiComponent, String> NEXT_TAB_PANE = new ComponentProperties<>("next_tab_pane_name", c -> new TypeString(SqriptCompatiblity.nextPannedTabName), (c, s) -> SqriptCompatiblity.nextPannedTabName = s);
+    public static final ComponentProperties<GuiComponent, String> NEXT_TAB_PANE = new ComponentProperties<>("next_tab_pane_name", c -> new TypeString(GuiTabbedPane.nextTabName), (c, s) -> GuiTabbedPane.nextTabName = s);
 
     private final String name;
     private final Function<A, ScriptType<B>> getter;
