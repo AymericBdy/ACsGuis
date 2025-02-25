@@ -90,7 +90,7 @@ checkbox
 checkbox>label
 {
     left: 20px;
-    width: 90px;
+    width: auto;
     height: auto;
     padding: 2px;
     text-align-vertical: center;
@@ -112,6 +112,7 @@ checkbox>button
 
 slider_horizontal
 {
+    left: 0px;
     height: 6px;
     bottom: 0px;
     width: 100%;
@@ -124,6 +125,7 @@ slider_horizontal>button
 
 slider_vertical
 {
+    top: 0px;
     width: 6px;
     right: 0px;
     height: 100%;

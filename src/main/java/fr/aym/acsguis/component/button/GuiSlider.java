@@ -32,21 +32,21 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
     public GuiSlider(boolean horizontal) {
         this.horizontal = horizontal;
         add(sliderButton = new GuiSliderButton());
-        getStyleCustomizer().withAutoStyles(new AutoStyleHandler<InternalComponentStyle>() {
+        getStyleCustomizer()/*.withAutoStyles(new AutoStyleHandler<InternalComponentStyle>() {
                     @Override
                     public boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, InternalComponentStyle target) {
                         switch (property) {
                             case WIDTH:
-                                target.getWidth().setRelative(1F / (horizontal ? 5 : 1), RELATIVE_TO_PARENT);
+                                //target.getWidth().setRelative(1F / (horizontal ? 5 : 1), RELATIVE_TO_PARENT);
                                 return true;
                             case HEIGHT:
-                                target.getHeight().setRelative(1F / (horizontal ? 1 : 5), RELATIVE_TO_PARENT);
+                                //target.getHeight().setRelative(1F / (horizontal ? 1 : 5), RELATIVE_TO_PARENT);
                                 return true;
                             case LEFT:
-                                target.getXPos().setAbsolute(0, horizontal ? GuiConstants.ENUM_RELATIVE_POS.START : GuiConstants.ENUM_RELATIVE_POS.END);
+                                //target.getXPos().setAbsolute(0, horizontal ? GuiConstants.ENUM_RELATIVE_POS.START : GuiConstants.ENUM_RELATIVE_POS.END);
                                 return true;
                             case TOP:
-                                target.getYPos().setAbsolute(0);
+                                //target.getYPos().setAbsolute(0, horizontal ? GuiConstants.ENUM_RELATIVE_POS.END : GuiConstants.ENUM_RELATIVE_POS.START);
                                 return true;
                         }
                         return false;
@@ -56,7 +56,7 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
                     public Priority getPriority(InternalComponentStyle forT) {
                         return Priority.IGNORE_LAYOUT;
                     }
-                }, EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.TOP)
+                }, EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.TOP)*/
                 .withAutoStyle(EnumCssStyleProperty.BACKGROUND_COLOR, t -> t.setBackgroundColor(new Color(0, 0, 0, 0.5f).getRGB()));
 
         addClickListener(this);

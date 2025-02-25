@@ -1,6 +1,7 @@
 package fr.aym.acsguis.cssengine.v2;
 
 import fr.aym.acsguis.api.ACsGuiApi;
+import fr.aym.acsguis.component.button.GuiSlider;
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.style.ComponentStyle;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
@@ -76,15 +77,16 @@ public class GuiOrchestrator {
             return;
         }*/
 
-        if (properties.length != EnumCssStyleProperty.values().length) {
+        boolean fils = properties.length == EnumCssStyleProperty.values().length;
+       // if (properties.length != EnumCssStyleProperty.values().length) {
             //TODO OPTIMIZE, goal is to cancel previous refresh in order of the queue, and only keep the last with all properties to refresh
             List<CssRefreshEntry> others = componentReloadQueue.stream().filter(other -> other.style.equals(style)).collect(Collectors.toList());
             if (!others.isEmpty()) {
                 // System.out.println("FOUND OTHERS: " + others.size());
                 Set<EnumCssStyleProperty> propertyList = new HashSet<>(Arrays.asList(properties));
                 for (CssRefreshEntry other : others) {
-                    other.valid = false;
-                    if (Arrays.equals(other.properties, properties)) {
+                    other.valid = fils;
+                    if (Arrays.equals(other.properties, entry.properties)) {
                         continue;
                     }
                     //  System.out.println("Complementary :O");
@@ -95,8 +97,15 @@ public class GuiOrchestrator {
                 }
                 entry.properties = propertyList.toArray(new EnumCssStyleProperty[0]);
             }
-            componentReloadQueue.removeAll(others);
-        }
+            if(fils) {
+                System.out.println("Gros fils " + style.getOwner() + ": " + others.stream().map(e -> "TPG: " + Arrays.toString(e.properties)).collect(Collectors.joining(", ")));
+                System.out.println("props: " + Arrays.toString(properties) + "to: " + Arrays.toString(entry.properties));
+            } else {
+                componentReloadQueue.removeAll(others);
+            }
+        /*} else if(style.getOwner() instanceof GuiSlider) {
+            System.out.println("THE FUCK IS YOU GUY " + style.getOwner());
+        }*/
         // System.out.println("REFRESH " + style.getOwner());
         componentReloadQueue.add(entry);
     }

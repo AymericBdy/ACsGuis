@@ -28,6 +28,14 @@ public class CssPanelStyle extends CssComponentStyle implements PanelStyle {
     }
 
     @Override
+    public void resetCssStack() {
+        super.resetCssStack();
+        for(GuiComponent c : panel.getChildComponents()) {
+            c.getStyle().resetCssStack();
+        }
+    }
+
+    @Override
     public void refreshStyle(GuiFrame.APIGuiScreen gui, EnumCssStyleProperty... properties) {
         super.refreshStyle(gui, properties);
         // Schedule children refresh AFTER

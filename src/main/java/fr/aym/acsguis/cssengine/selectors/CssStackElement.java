@@ -9,6 +9,9 @@ import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static fr.aym.acsguis.cssengine.style.EnumCssStyleProperty.*;
 
 /**
  * Chooses which style to apply, depending on the state of the element
@@ -41,18 +44,33 @@ public class CssStackElement {
         propertyMap.get(universalSelector).put(property, value);
     }
 
+    private boolean searchSim(EnumSelectorContext context, EnumCssStyleProperty property, InternalComponentStyle to) {
+        AtomicBoolean result = new AtomicBoolean();
+        propertyMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach((e) -> {
+            if (!e.getKey().applies(to, context)) {
+                return;
+            }
+            CssStyleProperty<?> p = e.getValue().get(property);
+            if (p != null) {
+                result.set(true);
+            }
+        });
+        return result.get();
+    }
+
     public void applyProperty(EnumSelectorContext context, EnumCssStyleProperty property, InternalComponentStyle to) {
         boolean out = false;//to.getOwner() instanceof GuiButton && ((GuiButton)to.getOwner()).getText().equals("Vehicles") && property == EnumCssStyleProperties.TEXTURE && context == EnumSelectorContext.NORMAL;//to.getOwner() instanceof GuiLabel && property == EnumCssStyleProperties.PADDING_LEFT;//(property == EnumCssStyleProperties.VISIBILITY) && to.getOwner() instanceof GuiButton;
         propertyMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach((e) -> {
             if (out)
                 System.out.println("Try stack " + property + " " + context + " to " + to.getOwner() + " " + e.getKey());
-            if (e.getKey().applies(to, context)) {
-                CssStyleProperty<?> p = e.getValue().get(property);
-                if (out)
-                    System.out.println("Able to do it ! Found prop " + p);
-                if (p != null) {
-                    matchingProperties.add(p);
-                }
+            if (!e.getKey().applies(to, context)) {
+                return;
+            }
+            CssStyleProperty<?> p = e.getValue().get(property);
+            if (out)
+                System.out.println("Able to do it ! Found prop " + p);
+            if (p != null) {
+                matchingProperties.add(p);
             }
         });
         if (!matchingProperties.isEmpty()) {
@@ -101,6 +119,24 @@ public class CssStackElement {
         matchingProperties.clear();
         // If we are there, the property was neither applied, neither inherited. Let's see if there is an AutoStyleHandler for it.
         if(!property.isDefaultAuto) {
+            return;
+        }
+        EnumCssStyleProperty sim = null;
+        switch (property) {
+            case LEFT:
+                sim = RIGHT;
+                break;
+            case RIGHT:
+                sim = LEFT;
+                break;
+            case TOP:
+                sim = BOTTOM;
+                break;
+            case BOTTOM:
+                sim = TOP;
+                break;
+        }
+        if(sim != null && searchSim(context, sim, to)) {
             return;
         }
         List<AutoStyleHandler<?>> styleHandlers = to.getCustomizer().getAutoStyleHandlers(property);

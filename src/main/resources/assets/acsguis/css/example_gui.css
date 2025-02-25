@@ -64,3 +64,41 @@
     height: 50px;
     border: 1px gray;
 }
+
+/* Checkbox testing */
+
+.switch-button-chk-active, .switch-button-chk-inactive {
+    /*width: 11px;*/
+    width: 100%;
+    height: 12px;
+    /*left: 10px;*/
+    top: auto;
+    background-color: translucent;
+}
+
+.switch-button-chk-active:hover>label, .switch-button-chk-inactive:hover>label {
+    color: #a23e00;
+}
+
+.switch-button-chk-active:hover>button, .switch-button-chk-inactive:hover>button {
+    border-color: #a23e00;
+}
+
+.switch-button-chk-inactive>button {
+    background-color: black;
+}
+
+.switch-button-chk-active>button {
+    background-color: #c25008;
+}
+
+checkbox {
+    color: rgba(255, 255, 255, 0);
+    text-shadow: disable;
+}
+
+checkbox>label
+{
+    left: 16px;
+    /*width: 220px;*/
+}

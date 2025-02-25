@@ -134,14 +134,12 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
         for (GuiComponent component : getChildComponents()) {
             if (!(component instanceof GuiSlider)) {
                 float height = component.getY() + component.getHeight();
-                //    System.out.println("Cp "+component+" h" +height + " id " + component.hashCode());
                 if (height > maxHeight) {
                     maxHeight = height;
                 }
             }
         }
-
-        return maxHeight;
+        return maxHeight + xSlider.getHeight();
     }
 
     @Override

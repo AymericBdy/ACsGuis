@@ -243,13 +243,31 @@ public class ACsGuiBuilder {
         panelQueue.peek().add(label);
         return label;
     }
-    // TODO ID CLASS
 
-    public GuiCheckBox checkbox(String text, IMouseClickListener clickListener) {
+    public GuiButtonWithItem buttonWithItem(ItemStack icon, IMouseClickListener clickListener, String cssId) {
+        return (GuiButtonWithItem) buttonWithItem(icon, clickListener).setCssId(cssId);
+    }
+
+    public GuiButtonWithItem buttonWithItem(ItemStack icon, IMouseClickListener clickListener, @Nullable String cssId, String... cssClass) {
+        return (GuiButtonWithItem) buttonWithItem(icon, clickListener, cssId).setCssClasses(cssClass);
+    }
+
+    public GuiCheckBox checkbox(String text) {
         GuiCheckBox label = new GuiCheckBox(text);
-        label.addClickListener(clickListener);
         panelQueue.peek().add(label);
         return label;
+    }
+
+    public GuiCheckBox checkbox(String text, String cssId) {
+        return (GuiCheckBox) checkbox(text).setCssId(cssId);
+    }
+
+    public GuiCheckBox checkbox(String text, @Nullable String cssId, String... cssClass) {
+        return (GuiCheckBox) checkbox(text, cssId).setCssClasses(cssClass);
+    }
+
+    public GuiCheckBox checkbox(String text, IMouseClickListener clickListener) {
+        return (GuiCheckBox) checkbox(text).addClickListener(clickListener);
     }
 
     public GuiCheckBox checkbox(String text, IMouseClickListener clickListener, String cssId) {

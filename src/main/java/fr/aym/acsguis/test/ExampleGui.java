@@ -4,6 +4,7 @@ import fr.aym.acsguis.api.ACsGuiApi;
 import fr.aym.acsguis.api.ACsGuiBuilder;
 import fr.aym.acsguis.api.ACsGuiFrame;
 import fr.aym.acsguis.component.button.GuiButton;
+import fr.aym.acsguis.component.button.GuiCheckBox;
 import fr.aym.acsguis.component.layout.GuiScaler;
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.panel.GuiScrollPane;
@@ -13,6 +14,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @ACsGuiFrame
 public class ExampleGui extends GuiFrame {
@@ -28,7 +30,6 @@ public class ExampleGui extends GuiFrame {
         ACsGuiBuilder builder = ACsGuiBuilder.beginGui(this);
         GuiScrollPane contentPane = builder.scrollPane("content");
 
-
         /*GuiScrollPane contentPane = new GuiScrollPane();
         //contentPane.setLayout(new FlowLayout());
         contentPane.setCssId("content");*/
@@ -38,22 +39,35 @@ public class ExampleGui extends GuiFrame {
                 contentPane.getLayout().clear();
             }
         });
+
+        GuiCheckBox box = builder.checkbox("CLIQUES SUR MOI STPPPP STPPPPPPPP STPPPPPPPPPPPP", (x, y, b) -> {
+            System.out.println("Lol");
+        });
+        AtomicBoolean active = new AtomicBoolean();
+        box.setCssClass("switch-button-chk-" + (active.get() ? "active" : "inactive")).addClickListener((mx, my, button) -> {
+            if (!box.isChecked())
+                active.set(false);
+            else
+                active.set(true);
+            box.setCssClass("switch-button-chk-" + (active.get() ? "active" : "inactive"));
+        });
+
         GuiLabel lab;
         for (int i = 0; i < 8; i++) {
             //lab = new GuiLabel("This is the " + i + "th label");
             //lab.setCssClasses("block_labels");
-          //  contentPane.add(lab);
+            //  contentPane.add(lab);
             builder.label("This is the " + i + "th label", null, "block_labels");
         }
         for (int i = 0; i < 12; i++) {
             //lab = new GuiLabel("This is the " + i + "th label");
             //lab.setCssClasses("inline_labels");
-           // contentPane.add(lab);
+            // contentPane.add(lab);
             builder.label("This is the " + i + "th label", null, "inline_labels", "inline_labels2", "inline_labels_dumb");
         }
         for (int i = 0; i < 4; i++) {
             StringBuilder hack = new StringBuilder();
-            for (int j = 0 ; j < i ; j++) {
+            for (int j = 0; j < i; j++) {
                 hack.append(j);
             }
             //lab = new GuiLabel("This is the " + i + "th label: " + hack);
@@ -63,7 +77,7 @@ public class ExampleGui extends GuiFrame {
         }
         for (int i = 0; i < 13; i++) {
             StringBuilder hack = new StringBuilder();
-            for (int j = 0 ; j < i ; j++) {
+            for (int j = 0; j < i; j++) {
                 hack.append(j);
             }
             //lab = new GuiLabel("This is the " + i + "th label: " + hack);
@@ -76,8 +90,9 @@ public class ExampleGui extends GuiFrame {
             //buttons = new GuiButton("This is the " + i + "th button");
             //buttons.setCssClasses("inline_buttons");
             //contentPane.add(buttons);
-            builder.button("This is the " + i + "th button", null, null, "inline_buttons");
+            builder.button("This is the " + i + "th button", (x, y, b) -> {}, null, "inline_buttons");
         }
+
         builder.endPane();
         builder.endGui();
         /*GuiButtonWithItem buttonWithItem = new GuiButtonWithItem( new ItemStack(Items.DIAMOND));
@@ -131,6 +146,8 @@ public class ExampleGui extends GuiFrame {
         contentPane.add(progressBar);*/
 
         //add(contentPane);
+
+        setNeedsCssReload(true);
     }
 
     @Override

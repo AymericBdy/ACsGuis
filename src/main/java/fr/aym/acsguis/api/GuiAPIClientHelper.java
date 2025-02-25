@@ -1,6 +1,5 @@
 package fr.aym.acsguis.api;
 
-import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.cssengine.font.ICssFont;
 import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.utils.ACsScaledResolution;
@@ -142,9 +141,6 @@ public class GuiAPIClientHelper {
                 }
             }
 
-            if (line.isEmpty()) {
-                break;
-            }
             // Check if we've reached the maximum allowed height
             if (addEllipsisToLastLine(ACsGuisCssParser.DEFAULT_FONT, maxWidth, maxTextHeight, renderedLines, totalHeight, line)) {
                 return renderedLines;
