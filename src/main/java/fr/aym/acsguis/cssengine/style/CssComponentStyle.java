@@ -2,6 +2,7 @@ package fr.aym.acsguis.cssengine.style;
 
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.panel.GuiFrame;
+import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.style.ComponentStyle;
 import fr.aym.acsguis.component.style.ComponentStyleCustomizer;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
@@ -98,6 +99,9 @@ public class CssComponentStyle implements InternalComponentStyle {
     @Override
     public void update(GuiFrame.APIGuiScreen gui) {
         if (component.getState() != lastContext || cssStack == null) {
+            if(getOwner() instanceof GuiPanel) {
+                System.out.println("Mon ETA a changé " + getOwner().getCssId() + " " + component.getState() + " " + cssStack);
+            }
             refreshStyle(getOwner().getGui());
         } else if (styleCustomizer.hasChanges()) {
             refreshStyle(gui, styleCustomizer.getChanges());
@@ -123,14 +127,13 @@ public class CssComponentStyle implements InternalComponentStyle {
     public boolean refreshStyleInternal(GuiFrame.APIGuiScreen gui, EnumCssStyleProperty... properties) {
         if (cssStack == null && (getParent() == null || getParent().getCssStack() != null)) {
             reloadCssStack();
+            if (properties.length != EnumCssStyleProperty.values().length) {
+                properties = EnumCssStyleProperty.values();
+            }
         }
         if (cssStack == null) {
             return false;
         }
-
-        /*if (getOwner().getCssId() != null && getOwner().getCssId().equalsIgnoreCase("root")) {
-            System.out.println("State: " + lastContext + " " + component.getState());
-        }*/
 
         //Anticipate and apply the new context now
         if (lastContext != component.getState()) {
@@ -253,9 +256,7 @@ public class CssComponentStyle implements InternalComponentStyle {
 
     @Override
     public void resize(GuiFrame.APIGuiScreen gui) {
-        if (getCssStack() != null) {
-            refreshStyle(gui, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.TOP, EnumCssStyleProperty.RIGHT, EnumCssStyleProperty.BOTTOM, EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
-        }
+        refreshStyle(gui, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.TOP, EnumCssStyleProperty.RIGHT, EnumCssStyleProperty.BOTTOM, EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
     }
 
     @Override

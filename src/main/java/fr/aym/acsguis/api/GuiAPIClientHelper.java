@@ -119,6 +119,9 @@ public class GuiAPIClientHelper {
 
         while (!text.isEmpty()) {
             String rawTrim = Minecraft.getMinecraft().fontRenderer.trimStringToWidth(text, maxWidth);
+            if(rawTrim.isEmpty()) { // rawTrim can be empty if maxWidth is less than a char width
+                rawTrim = text.substring(0, 1);
+            }
 
             String str = text.substring(MathHelper.clamp(rawTrim.length(), 0, text.length()), MathHelper.clamp(rawTrim.length() + 1, 0, text.length()));
             Character lastChar = rawTrim.isEmpty() ? null : rawTrim.charAt(rawTrim.length() - 1);

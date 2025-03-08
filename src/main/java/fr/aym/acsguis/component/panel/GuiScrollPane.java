@@ -27,7 +27,7 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
 
         addWheelListener(this);
 
-        widthFlowLayout();
+        withFlowLayout();
     }
 
     @Override

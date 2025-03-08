@@ -1,7 +1,6 @@
 package fr.aym.acsguis.cssengine.v2;
 
 import fr.aym.acsguis.api.ACsGuiApi;
-import fr.aym.acsguis.component.button.GuiSlider;
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.style.ComponentStyle;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
@@ -25,10 +24,8 @@ public class GuiOrchestrator {
         if (componentReloadQueue.isEmpty()) {
             return;
         }
-     //   System.out.println("Processing " + componentReloadQueue.size() + " components");
-        // System.out.println("First " + componentReloadQueue.element().style.getOwner());
-
         CssRefreshEntry entry;
+
         isProcessing.set(true);
         while ((entry = componentReloadQueue.poll()) != null) {
             if (!entry.valid) {
@@ -38,12 +35,12 @@ public class GuiOrchestrator {
             workQueue.add(entry);
         }
         isProcessing.set(false);
+
         int sx = screen != null ? (int) (screen.getFrame().getResolution().getScaledWidth() / screen.getScaleX()) : 1;
         int sy = screen != null ? (int) (screen.getFrame().getResolution().getScaledHeight() / screen.getScaleY()) : 1;
-        // System.out.println("SE2 " + sx + " " + sy);
+
         Set<ComponentStyle> changedContainers = new HashSet<>();
         while ((entry = workQueue.poll()) != null) {
-            // System.out.println("SIZE " + entry.style.getOwner());
             // Here, if some layouts change, the other elements in that layout will be added to the componentReloadQueue, and their position will later be updated
             if (entry.style.updateComponentSize(sx, sy) && entry.style.getParent() != null) {
                 changedContainers.add(entry.style.getParent());
@@ -51,62 +48,44 @@ public class GuiOrchestrator {
             componentReloadQueue.add(entry);
         }
         for (ComponentStyle changedContainer : changedContainers) {
-        //    System.out.println("Changed: " + changedContainer);
             // TODO PARAM IS NOT CHILD
             changedContainer.notifyOfChildSizeChange((InternalComponentStyle) changedContainer);
         }
-        // System.out.println("SE3");
+
         while ((entry = componentReloadQueue.poll()) != null) {
             if (!entry.valid) {
                 continue;
             }
-            // System.out.println("POS " + entry.style.getOwner());
             entry.style.updateComponentPosition(sx, sy);
         }
     }
 
     public void scheduleRefresh(InternalComponentStyle style, EnumCssStyleProperty... properties) {
-        //System.out.println("Refresh " + style.getOwner());
         if (isProcessing.get()) {
             ACsGuiApi.log.warn("Trying to schedule refresh of {} while already processing queue!", style.getOwner());
             return;
         }
         CssRefreshEntry entry = new CssRefreshEntry(style, properties);
-        /*if (componentReloadQueue.contains(entry)) {
-            //System.out.println("Preventing DUP¨reload " + style.getOwner());
-            return;
-        }*/
 
-        boolean fils = properties.length == EnumCssStyleProperty.values().length;
-       // if (properties.length != EnumCssStyleProperty.values().length) {
-            //TODO OPTIMIZE, goal is to cancel previous refresh in order of the queue, and only keep the last with all properties to refresh
-            List<CssRefreshEntry> others = componentReloadQueue.stream().filter(other -> other.style.equals(style)).collect(Collectors.toList());
-            if (!others.isEmpty()) {
-                // System.out.println("FOUND OTHERS: " + others.size());
-                Set<EnumCssStyleProperty> propertyList = new HashSet<>(Arrays.asList(properties));
-                for (CssRefreshEntry other : others) {
-                    other.valid = fils;
-                    if (Arrays.equals(other.properties, entry.properties)) {
-                        continue;
-                    }
-                    //  System.out.println("Complementary :O");
-                    propertyList.addAll(Arrays.asList(other.properties));
-                    if (propertyList.size() == EnumCssStyleProperty.values().length) {
-                        break;
-                    }
+        //TODO OPTIMIZE, goal is to cancel previous refresh in order of the queue, and only keep the last with all properties to refresh
+        List<CssRefreshEntry> others = componentReloadQueue.stream().filter(other -> other.style.equals(style)).collect(Collectors.toList());
+        if (!others.isEmpty()) {
+            // System.out.println("FOUND OTHERS: " + others.size());
+            Set<EnumCssStyleProperty> propertyList = new HashSet<>(Arrays.asList(properties));
+            for (CssRefreshEntry other : others) {
+                other.valid = false;
+                if (Arrays.equals(other.properties, entry.properties)) {
+                    continue;
                 }
-                entry.properties = propertyList.toArray(new EnumCssStyleProperty[0]);
+                propertyList.addAll(Arrays.asList(other.properties));
+                if (propertyList.size() == EnumCssStyleProperty.values().length) {
+                    break;
+                }
             }
-            if(fils) {
-                System.out.println("Gros fils " + style.getOwner() + ": " + others.stream().map(e -> "TPG: " + Arrays.toString(e.properties)).collect(Collectors.joining(", ")));
-                System.out.println("props: " + Arrays.toString(properties) + "to: " + Arrays.toString(entry.properties));
-            } else {
-                componentReloadQueue.removeAll(others);
-            }
-        /*} else if(style.getOwner() instanceof GuiSlider) {
-            System.out.println("THE FUCK IS YOU GUY " + style.getOwner());
-        }*/
-        // System.out.println("REFRESH " + style.getOwner());
+            entry.properties = propertyList.toArray(new EnumCssStyleProperty[0]);
+        }
+
+        componentReloadQueue.removeAll(others);
         componentReloadQueue.add(entry);
     }
 

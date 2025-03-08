@@ -22,9 +22,9 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
     protected List<GuiComponent> queuedComponents = new ArrayList<>();
     protected List<GuiComponent> toRemoveComponents = new ArrayList<>();
 
-    protected PanelLayout<?> layout;// = new FlowLayout(this);
+    protected PanelLayout<?> layout;
 
-    public GuiPanel widthFlowLayout()  {
+    public GuiPanel withFlowLayout() {
         this.setLayout(new FlowLayout());
         return this;
     }
@@ -142,11 +142,11 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
         Iterator<GuiComponent> queuedComponentsIterator = queuedComponents.iterator();
         while (queuedComponentsIterator.hasNext()) {
             GuiComponent component = queuedComponentsIterator.next();
-            if (getStyle().getCssStack() != null) {
-                component.getStyle().reloadCssStack();
-            }
+            component.getStyle().resetCssStack();
             GuiFrame frame = getGui().getFrame();
-            component.resize(getGui(), frame.getResolution().getScaledWidth(), frame.getResolution().getScaledHeight());
+            if(getGui() != null) {
+                component.resize(getGui(), frame.getResolution().getScaledWidth(), frame.getResolution().getScaledHeight());
+            }
             getChildComponents().add(component);
             //the resize already refresh the style component.getStyle().refreshCss(false);
             queuedComponentsIterator.remove();
@@ -180,7 +180,7 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
                 ((GuiPanel) component).flushRemovedComponents();
             }
         }
-        if(getLayout() != null) {
+        if (getLayout() != null) {
             getLayout().clear();
         }
         return true;

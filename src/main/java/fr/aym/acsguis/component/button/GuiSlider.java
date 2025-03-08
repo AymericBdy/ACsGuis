@@ -2,14 +2,10 @@ package fr.aym.acsguis.component.button;
 
 import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.panel.GuiPanel;
-import fr.aym.acsguis.component.style.AutoStyleHandler;
-import fr.aym.acsguis.component.style.InternalComponentStyle;
-import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.event.listeners.mouse.IMouseClickListener;
 import fr.aym.acsguis.event.listeners.mouse.IMouseExtraClickListener;
 import fr.aym.acsguis.event.listeners.mouse.IMouseMoveListener;
-import fr.aym.acsguis.utils.GuiConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
@@ -18,8 +14,6 @@ import net.minecraft.util.math.MathHelper;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static fr.aym.acsguis.cssengine.parsing.core.objects.CssValue.Unit.RELATIVE_TO_PARENT;
 
 public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseExtraClickListener {
     protected final List<ISliderListener> sliderListeners = new ArrayList<ISliderListener>();
@@ -32,31 +26,7 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
     public GuiSlider(boolean horizontal) {
         this.horizontal = horizontal;
         add(sliderButton = new GuiSliderButton());
-        getStyleCustomizer()/*.withAutoStyles(new AutoStyleHandler<InternalComponentStyle>() {
-                    @Override
-                    public boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, InternalComponentStyle target) {
-                        switch (property) {
-                            case WIDTH:
-                                //target.getWidth().setRelative(1F / (horizontal ? 5 : 1), RELATIVE_TO_PARENT);
-                                return true;
-                            case HEIGHT:
-                                //target.getHeight().setRelative(1F / (horizontal ? 1 : 5), RELATIVE_TO_PARENT);
-                                return true;
-                            case LEFT:
-                                //target.getXPos().setAbsolute(0, horizontal ? GuiConstants.ENUM_RELATIVE_POS.START : GuiConstants.ENUM_RELATIVE_POS.END);
-                                return true;
-                            case TOP:
-                                //target.getYPos().setAbsolute(0, horizontal ? GuiConstants.ENUM_RELATIVE_POS.END : GuiConstants.ENUM_RELATIVE_POS.START);
-                                return true;
-                        }
-                        return false;
-                    }
-
-                    @Override
-                    public Priority getPriority(InternalComponentStyle forT) {
-                        return Priority.IGNORE_LAYOUT;
-                    }
-                }, EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.TOP)*/
+        getStyleCustomizer()
                 .withAutoStyle(EnumCssStyleProperty.BACKGROUND_COLOR, t -> t.setBackgroundColor(new Color(0, 0, 0, 0.5f).getRGB()));
 
         addClickListener(this);
@@ -160,7 +130,7 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
     }
 
     public double getRelativeValue() {
-        if(max <= min) {
+        if (max <= min) {
             return 0;
         }
         return (this.value - min) / (max - min);

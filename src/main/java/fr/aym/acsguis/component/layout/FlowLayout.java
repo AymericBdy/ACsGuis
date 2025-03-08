@@ -21,7 +21,6 @@ public class FlowLayout implements PanelLayout<InternalComponentStyle> {
     private GuiPanel container;
 
     public void placeElement(InternalComponentStyle target) {
-        //System.out.println("PLACE " + target.getOwner() + " " + container.getWidth());
         if (target.getDisplay() == GuiConstants.COMPONENT_DISPLAY.INLINE_BLOCK) {
             if (currentX + target.getRenderWidth() > container.getWidth()) {
                 currentX = 0;
@@ -33,13 +32,15 @@ public class FlowLayout implements PanelLayout<InternalComponentStyle> {
             currentY += maxLineHeight;
             maxLineHeight = 0;
         }
-        // System.out.println("TPlace element: " + target + " " + lastWidth + " " + lastHeight + " " + currentX + " " + currentY + " " + target.getWidth().getValue().getRawValue());
+
         ComponentPosition pos = new ComponentPosition(currentX, currentY);
         cache.put(target.getOwner(), pos);
+
         if (target.getDisplay() != GuiConstants.COMPONENT_DISPLAY.NONE) {
             lastWidth = target.getRenderWidth();
             lastHeight = target.getRenderHeight();
         }
+
         switch (target.getDisplay()) {
             case BLOCK:
                 currentX = 0;
@@ -51,6 +52,7 @@ public class FlowLayout implements PanelLayout<InternalComponentStyle> {
                 maxLineHeight = Math.max(maxLineHeight, lastHeight);
                 break;
         }
+
         lastDisplay = target.getDisplay();
     }
 
