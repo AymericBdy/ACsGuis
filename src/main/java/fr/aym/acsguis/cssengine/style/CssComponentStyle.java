@@ -192,10 +192,10 @@ public class CssComponentStyle implements InternalComponentStyle {
         float parentHeight = component.getParent() != null ? component.getParent().getHeight() : screenHeight;
         float newHeight = height.computeValue(this, screenWidth, screenHeight, parentHeight);
 
-        boolean temp = false;
+        boolean sizeChanged = false;
 
         if (newWidth != computedWidth || newHeight != computedHeight) {
-            temp = true;
+            sizeChanged = true;
             computedWidth = newWidth;
             computedHeight = newHeight;
         }
@@ -215,7 +215,7 @@ public class CssComponentStyle implements InternalComponentStyle {
             setTextureHeight((int) (getRenderHeight() * getTextureRelativeHeight()));
         }
 
-        return temp;
+        return sizeChanged;
     }
 
     /**

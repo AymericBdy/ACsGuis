@@ -51,6 +51,8 @@ public class CssPanelStyle extends CssComponentStyle implements PanelStyle {
         if (panel.getLayout() != null) {
             ((PanelLayout<InternalComponentStyle>) panel.getLayout()).onChildSizeChange(child);
         }
+        // this will update auto style for auto sized panels
+        refreshStyle(getOwner().getGui(), EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
     }
 
     public static class CssScrollPanelStyle extends CssPanelStyle {
@@ -70,8 +72,7 @@ public class CssPanelStyle extends CssComponentStyle implements PanelStyle {
         @Override
         public void notifyOfChildSizeChange(InternalComponentStyle child) {
             super.notifyOfChildSizeChange(child);
-            // this will update sliders visibility for scroll panes
-            refreshStyle(getOwner().getGui(), EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
+            ((GuiScrollPane) panel).setSlidersNeedsUpdate();
         }
     }
 }
