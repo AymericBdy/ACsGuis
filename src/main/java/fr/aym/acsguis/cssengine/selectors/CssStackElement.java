@@ -26,7 +26,6 @@ public class CssStackElement {
     public CssStackElement(CssStackElement parent, Map<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> propertyMap) {
         this.parent = parent;
         this.propertyMap = propertyMap;
-        //System.out.println("Property map is "+propertyMap);
     }
 
     public CssStackElement getParent() {
@@ -44,18 +43,20 @@ public class CssStackElement {
         propertyMap.get(universalSelector).put(property, value);
     }
 
-    private boolean searchSim(EnumSelectorContext context, EnumCssStyleProperty property, InternalComponentStyle to) {
-        AtomicBoolean result = new AtomicBoolean();
-        propertyMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach((e) -> {
-            if (!e.getKey().applies(to, context)) {
-                return;
+    private boolean hasProp(EnumSelectorContext context, EnumCssStyleProperty equivalentProperty, InternalComponentStyle shouldApplyTo) {
+        AtomicBoolean equivalentFound = new AtomicBoolean();
+        for (Map.Entry<CompoundCssSelector, Map<EnumCssStyleProperty, CssStyleProperty<?>>> entry : propertyMap.entrySet()) {
+            CssStyleProperty<?> p = entry.getValue().get(equivalentProperty);
+            if(p == null) {
+                continue;
             }
-            CssStyleProperty<?> p = e.getValue().get(property);
-            if (p != null) {
-                result.set(true);
+            if (!entry.getKey().applies(shouldApplyTo, context)) {
+                continue;
             }
-        });
-        return result.get();
+            equivalentFound.set(true);
+            break;
+        }
+        return equivalentFound.get();
     }
 
     public void applyProperty(EnumSelectorContext context, EnumCssStyleProperty property, InternalComponentStyle to) {
@@ -121,22 +122,22 @@ public class CssStackElement {
         if(!property.isDefaultAuto) {
             return;
         }
-        EnumCssStyleProperty sim = null;
+        EnumCssStyleProperty equivalent = null;
         switch (property) {
             case LEFT:
-                sim = RIGHT;
+                equivalent = RIGHT;
                 break;
             case RIGHT:
-                sim = LEFT;
+                equivalent = LEFT;
                 break;
             case TOP:
-                sim = BOTTOM;
+                equivalent = BOTTOM;
                 break;
             case BOTTOM:
-                sim = TOP;
+                equivalent = TOP;
                 break;
         }
-        if(sim != null && searchSim(context, sim, to)) {
+        if(equivalent != null && hasProp(context, equivalent, to)) {
             return;
         }
         List<AutoStyleHandler<?>> styleHandlers = to.getCustomizer().getAutoStyleHandlers(property);

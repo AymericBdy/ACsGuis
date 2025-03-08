@@ -28,9 +28,6 @@ public class GuiOrchestrator {
 
         isProcessing.set(true);
         while ((entry = componentReloadQueue.poll()) != null) {
-            if (!entry.valid) {
-                continue;
-            }
             entry.style.refreshStyleInternal(screen, entry.properties);
             workQueue.add(entry);
         }
@@ -53,9 +50,6 @@ public class GuiOrchestrator {
         }
 
         while ((entry = componentReloadQueue.poll()) != null) {
-            if (!entry.valid) {
-                continue;
-            }
             entry.style.updateComponentPosition(sx, sy);
         }
     }
@@ -69,11 +63,9 @@ public class GuiOrchestrator {
 
         //TODO OPTIMIZE, goal is to cancel previous refresh in order of the queue, and only keep the last with all properties to refresh
         List<CssRefreshEntry> others = componentReloadQueue.stream().filter(other -> other.style.equals(style)).collect(Collectors.toList());
-        if (!others.isEmpty()) {
-            // System.out.println("FOUND OTHERS: " + others.size());
+        if (!others.isEmpty() && properties.length != EnumCssStyleProperty.values().length) {
             Set<EnumCssStyleProperty> propertyList = new HashSet<>(Arrays.asList(properties));
             for (CssRefreshEntry other : others) {
-                other.valid = false;
                 if (Arrays.equals(other.properties, entry.properties)) {
                     continue;
                 }
@@ -96,12 +88,10 @@ public class GuiOrchestrator {
     private static class CssRefreshEntry {
         private final InternalComponentStyle style;
         private EnumCssStyleProperty[] properties;
-        private boolean valid;
 
         private CssRefreshEntry(InternalComponentStyle style, EnumCssStyleProperty[] properties) {
             this.style = style;
             this.properties = properties;
-            this.valid = true;
         }
 
         @Override

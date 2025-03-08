@@ -124,7 +124,6 @@ public class GuiTabbedPane extends GuiPanel {
                         int c = tabsButtons.size();
                         float w = (getWidth() - 10) / c;
                         size.setAbsolute(w);
-                        System.out.println("Width " + getWidth());
                     }));
                     return true;
                 }

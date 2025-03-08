@@ -99,9 +99,6 @@ public class CssComponentStyle implements InternalComponentStyle {
     @Override
     public void update(GuiFrame.APIGuiScreen gui) {
         if (component.getState() != lastContext || cssStack == null) {
-            if(getOwner() instanceof GuiPanel) {
-                System.out.println("Mon ETA a changé " + getOwner().getCssId() + " " + component.getState() + " " + cssStack);
-            }
             refreshStyle(getOwner().getGui());
         } else if (styleCustomizer.hasChanges()) {
             refreshStyle(gui, styleCustomizer.getChanges());
@@ -198,10 +195,6 @@ public class CssComponentStyle implements InternalComponentStyle {
         boolean temp = false;
 
         if (newWidth != computedWidth || newHeight != computedHeight) {
-            /*System.out.println("Deeply involved " + getOwner() +" "+newWidth +" / " + computedWidth);
-            if (getParent() != null) {
-                getParent().notifyOfChildSizeChange(this);
-            }*/
             temp = true;
             computedWidth = newWidth;
             computedHeight = newHeight;
@@ -236,12 +229,8 @@ public class CssComponentStyle implements InternalComponentStyle {
         float parentWidth = component.getParent() != null ? component.getParent().getWidth() : screenWidth;
         float parentHeight = component.getParent() != null ? component.getParent().getHeight() : screenHeight;
 
-        //.out.println("Compute "+getOwner()+" x and from "+computedX);
         computedX = getXPos().computeValue(this, screenWidth, screenHeight, parentWidth, getRenderWidth());
-        //System.out.println("Got "+computedX);
-        //System.out.println("Compute "+getOwner()+" y and from "+computedY);
         computedY = getYPos().computeValue(this, screenWidth, screenHeight, parentHeight, getRenderHeight());
-        //System.out.println("Got "+computedY);
     }
 
     @Override
