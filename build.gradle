@@ -28,7 +28,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'maven-publish'
 apply plugin: "com.jfrog.artifactory"
 
-version = "1.4.0-dev3"
+version = "1.4.0-beta"
 group = "fr.aym.acsguis" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ACsGuis"
 
@@ -102,6 +102,7 @@ task outputNoTestJar(type: Jar) {
     from(zipTree("build/libs/${builtFile}")) {
         exclude '/fr/nico/'
         exclude '/fr/aym/acsguis/test/'
+        exclude '/assets/acsguis/css/atm.css'
         exclude '/assets/acsguis/css/dnx_debug.css'
         exclude '/assets/acsguis/css/font2.ttf'
     }
@@ -113,6 +114,7 @@ task outputNoTestJarSources(type: Jar) {
     from(zipTree("build/libs/${builtFileSources}")) {
         exclude '/fr/nico/'
         exclude '/fr/aym/acsguis/test/'
+        exclude '/assets/acsguis/css/atm.css'
         exclude '/assets/acsguis/css/dnx_debug.css'
         exclude '/assets/acsguis/css/font2.ttf'
     }

@@ -29,16 +29,7 @@ public class ExampleGui extends GuiFrame {
 
         ACsGuiBuilder builder = ACsGuiBuilder.begin(this);
         GuiScrollPane contentPane = builder.scrollPane("content");
-
-        /*GuiScrollPane contentPane = new GuiScrollPane();
-        //contentPane.setLayout(new FlowLayout());
-        contentPane.setCssId("content");*/
-        contentPane.addClickListener(new IMouseClickListener() {
-            @Override
-            public void onMouseClicked(int mouseX, int mouseY, int mouseButton) {
-                contentPane.getLayout().clear();
-            }
-        });
+        contentPane.addClickListener((mouseX, mouseY, mouseButton) -> contentPane.getLayout().clear());
 
         GuiCheckBox box = builder.checkbox("CLIQUES SUR MOI STPPPP STPPPPPPPP STPPPPPPPPPPPP", (x, y, b) -> {
             System.out.println("Lol");
