@@ -139,7 +139,7 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
                 }
             }
         }
-        return maxHeight + xSlider.getHeight();
+        return maxHeight;
     }
 
     @Override
@@ -153,6 +153,13 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
             ySlider.setValue(ySlider.getMax());
         }
         return true;
+    }
+
+    @Override
+    public void removeAllChildren() {
+        super.removeAllChildren();
+        add(xSlider);
+        add(ySlider);
     }
 
     public void scrollXBy(double d) {
