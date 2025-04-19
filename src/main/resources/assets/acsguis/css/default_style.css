@@ -121,6 +121,7 @@ slider_horizontal
 slider_horizontal>button
 {
     left: auto;
+    width: auto;
 }
 
 slider_vertical
@@ -134,6 +135,7 @@ slider_vertical
 slider_vertical>button
 {
     top: auto;
+    height: auto;
 }
 
 /** GuiSearchField */

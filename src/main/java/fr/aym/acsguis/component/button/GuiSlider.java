@@ -92,12 +92,20 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
                     target.getXPos().setAbsolute((int) (getRelativeValue() * (GuiSlider.this.getWidth() - sliderButton.getWidth())));
                     return true;
                 }
+                if (property == EnumCssStyleProperty.WIDTH && horizontal) {
+                    target.getWidth().setAbsolute((float) Math.max(20, GuiSlider.this.getWidth() - getMax()));
+                    return true;
+                }
                 if (property == EnumCssStyleProperty.TOP && !horizontal) {
                     target.getYPos().setAbsolute((int) (getRelativeValue() * (GuiSlider.this.getHeight() - sliderButton.getHeight())));
                     return true;
                 }
+                if (property == EnumCssStyleProperty.HEIGHT && !horizontal) {
+                    target.getHeight().setAbsolute((float) Math.max(20, GuiSlider.this.getHeight() - getMax()));
+                    return true;
+                }
                 return false;
-            }, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.TOP);
+            }, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.TOP, EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
         }
 
         @Override

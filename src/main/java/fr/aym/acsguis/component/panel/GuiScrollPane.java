@@ -107,6 +107,8 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
         //    System.out.println(getWidth() + "/" + getMaxWidth() + " " + getHeight() + "/" + mxh);
         ((InternalComponentStyle) xSlider.getStyle()).setVisible(getMaxWidth() - getWidth() > 0);
         ((InternalComponentStyle) ySlider.getStyle()).setVisible(mxh - getHeight() > 0);
+        xSlider.getStyle().refreshStyle(getGui(), EnumCssStyleProperty.WIDTH);
+        ySlider.getStyle().refreshStyle(getGui(), EnumCssStyleProperty.HEIGHT);
         slidersNeedsUpdate = false;
     }
 
