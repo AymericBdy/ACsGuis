@@ -7,7 +7,6 @@ import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyle;
 import fr.aym.acsguis.component.style.ComponentStyleCustomizer;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
-import fr.aym.acsguis.component.textarea.GuiLabel;
 import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.cssengine.selectors.CompoundCssSelector;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
@@ -276,7 +275,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (isHovered() && !hoveringText.isEmpty()) {
             renderContext.getParentGui().hoveringText = hoveringText;
         }
-        if (isHovered() && !GuiFrame.debugInfoCompiled && this instanceof GuiLabel) {
+        if (isHovered() && !GuiFrame.debugInfoCompiled) {
             displayComponentOnDebugPane();
         }
     }
