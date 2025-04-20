@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseExtraClickListener {
-    protected final List<ISliderListener> sliderListeners = new ArrayList<ISliderListener>();
+    protected final List<ISliderListener> sliderListeners = new ArrayList<>();
     protected final GuiSliderButton sliderButton;
     protected final boolean horizontal;
 
@@ -25,6 +25,7 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
 
     public GuiSlider(boolean horizontal) {
         this.horizontal = horizontal;
+
         add(sliderButton = new GuiSliderButton());
         getStyleCustomizer()
                 .withAutoStyle(EnumCssStyleProperty.BACKGROUND_COLOR, t -> t.setBackgroundColor(new Color(0, 0, 0, 0.5f).getRGB()));
@@ -178,4 +179,9 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
         return wheelStep;
     }
 
+    public static class InternalPanelSlider extends GuiSlider {
+        public InternalPanelSlider(boolean horizontal) {
+            super(horizontal);
+        }
+    }
 }

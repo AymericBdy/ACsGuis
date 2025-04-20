@@ -19,8 +19,8 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
     private boolean slidersNeedsUpdate;
 
     public GuiScrollPane() {
-        xSlider = new GuiSlider(true);
-        ySlider = new GuiSlider(false);
+        xSlider = new GuiSlider.InternalPanelSlider(true);
+        ySlider = new GuiSlider.InternalPanelSlider(false);
 
         add(xSlider);
         add(ySlider);

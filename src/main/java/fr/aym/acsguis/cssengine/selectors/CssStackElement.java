@@ -1,6 +1,7 @@
 package fr.aym.acsguis.cssengine.selectors;
 
 import fr.aym.acsguis.component.GuiComponent;
+import fr.aym.acsguis.component.button.GuiSlider;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyle;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
@@ -146,7 +147,8 @@ public class CssStackElement {
         }
         for (AutoStyleHandler.Priority p : AutoStyleHandler.Priority.values()) {
             for (AutoStyleHandler a : styleHandlers) {
-                if (a.getPriority(to) != p) {
+                // Fix: make sure layouts aren't applied to sliders (unless described as "auto" in the .css
+                if (a.getPriority(to) != p ||(p == AutoStyleHandler.Priority.LAYOUT && to.getOwner() instanceof GuiSlider.InternalPanelSlider)) {
                     continue;
                 }
                 if (a.handleProperty(property, context, to)) {
