@@ -122,6 +122,7 @@ slider_horizontal>button
 {
     left: auto;
     width: auto;
+    height: 100%;
 }
 
 slider_vertical
@@ -135,6 +136,7 @@ slider_vertical
 slider_vertical>button
 {
     top: auto;
+    width: 100%;
     height: auto;
 }
 
