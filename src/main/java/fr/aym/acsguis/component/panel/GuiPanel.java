@@ -11,10 +11,7 @@ import fr.aym.acsguis.cssengine.style.CssPanelStyle;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.utils.ComponentRenderContext;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalComponentStyle> {
     protected List<GuiComponent> childComponents = new ArrayList<>();
@@ -211,10 +208,11 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
         return childComponents;
     }
 
-    public List<GuiComponent> getReversedChildComponents() {
+    public List<GuiComponent> getOrderedChildComponents() {
         List<GuiComponent> components = new ArrayList<>();
         if (getChildComponents() != null) {
             components.addAll(getChildComponents());
+            components.sort(Comparator.comparingInt(c -> c.getStyle().getZLevel()));
             Collections.reverse(components);
         }
         return components;

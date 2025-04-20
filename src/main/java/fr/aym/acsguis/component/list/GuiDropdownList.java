@@ -41,8 +41,9 @@ public class GuiDropdownList extends GuiPanel implements IMouseClickListener {
             panel.add(new GuiLabel(s).addClickListener((mouseX, mouseY, mouseButton) -> {
                 selectedElement = s;
                 ((InternalComponentStyle) panel.getStyle()).setVisible(false);
-                if (changeCallback != null)
+                if (changeCallback != null) {
                     changeCallback.accept(s);
+                }
             }));
         }
     }
@@ -89,11 +90,6 @@ public class GuiDropdownList extends GuiPanel implements IMouseClickListener {
     @Override
     public float getRenderMaxY() {
         return super.getRenderMaxY() + (panel.isVisible() ? panel.getHeight() : 0);
-    }
-
-    @Override
-    public boolean isMouseOver(int mouseX, int mouseY) {
-        return mouseX >= getScreenX() && mouseX < getScreenX() + getWidth() && mouseY >= getScreenY() && mouseY < getScreenY() + getHeight() + (panel.isVisible() ? panel.getHeight() : 0);
     }
 
     @Override

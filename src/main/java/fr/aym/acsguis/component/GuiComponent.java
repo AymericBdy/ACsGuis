@@ -301,7 +301,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
             });
             hadAutoStyle = true;
         }
-        if(!hadAutoStyle) {
+        if (!hadAutoStyle) {
             debug.add("None");
         }
         GuiFrame.setupDebug(getStyle().getParent(), debug);
@@ -411,7 +411,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (!(this instanceof GuiPanel)) {
             return;
         }
-        for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+        for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
             component.keyTyped(typedChar, keyCode);
         }
     }
@@ -448,7 +448,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
             return;
         }
         boolean canBeHovered1 = canBeHovered;
-        for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+        for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
             component.mouseMoved(mouseX, mouseY, canBeHovered1);
             if (component.isHovered()) {
                 canBeHovered1 = false;
@@ -474,7 +474,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         }
         if (this instanceof GuiPanel) {
             boolean canBePressed1 = canBePressed;
-            for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+            for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
                 component.mouseClicked(mouseX, mouseY, mouseButton, canBePressed1);
                 if (component.isPressed()) {
                     canBePressed1 = false;
@@ -528,7 +528,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (!(this instanceof GuiPanel)) {
             return;
         }
-        for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+        for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
             component.mouseReleased(mouseX, mouseY, mouseButton);
         }
     }
@@ -545,7 +545,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (!(this instanceof GuiPanel)) {
             return;
         }
-        for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+        for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
             component.mouseWheel(dWheel);
         }
     }
@@ -560,7 +560,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (!(this instanceof GuiPanel)) {
             return;
         }
-        for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+        for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
             component.guiOpen();
         }
     }
@@ -575,7 +575,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (!(this instanceof GuiPanel)) {
             return;
         }
-        for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+        for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
             component.guiClose();
         }
     }
@@ -820,7 +820,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     public float getMinHitboxX() {
         if (this instanceof GuiPanel) {
             float renderMinX = getRenderMinX();
-            for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+            for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
                 if (component.isVisible() && component.getMinHitboxX() < renderMinX) {
                     renderMinX = component.getMinHitboxX();
                 }
@@ -835,7 +835,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     public float getMinHitboxY() {
         if (this instanceof GuiPanel) {
             float renderMinY = getRenderMinY();
-            for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+            for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
                 if (component.isVisible() && component.getMinHitboxY() < renderMinY) {
                     renderMinY = component.getMinHitboxY();
                 }
@@ -849,7 +849,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     public float getMaxHitboxX() {
         if (this instanceof GuiPanel) {
             float renderMaxX = getRenderMaxX();
-            for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+            for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
                 if (component.isVisible() && component.getMaxHitboxX() > renderMaxX) {
                     renderMaxX = component.getMaxHitboxX();
                 }
@@ -863,7 +863,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     public float getMaxHitboxY() {
         if (this instanceof GuiPanel) {
             float renderMaxY = getRenderMaxY();
-            for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+            for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
                 if (component.isVisible() && component.getMaxHitboxY() > renderMaxY) {
                     renderMaxY = component.getMaxHitboxY();
                 }
