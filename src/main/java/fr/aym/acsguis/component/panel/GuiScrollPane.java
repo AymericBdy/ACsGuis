@@ -5,6 +5,7 @@ import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.button.GuiSlider;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
 import fr.aym.acsguis.cssengine.style.CssPanelStyle;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.event.listeners.mouse.IMouseWheelListener;
 import fr.aym.acsguis.utils.ComponentRenderContext;
 
