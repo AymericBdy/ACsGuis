@@ -7,6 +7,7 @@ import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyle;
 import fr.aym.acsguis.component.style.ComponentStyleCustomizer;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
+import fr.aym.acsguis.component.textarea.GuiLabel;
 import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.cssengine.selectors.CompoundCssSelector;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
@@ -275,7 +276,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (isHovered() && !hoveringText.isEmpty()) {
             renderContext.getParentGui().hoveringText = hoveringText;
         }
-        if (isHovered() && !GuiFrame.hasDebugInfo) {
+        if (isHovered() && !GuiFrame.debugInfoCompiled && this instanceof GuiLabel) {
             displayComponentOnDebugPane();
         }
     }
@@ -286,25 +287,25 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     public void displayComponentOnDebugPane() {
         List<String> debug = new ArrayList<>();
         debug.add(TextFormatting.AQUA + "Element : " + getType() + " id=" + getCssId() + " class=" + getCssClasses());
-        debug.add("-------------");
+        debug.add(TextFormatting.GOLD + "-------------");
         debug.addAll(ACsGuisCssParser.getStyleFor(style).getProperties(getState(), style));
-        //debug.add("-------------");
         debug.add(TextFormatting.BLUE + "Auto styles :");
+        boolean hadAutoStyle = false;
         for (EnumCssStyleProperty property : EnumCssStyleProperty.values()) {
             List<AutoStyleHandler<?>> handlers = getStyleCustomizer().getAutoStyleHandlers(property);
-            if (handlers == null) {
+            if (handlers == null || handlers.isEmpty()) {
                 continue;
             }
             handlers.forEach(h -> {
                 AutoStyleHandler<InternalComponentStyle> hc = (AutoStyleHandler<InternalComponentStyle>) h;
                 debug.add(property + " : " + hc.getPriority(style) + " " + hc);
             });
+            hadAutoStyle = true;
+        }
+        if(!hadAutoStyle) {
+            debug.add("None");
         }
         GuiFrame.setupDebug(getStyle().getParent(), debug);
-
-        if (this instanceof GuiPanel) {
-            System.out.println("Childs " + ((GuiPanel) this).getChildComponents());
-        }
     }
 
     /**
@@ -898,5 +899,9 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
             gui = parent.getGui();
         }
         return gui;
+    }
+
+    public void setGui(GuiFrame.APIGuiScreen gui) {
+        this.gui = gui;
     }
 }

@@ -3,14 +3,10 @@ package fr.aym.acsguis.component.panel;
 import fr.aym.acsguis.api.GuiAPIClientHelper;
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.button.GuiButton;
-import fr.aym.acsguis.component.button.GuiSlider;
-import fr.aym.acsguis.component.layout.GridLayout;
 import fr.aym.acsguis.component.layout.GuiScaler;
-import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyle;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
 import fr.aym.acsguis.component.textarea.GuiLabel;
-import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.cssengine.parsing.core.objects.CssValue;
 import fr.aym.acsguis.cssengine.style.CssPanelStyle;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
@@ -22,13 +18,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
@@ -39,7 +33,6 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
     protected final APIGuiScreen guiScreen;
 
     private ACsScaledResolution resolution = new ACsScaledResolution(GuiComponent.mc);
-    //MAY BE USED World render public static final Framebuffer worldRenderBuffer = new Framebuffer(GuiComponent.mc.displayWidth, GuiComponent.mc.displayHeight, true);
 
     protected boolean pauseGame = true;
     protected boolean enableRepeatEvents = true;
@@ -67,39 +60,19 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
     public int lastPressedX, lastPressedY;
     public List<String> hoveringText;
 
-    public static boolean hasDebugInfo;
+    public static boolean debugInfoCompiled;
     private static GuiScrollPane debugPane;
 
     public static void setupDebug(ComponentStyle parent, List<String> hoveringDebugText) {
-        debugPane.getChildComponents().forEach(c -> {
-            if (!(c instanceof GuiSlider))
-                debugPane.remove(c);
-        });
-        debugPane.getLayout().clear();
+        debugPane.removeAllChildren();
         hoveringDebugText.forEach(s -> debugPane.add(new GuiLabel(s)));
         if (parent != null) {
             debugPane.add(new GuiButton("Parent").addClickListener((x, y, b) -> {
-                List<String> debug = new ArrayList<>();
-                debug.add(TextFormatting.AQUA + "Parent element : " + parent.getOwner().getType() + " id=" + parent.getOwner().getCssId() + " class=" + parent.getOwner().getCssClasses());
-                debug.add("-------------");
-                debug.addAll(ACsGuisCssParser.getStyleFor(parent).getProperties(parent.getOwner().getState(), parent));
-                //debug.add("-------------");
-                debug.add(TextFormatting.BLUE + "Auto styles :");
-                for (EnumCssStyleProperty property : EnumCssStyleProperty.values()) {
-                    List<AutoStyleHandler<?>> handlers = parent.getCustomizer().getAutoStyleHandlers(property);
-                    if (handlers == null) {
-                        continue;
-                    }
-                    handlers.forEach(h -> {
-                        AutoStyleHandler<InternalComponentStyle> hc = (AutoStyleHandler<InternalComponentStyle>) h;
-                        debug.add(property + " : " + hc.getPriority((InternalComponentStyle) parent) + " " + hc);
-                    });
-                }
-                GuiFrame.setupDebug(parent.getParent(), debug);
+                parent.getOwner().displayComponentOnDebugPane();
             }));
         }
-        //System.out.println("Pane setuped with "+debugPane.getQueuedComponents()+" "+debugPane.getStyle().getRenderWidth()+" "+debugPane.getStyle().getRenderHeight());
-        hasDebugInfo = true;
+        debugPane.updateSlidersVisibility();
+        debugInfoCompiled = true;
     }
 
     /**
@@ -115,11 +88,10 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
         setFocused(true);
         addKeyboardListener(this);
 
-        hasDebugInfo = true;
+        debugInfoCompiled = true;
         debugPane = new GuiScrollPane();
-        debugPane.setParent(this);
+        debugPane.setGui(this.guiScreen);
         debugPane.setCssId("css_debug_pane");
-        debugPane.setLayout(new GridLayout(-1, 10, 0, GridLayout.GridDirection.HORIZONTAL, 1));
     }
 
     /**
@@ -173,8 +145,12 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 
     @Override
     public void onKeyTyped(char typedChar, int keyCode) {
-        if (keyCode == 1 && doesEscapeQuit()) {
-            GuiComponent.mc.displayGuiScreen(null);
+        if (keyCode == 1) {
+            if (debugPane != null && debugPane.getChildComponents().size() > 2) {
+                debugPane.removeAllChildren();
+            } else if (doesEscapeQuit()) {
+                GuiComponent.mc.displayGuiScreen(null);
+            }
         }
     }
 
@@ -191,8 +167,8 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
      * @param typedChar  The typed char
      */
     public void onKeyboardEvent(boolean keyPressed, int keyCode, char typedChar) {
-        if (allowDebugInGui() && keyCode == Keyboard.KEY_K) {
-            hasDebugInfo = false;
+        if (isEnableDebugPanel() && keyCode == Keyboard.KEY_K) {
+            debugInfoCompiled = false;
             return;
         }
         if (keyCode == 0 && typedChar >= ' ' || keyPressed) {
@@ -277,26 +253,12 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
                     isApplyMcScale()));
             frame.resize(this, width, height);
             debugPane.resize(this, width, height);
-            //debugPane.updateSlidersVisibility();
 
             //Needed for scale
             getStyle().update(this);
             debugPane.getStyle().update(this);
-            //worldRenderBuffer.createBindFramebuffer(width * resolution.getScaleFactor(), height * resolution.getScaleFactor());
         }
 
-        /**
-         * Store the Minecraft's game render in the buffer
-         */
-		/*private void updateWorldRenderBuffer()
-		{
-			Framebuffer mcBuffer = mc.getFramebuffer();
-			worldRenderBuffer.bindFramebuffer(true);
-			mcBuffer.bindFramebufferTexture();
-			Gui.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, resolution.getScaledWidth(), resolution.getScaledHeight(), resolution.getScaledWidth(), resolution.getScaledHeight());
-			mcBuffer.unbindFramebufferTexture();
-			mcBuffer.bindFramebuffer(true);
-		}*/
         @Override
         public void updateScreen() {
             frame.tick();
@@ -328,73 +290,75 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 
         public void drawScreen(int mouseX, int mouseY, float partialTicks, ComponentRenderContext renderContext) {
             orchestrator.processQueue();
-            //updateWorldRenderBuffer();
+
             hoveringText = null;
 
-            //frame.setHovered(false);
+            int scaledMouseX = (int) (mouseX / scaleX);
+            int scaledMouseY = (int) (mouseY / scaleY);
 
-            mouseX /= scaleX;
-            mouseY /= scaleY;
-
-            GuiFrame.this.mouseX = mouseX;
-            GuiFrame.this.mouseY = mouseY;
-            if (mouseX != lastMouseX || mouseY != lastMouseY) {
-                lastMouseX = mouseX;
-                lastMouseY = mouseY;
-                frame.mouseMoved(mouseX, mouseY, true);
-                if (debugPane.getChildComponents().size() > 2)
+            GuiFrame.this.mouseX = scaledMouseX;
+            GuiFrame.this.mouseY = scaledMouseY;
+            if (scaledMouseX != lastMouseX || scaledMouseY != lastMouseY) {
+                lastMouseX = scaledMouseX;
+                lastMouseY = scaledMouseY;
+                frame.mouseMoved(scaledMouseX, scaledMouseY, true);
+                if (debugPane.getChildComponents().size() > 2) {
                     debugPane.mouseMoved(mouseX, mouseY, true);
+                }
             }
 
             GlStateManager.scale(scaleX, scaleY, 1);
             GuiAPIClientHelper.setCurrentScissorScaling(scaleX, scaleY);
             frame.scale.onApplyScale(scaleX, scaleY);
-            frame.render(mouseX, mouseY, partialTicks, renderContext);
+            frame.render(scaledMouseX, scaledMouseY, partialTicks, renderContext);
             frame.scale.onRemoveScale(scaleX, scaleY);
             GuiAPIClientHelper.resetScissorScaling();
             GL11.glScalef(1 / scaleX, 1 / scaleY, 1);
 
-            mouseX *= scaleX;
-            mouseY *= scaleY;
-
             if (hoveringText != null && !hoveringText.isEmpty())
                 GuiAPIClientHelper.drawHoveringText(getResolution(), hoveringText, mouseX, mouseY);
 
-            if (debugPane.getChildComponents().size() > 2)
+            if (debugPane.getChildComponents().size() > 2) {
                 debugPane.render(mouseX, mouseY, partialTicks, renderContext);
-            //if(hoveringDebugText != null && !hoveringDebugText.isEmpty())
-            //	GuiAPIClientHelper.drawHoveringText(hoveringDebugText, mouseX, mouseY);
+            }
         }
 
         @Override
         public void handleMouseInput() throws IOException {
             super.handleMouseInput();
-            frame.mouseWheel(Mouse.getEventDWheel());
-            if (debugPane.getChildComponents().size() > 2)
+            if (debugPane.getChildComponents().size() > 2 && debugPane.isHovered()) {
                 debugPane.mouseWheel(Mouse.getEventDWheel());
+            } else {
+                frame.mouseWheel(Mouse.getEventDWheel());
+            }
         }
 
         @Override
         public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-            mouseX /= scaleX;
-            mouseY /= scaleY;
+            int scaledMouseX = (int) (mouseX / scaleX);
+            int scaledMouseY = (int) (mouseY / scaleY);
 
-            frame.mouseClicked(mouseX, mouseY, mouseButton, true);
-            if (debugPane.getChildComponents().size() > 2)
+            if (debugPane.getChildComponents().size() > 2 && debugPane.isHovered()) {
                 debugPane.mouseClicked(mouseX, mouseY, mouseButton, true);
+            } else {
+                frame.mouseClicked(scaledMouseX, scaledMouseY, mouseButton, true);
+            }
+
             GuiFrame.this.mouseButton = mouseButton;
             lastClickTime = Minecraft.getSystemTime();
-            lastPressedX = mouseX;
-            lastPressedY = mouseY;
+            lastPressedX = scaledMouseX;
+            lastPressedY = scaledMouseY;
         }
 
         @Override
         public void mouseReleased(int mouseX, int mouseY, int state) {
-            mouseX /= scaleX;
-            mouseY /= scaleY;
-            frame.mouseReleased(mouseX, mouseY, mouseButton);
-            if (debugPane.getChildComponents().size() > 2)
+            if (debugPane.getChildComponents().size() > 2 && debugPane.isHovered()) {
                 debugPane.mouseReleased(mouseX, mouseY, mouseButton);
+            } else {
+                mouseX /= scaleX;
+                mouseY /= scaleY;
+                frame.mouseReleased(mouseX, mouseY, mouseButton);
+            }
         }
 
         @Override
