@@ -211,7 +211,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
             return;
         }
         bindLayerBounds(renderContext);
-        GlStateManager.translate(0, 0, getStyle().getZLevel());
+        GlStateManager.translate(0, 0, getStyle().getZLevel() * (renderContext.getGuiType() == GuiFrame.GuiType.IN_WORLD ? 0.065f : 1));
         if (!MinecraftForge.EVENT_BUS.post(new ComponentRenderEvent.ComponentRenderBackgroundEvent(this))) {
             drawBackground(mouseX, mouseY, partialTicks, renderContext);
             renderListeners.forEach(IRenderListener::onRenderBackground);
@@ -224,7 +224,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
             if (renderContext.getGuiType() == GuiFrame.GuiType.IN_WORLD)
                 GlStateManager.translate(0, 0, 0.02);
         }
-        GlStateManager.translate(0, 0, -getStyle().getZLevel());
+        GlStateManager.translate(0, 0, -getStyle().getZLevel() * (renderContext.getGuiType() == GuiFrame.GuiType.IN_WORLD ? 0.065f : 1));
         unbindLayerBounds(renderContext);
         style.update(getGui());
     }
@@ -233,18 +233,17 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
      * Draws the component background (texture, color and borders)
      */
     public void drawBackground(int mouseX, int mouseY, float partialTicks, ComponentRenderContext renderContext) {
-        if (getScaledBorderSize() > 0) {
+        if (getScaledBorderSize(renderContext) > 0) {
+            float scaledBorderSize = getScaledBorderSize(renderContext);
             if (style.getBorderPosition() == ComponentStyle.BORDER_POSITION.EXTERNAL) {
-                if (renderContext.enableScissors()) {
-                    GuiAPIClientHelper.glScissor(getGui().getFrame().getResolution().getScaleFactor(),
-                            getRenderMinX() - getScaledBorderSize(), getRenderMinY() - getScaledBorderSize(),
-                            getRenderMaxX() - getRenderMinX() + getScaledBorderSize() * 2, getRenderMaxY() - getRenderMinY() + getScaledBorderSize() * 2);
-                }
-                GuiAPIClientHelper.drawBorderedRectangle(getScreenX() - getScaledBorderSize(), getScreenY() - getScaledBorderSize(), getScreenX() + getWidth() + getScaledBorderSize(),
-                        getScreenY() + getHeight() + getScaledBorderSize(), getScaledBorderSize(), style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
+                GuiAPIClientHelper.glScissor(renderContext,
+                        getRenderMinX() - scaledBorderSize, getRenderMinY() - scaledBorderSize,
+                        getRenderMaxX() - getRenderMinX() + scaledBorderSize * 2, getRenderMaxY() - getRenderMinY() + scaledBorderSize * 2);
+                GuiAPIClientHelper.drawBorderedRectangle(getScreenX() - scaledBorderSize, getScreenY() - scaledBorderSize, getScreenX() + getWidth() + scaledBorderSize,
+                        getScreenY() + getHeight() + scaledBorderSize, scaledBorderSize, style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
             } else {
                 GuiAPIClientHelper.drawBorderedRectangle(getScreenX(), getScreenY(), getScreenX() + getWidth(),
-                        getScreenY() + getHeight(), getScaledBorderSize(), style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
+                        getScreenY() + getHeight(), scaledBorderSize, style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
             }
         } else {
             CircleBackground.renderBackground(style.getBorderRadius(), getScreenX(), getScreenY(), getScreenX() + getWidth(), getScreenY() + getHeight(), style.getBackgroundColor());
@@ -315,7 +314,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
             return;
         }
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GuiAPIClientHelper.glScissor(renderContext.getParentGui().getResolution().getScaleFactor(),
+        GuiAPIClientHelper.glScissor(renderContext,
                 getRenderMinX(), getRenderMinY(),
                 getRenderMaxX() - getRenderMinX(), getRenderMaxY() - getRenderMinY());
     }
@@ -666,9 +665,9 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     /**
      * @return The border size scaled with the custom style manager border scale
      */
-    public float getScaledBorderSize() {
+    public float getScaledBorderSize(ComponentRenderContext renderContext) {
         if (style.shouldRescaleBorder()) {
-            return style.getBorderSize() / GuiAPIClientHelper.getCurrentScaleY();
+            return style.getBorderSize() / renderContext.getScreenScaleY();
         }
         return style.getBorderSize();
     }

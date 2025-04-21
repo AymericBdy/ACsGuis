@@ -285,7 +285,8 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
 
         @Override
         public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-            drawScreen(mouseX, mouseY, partialTicks, new ComponentRenderContext(getFrame(), true, guiType));
+            drawScreen(mouseX, mouseY, partialTicks, new ComponentRenderContext(getFrame(), true, guiType,
+                    mc.displayHeight, scaleX * getResolution().getScaleFactor(), scaleY * getResolution().getScaleFactor()));
         }
 
         public void drawScreen(int mouseX, int mouseY, float partialTicks, ComponentRenderContext renderContext) {
@@ -308,11 +309,9 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
             }
 
             GlStateManager.scale(scaleX, scaleY, 1);
-            GuiAPIClientHelper.setCurrentScissorScaling(scaleX, scaleY);
             frame.scale.onApplyScale(scaleX, scaleY);
             frame.render(scaledMouseX, scaledMouseY, partialTicks, renderContext);
             frame.scale.onRemoveScale(scaleX, scaleY);
-            GuiAPIClientHelper.resetScissorScaling();
             GL11.glScalef(1 / scaleX, 1 / scaleY, 1);
 
             if (hoveringText != null && !hoveringText.isEmpty())

@@ -79,7 +79,7 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
         return new CssTextComponentStyle(this) {
             @Override
             public boolean updateComponentSize(int screenWidth, int screenHeight) {
-                if(super.updateComponentSize(screenWidth, screenHeight)) {
+                if (super.updateComponentSize(screenWidth, screenHeight)) {
                     clearCachedTextLines();
                     return true;
                 }
@@ -114,22 +114,20 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
 
     @Override
     public void drawForeground(int mouseX, int mouseY, float partialTicks, ComponentRenderContext renderContext) {
-        if (renderContext.enableScissors()) {
-            GuiAPIClientHelper.glScissor(renderContext.getParentGui().getResolution().getScaleFactor(),
-                    getRenderMinX() + getPaddingLeft(), getRenderMinY() + getPaddingTop(),
-                    (getRenderMaxX() - getRenderMinX()) - (getPaddingLeft() + getPaddingRight()), (getRenderMaxY() - getRenderMinY()) - (getPaddingTop() + getPaddingBottom()));
-        }
+        GuiAPIClientHelper.glScissor(renderContext,
+                getRenderMinX() + getPaddingLeft(), getRenderMinY() + getPaddingTop(),
+                (getRenderMaxX() - getRenderMinX()) - (getPaddingLeft() + getPaddingRight()), (getRenderMaxY() - getRenderMinY()) - (getPaddingTop() + getPaddingBottom()));
         textScale = (float) (getStyle().getFontSize()) / mc.fontRenderer.FONT_HEIGHT;
         GlStateManager.scale(textScale, textScale, 1);
         CssFontHelper.pushDrawing(getStyle().getFontFamily(), getStyle().getEffects());
-        if (!getText().isEmpty())
+        if (!getText().isEmpty()) {
             drawTextLines(getCachedTextLines(), textScale);
-
-        if (renderContext.enableScissors()) {
-            GuiAPIClientHelper.glScissor(renderContext.getParentGui().getResolution().getScaleFactor(),
-                    getRenderMinX() + getScaledBorderSize(), getRenderMinY() + getScaledBorderSize(),
-                    getRenderMaxX() - getRenderMinX() - getScaledBorderSize(), getRenderMaxY() - getRenderMinY() - getScaledBorderSize());
         }
+
+        float scaledBorderSize = getScaledBorderSize(renderContext);
+        GuiAPIClientHelper.glScissor(renderContext,
+                getRenderMinX() + scaledBorderSize, getRenderMinY() + scaledBorderSize,
+                getRenderMaxX() - getRenderMinX() - scaledBorderSize, getRenderMaxY() - getRenderMinY() - scaledBorderSize);
         drawHintLines(textScale);
 
         if (isEditable() && isFocused()) {

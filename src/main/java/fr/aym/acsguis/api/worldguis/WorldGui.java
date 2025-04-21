@@ -35,6 +35,12 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class WorldGui {
     public static final Minecraft mc = Minecraft.getMinecraft();
+
+    /**
+     * Note: this might be hardcoded at some places in this file. The constant may not be used everywhere it should.
+     */
+    private static final int SUPER_SAMPLING_RATIO = 2;
+
     protected final UUID id;
     protected final GuiFrame gui;
     protected WorldGuiTransform transform;
@@ -55,13 +61,13 @@ public class WorldGui {
     /**
      * Creates a new WorldGui with a random uuid
      *
-     * @param gui           The gui to display
-     * @param transform     The gui transform, can change dynamically
-     * @param width         The gui width (in world, unit: blocks)
-     * @param height        The gui height (in world, unit: blocks)
-     * @param guiWidth      The gui width (gui "screen" resolution, unit: pixels)
-     * @param guiHeight     The gui height (gui "screen" resolution, unit: pixels)
-     * @param canInteract   If the players can interact with this gui
+     * @param gui         The gui to display
+     * @param transform   The gui transform, can change dynamically
+     * @param width       The gui width (in world, unit: blocks)
+     * @param height      The gui height (in world, unit: blocks)
+     * @param guiWidth    The gui width (gui "screen" resolution, unit: pixels)
+     * @param guiHeight   The gui height (gui "screen" resolution, unit: pixels)
+     * @param canInteract If the players can interact with this gui
      */
     public WorldGui(GuiFrame gui, WorldGuiTransform transform, double width, double height, int guiWidth, int guiHeight, boolean canInteract) {
         this(UUID.randomUUID(), gui, transform, width, height, guiWidth, guiHeight, canInteract);
@@ -70,14 +76,14 @@ public class WorldGui {
     /**
      * Creates a new WorldGui with the given UUID
      *
-     * @param id            The unique id of this in world gui
-     * @param gui           The gui to display
-     * @param transform     The gui transform, can change dynamically
-     * @param width         The gui width (in world)
-     * @param height        The gui height (in world)
-     * @param guiWidth      The gui width (gui "screen" resolution, in pixels)
-     * @param guiHeight     The gui height (gui "screen" resolution, in pixels)
-     * @param canInteract   If the players can interact with this gui
+     * @param id          The unique id of this in world gui
+     * @param gui         The gui to display
+     * @param transform   The gui transform, can change dynamically
+     * @param width       The gui width (in world)
+     * @param height      The gui height (in world)
+     * @param guiWidth    The gui width (gui "screen" resolution, in pixels)
+     * @param guiHeight   The gui height (gui "screen" resolution, in pixels)
+     * @param canInteract If the players can interact with this gui
      */
     public WorldGui(UUID id, GuiFrame gui, WorldGuiTransform transform, double width, double height, int guiWidth, int guiHeight, boolean canInteract) {
         this.id = id;
@@ -141,8 +147,6 @@ public class WorldGui {
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
         framebuffer.bindFramebufferTexture();
-        float f = 1.0F / guiWidth;
-        float f1 = 1.0F / guiHeight;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
@@ -199,7 +203,7 @@ public class WorldGui {
 
         if (!rendered || rayTraceResult != null || gui.getGui().isFocused() || renderTicksRemaining > 0 || gui.getGui().getOrchestrator().hasUpdates()) {
             if (framebuffer == null) {
-                framebuffer = new Framebuffer(guiWidth*2, guiHeight*2, true);
+                framebuffer = new Framebuffer(guiWidth * SUPER_SAMPLING_RATIO, guiHeight * SUPER_SAMPLING_RATIO, true);
             }
             if (renderTicksRemaining > 0)
                 renderTicksRemaining--;
@@ -207,7 +211,7 @@ public class WorldGui {
             framebuffer.bindFramebuffer(true);
             glMatrixMode(5889);
             glLoadIdentity();
-            glOrtho(0.0D, guiWidth*2, guiHeight*2, 0.0D, 100.0D, 300.0D);
+            glOrtho(0.0D, guiWidth * SUPER_SAMPLING_RATIO, guiHeight * SUPER_SAMPLING_RATIO, 0.0D, 100.0D, 300.0D);
             glMatrixMode(5888);
             glLoadIdentity();
             glTranslated(0.0F, 0.0F, -200.0F);
@@ -237,7 +241,7 @@ public class WorldGui {
             glDisable(GL_LIGHT1);
             glDisable(GL_COLOR_MATERIAL);
             //glTranslated(-guiWidth, -guiHeight, 0);
-            glScaled(2, 2, 2);
+            glScaled(SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO);
 
             // restore blending function changed by RenderGlobal.preRenderDamagedBlocks
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -250,11 +254,14 @@ public class WorldGui {
             if (rayTraceResult != null) {
                 double mouseX = getMouseX();
                 double mouseY = getMouseY();
-                gui.getGui().drawScreen((int) mouseX, (int) mouseY, 0, new ComponentRenderContext(getGui(), false, GuiFrame.GuiType.IN_WORLD));
+                gui.getGui().drawScreen((int) mouseX, (int) mouseY, 0, new ComponentRenderContext(getGui(), true, GuiFrame.GuiType.IN_WORLD,
+                        guiHeight * SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO));
             } else {
-                gui.getGui().drawScreen(-100, -100, 0, new ComponentRenderContext(getGui(), false, GuiFrame.GuiType.IN_WORLD));
+                gui.getGui().drawScreen(-100, -100, 0, new ComponentRenderContext(getGui(), true, GuiFrame.GuiType.IN_WORLD,
+                        guiHeight * SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO));
             }
 
+            // Temp screenshot tool
             if (Keyboard.isKeyDown(Keyboard.KEY_L) && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
                 System.out.println("Saving...");
                 // Capturez le contenu du framebuffer dans un tableau de pixels (ByteBuffer)

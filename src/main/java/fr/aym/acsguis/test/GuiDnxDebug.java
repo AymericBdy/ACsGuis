@@ -219,7 +219,7 @@ public class GuiDnxDebug extends GuiFrame {
         general.add(new GuiLabel("LOL"));
         general.add(new GuiLabel("the end"));
         general.add(new GuiLabel("test2"));
-        general.add(new GuiLabel("test3"));
+        general.add(new GuiLabel("test3").setHoveringText(Arrays.asList("Lol", "je test le hover", "ahah", "merci")));
         general.add(new GuiLabel("test4"));
         general.add(new GuiLabel("test5"));
         general.add(new GuiLabel("test6"));
