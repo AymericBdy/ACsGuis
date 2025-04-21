@@ -22,13 +22,8 @@ import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -121,13 +116,16 @@ public class WorldGui {
     }
 
     public void render(float partialTicks) {
-        if (!rendered)
+        Entity renderViewEntity = Minecraft.getMinecraft().getRenderViewEntity();
+        if (!rendered || renderViewEntity == null) {
             return;
+        }
         GlStateManager.pushMatrix();
-        Entity rootPlayer = Minecraft.getMinecraft().getRenderViewEntity();
-        double x = rootPlayer.lastTickPosX + (rootPlayer.posX - rootPlayer.lastTickPosX) * partialTicks;
-        double y = rootPlayer.lastTickPosY + (rootPlayer.posY - rootPlayer.lastTickPosY) * partialTicks;
-        double z = rootPlayer.lastTickPosZ + (rootPlayer.posZ - rootPlayer.lastTickPosZ) * partialTicks;
+
+        double x = renderViewEntity.lastTickPosX + (renderViewEntity.posX - renderViewEntity.lastTickPosX) * partialTicks;
+        double y = renderViewEntity.lastTickPosY + (renderViewEntity.posY - renderViewEntity.lastTickPosY) * partialTicks;
+        double z = renderViewEntity.lastTickPosZ + (renderViewEntity.posZ - renderViewEntity.lastTickPosZ) * partialTicks;
+
         GlStateManager.translate(-x + transform.getPosition().x, -y + transform.getPosition().y, -z + transform.getPosition().z);
         GlStateManager.rotate(transform.getRotationYaw(), 0, 1, 0);
         GlStateManager.rotate(transform.getRotationPitch(), 1, 0, 0);
@@ -135,17 +133,12 @@ public class WorldGui {
         if (renderDebug) {
             GlStateManager.pushMatrix();
         }
-        //GlStateManager.rotate(180, 0, 0, 1);
         GlStateManager.translate(-width / 2, -height / 2, 0);
         GlStateManager.scale(width / guiWidth, height / guiHeight, 1f / 16);
-        /*GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-        GlStateManager.enableDepth();
-        GlStateManager.depthFunc(515);
-        GlStateManager.disableCull();*/
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
+
         framebuffer.bindFramebufferTexture();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -156,14 +149,6 @@ public class WorldGui {
         bufferbuilder.pos(0, 0, 0.0D).tex(1, 0).endVertex();
         tessellator.draw();
         framebuffer.unbindFramebufferTexture();
-
-        /*if(rayTraceResult != null) {
-            double mouseX = getMouseX();
-            double mouseY = getMouseY();
-            gui.getGui().drawScreen((int)mouseX, (int)mouseY, 0, false);
-        } else {
-            gui.getGui().drawScreen(-100, -100, 0, false);
-        }*/
 
         if (renderDebug) {
             GlStateManager.popMatrix();
@@ -179,15 +164,6 @@ public class WorldGui {
                 GlStateManager.translate(rayTraceResult.hitVec.x - transform.getPosition().x, rayTraceResult.hitVec.y - transform.getPosition().y, rayTraceResult.hitVec.z - transform.getPosition().z);
                 RenderGlobal.drawBoundingBox(-0.05, -0.05, -0.05, 0.05, 0.05, 0.05, 1, 0, 0, 1);
                 GlStateManager.popMatrix();
-
-                /* Not working
-                GlStateManager.pushMatrix();
-                //GlStateManager.translate(mx, my, 0);
-                GlStateManager.translate(-width / 2, -height / 2, 0);
-                GlStateManager.scale(width / guiWidth, height / guiHeight, 1f / 16);
-                GlStateManager.translate(getMouseX(), getMouseY(), 0);
-                RenderGlobal.drawBoundingBox(-0.05, -0.05, -0.05, 0.05, 0.05, 0.05, 0, 1, 0, 1);
-                GlStateManager.popMatrix();*/
             }
             RenderGlobal.drawSelectionBoundingBox(bounds, 0, 0, 1, 1);
         }
@@ -205,8 +181,11 @@ public class WorldGui {
             if (framebuffer == null) {
                 framebuffer = new Framebuffer(guiWidth * SUPER_SAMPLING_RATIO, guiHeight * SUPER_SAMPLING_RATIO, true);
             }
-            if (renderTicksRemaining > 0)
+
+            if (renderTicksRemaining > 0) {
                 renderTicksRemaining--;
+            }
+
             framebuffer.framebufferClear();
             framebuffer.bindFramebuffer(true);
             glMatrixMode(5889);
@@ -220,27 +199,12 @@ public class WorldGui {
             glClear(GL_COLOR_BUFFER_BIT);
 
             glDisable(GL_TEXTURE_2D);
-            //glEnable(GL_BLEND);
-            //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            //glEnable(GL_CULL_FACE);
-            //glCullFace(GL_BACK);
-            //glShadeModel(GL_SMOOTH);
-            //glEnable(GL_DEPTH_TEST);
-            //glDepthFunc(GL_LEQUAL);
-            //glDisable(GL_MULTISAMPLE);
             glEnable(GL_ALPHA_TEST);
             glAlphaFunc(516, 0.1F);
-            //glDisable(32826);
-            /*glEnable(GL_BLEND);
-            glEnable(GL_DEPTH_TEST);
-            OpenGlHelper.glBlendFunc(770, 771, 1, 0);*/
-            //GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            //glAlphaFunc(GL_GREATER, 0.1f);
             glDisable(GL_LIGHTING);
             glDisable(GL_LIGHT0);
             glDisable(GL_LIGHT1);
             glDisable(GL_COLOR_MATERIAL);
-            //glTranslated(-guiWidth, -guiHeight, 0);
             glScaled(SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO);
 
             // restore blending function changed by RenderGlobal.preRenderDamagedBlocks
@@ -251,71 +215,35 @@ public class WorldGui {
             glDisable(GL_BLEND);
             glDisable(GL_FOG);
 
-            if (rayTraceResult != null) {
-                double mouseX = getMouseX();
-                double mouseY = getMouseY();
-                gui.getGui().drawScreen((int) mouseX, (int) mouseY, 0, new ComponentRenderContext(getGui(), true, GuiFrame.GuiType.IN_WORLD,
-                        guiHeight * SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO));
-            } else {
-                gui.getGui().drawScreen(-100, -100, 0, new ComponentRenderContext(getGui(), true, GuiFrame.GuiType.IN_WORLD,
-                        guiHeight * SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO));
-            }
+            double mouseX = rayTraceResult != null ? getMouseX() : -100;
+            double mouseY = rayTraceResult != null ? getMouseY() : -100;
+            gui.getGui().drawScreen((int) mouseX, (int) mouseY, 0, new ComponentRenderContext(getGui(), true, GuiFrame.GuiType.IN_WORLD,
+                    guiHeight * SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO, SUPER_SAMPLING_RATIO));
 
-            // Temp screenshot tool
-            if (Keyboard.isKeyDown(Keyboard.KEY_L) && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
-                System.out.println("Saving...");
-                // Capturez le contenu du framebuffer dans un tableau de pixels (ByteBuffer)
-                int width = guiWidth; // Remplacez par la largeur de votre framebuffer
-                int height = guiHeight; // Remplacez par la hauteur de votre framebuffer
-                ByteBuffer buffer = ByteBuffer.allocateDirect(4 * width * height);
-                GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-
-// Convertissez le tableau de pixels en BufferedImage
-                BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
-                for (int y = 0; y < height; y++) {
-                    for (int x = 0; x < width; x++) {
-                        int r = buffer.get() & 0xFF;
-                        int g = buffer.get() & 0xFF;
-                        int b = buffer.get() & 0xFF;
-                        int a = buffer.get() & 0xFF;
-                        int pixel = (a << 24) | (r << 16) | (g << 8) | b;
-                        image.setRGB(x, height - y - 1, pixel);
-                    }
-                }
-
-// Sauvegardez l'image en tant que fichier PNG
-                try {
-                    File outputFile = new File("in_world_gui_buffer.png"); // Spécifiez le chemin de votre fichier de sortie
-                    ImageIO.write(image, "png", outputFile);
-                    System.out.println("L'image a été sauvegardée avec succès.");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    System.err.println("Erreur lors de la sauvegarde de l'image en tant que fichier PNG.");
-                }
-            }
             framebuffer.unbindFramebuffer();
             rendered = true;
         }
-        //rotationYaw = (rotationYaw + 1) % 360;
-        if (!canInteract)
+        if (!canInteract) {
             return;
+        }
         handleKeyboardInput();
         rayTraceMouseCursor();
     }
 
     private void handleKeyboardInput() {
-        if (rayTraceResult != null && gui.getGui().isFocused() && Keyboard.isCreated()) {
-            while (Keyboard.next()) {
-                int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
-                boolean flag = Keyboard.getEventKeyState();
-                if (flag && i == 1) {
-                    setFocused(false);
-                } else if (flag) {
-                    try {
-                        gui.getGui().handleKeyboardInput();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+        if (rayTraceResult == null || !gui.getGui().isFocused() || !Keyboard.isCreated()) {
+            return;
+        }
+        while (Keyboard.next()) {
+            int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
+            boolean flag = Keyboard.getEventKeyState();
+            if (flag && i == 1) {
+                setFocused(false);
+            } else if (flag) {
+                try {
+                    gui.getGui().handleKeyboardInput();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }
@@ -323,6 +251,11 @@ public class WorldGui {
 
     private void rayTraceMouseCursor() {
         Entity rootPlayer = Minecraft.getMinecraft().getRenderViewEntity();
+        if(rootPlayer == null) {
+            return;
+        }
+
+        //TODO CLEAN THIS
         Vec3d vec3d = rootPlayer.getPositionEyes(0);
         vec3d = vec3d.subtract(transform.getPosition().x, transform.getPosition().y, transform.getPosition().z);
         vec3d = vec3d.rotateYaw(-transform.getRotationYaw() * 0.017453292F);
@@ -344,11 +277,10 @@ public class WorldGui {
             //ray trace world in front of the gui
             RayTraceResult res = mc.objectMouseOver;
             if (res != null && res.hitVec.subtract(rootPlayer.getPositionEyes(0)).lengthSquared() < raytraceresult.hitVec.subtract(vec3d).lengthSquared()) {
-                //System.out.println("Blocked");
                 raytraceresult = null;
             }
         }
-        //System.out.println(raytraceresult);
+
         if (rayTraceResult != null && raytraceresult == null) {
             setFocused(false);
         }

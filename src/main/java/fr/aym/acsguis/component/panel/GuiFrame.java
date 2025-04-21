@@ -357,8 +357,6 @@ public abstract class GuiFrame extends GuiPanel implements IKeyboardListener {
                 mouseX /= scaleX;
                 mouseY /= scaleY;
                 frame.mouseReleased(mouseX, mouseY, mouseButton);
-                // update hover state, maybe some components changed during the click
-                frame.mouseMoved(mouseX, mouseY, true);
             }
         }
 
