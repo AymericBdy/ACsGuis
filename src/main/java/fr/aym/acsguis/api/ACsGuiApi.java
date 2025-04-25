@@ -44,7 +44,7 @@ import java.util.concurrent.Callable;
 @ACsRegisteredService(name = ACsGuiApi.RES_LOC_ID, version = ACsGuiApi.VERSION, sides = Side.CLIENT, interfaceClass = ACsGuiApiService.class, initOnStartup = true)
 public class ACsGuiApi implements ACsGuiApiService {
     public static final String RES_LOC_ID = ACsGuiApiService.RES_LOC_ID;
-    public static final String VERSION = "1.4.0";
+    public static final String VERSION = "1.4.1";
     public static final Logger log = LogManager.getLogger("ACsGuis");
 
     private static ErrorManagerService errorTracker;
@@ -210,7 +210,7 @@ public class ACsGuiApi implements ACsGuiApiService {
      */
     public static void reloadCssStyles(@Nullable GuiFrame frame) {
         getSqriptSupport().onCssInit();
-        CssReloadEvent.Pre event = new CssReloadEvent.Pre(frame != null ? new CssReloadOrigin.HotCssReloadOrigin(manager, frame) : new CssReloadOrigin(manager, false));
+        CssReloadEvent.Pre event = new CssReloadEvent.Pre(frame != null ? new CssReloadOrigin.HotCssReloadOrigin(manager, frame) : new CssReloadOrigin(manager));
         if (MinecraftForge.EVENT_BUS.post(event)) return;
 
         ACsLib.getPlatform().provideService(ThreadedLoadingService.class).addTask(ThreadedLoadingService.ModLoadingSteps.FINISH_LOAD, "css_load", () -> {
