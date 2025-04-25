@@ -351,6 +351,7 @@ public class TtfFontRenderer implements ICssFont {
         int low = start;
         int high = word.length();
         int mid;
+
         while (low < high) {
             mid = (low + high + 1) / 2;
             if (uniFont.getWidth(word.substring(start, mid)) <= maxWidth) {
@@ -359,6 +360,12 @@ public class TtfFontRenderer implements ICssFont {
                 high = mid - 1;
             }
         }
+
+        // Prevent the calling function from not progressing and looping infinitely
+        if(low == start) {
+            return low + 1;
+        }
+
         return low;
     }
 }

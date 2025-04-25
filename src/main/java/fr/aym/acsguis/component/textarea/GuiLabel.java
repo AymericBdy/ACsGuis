@@ -121,7 +121,8 @@ public class GuiLabel extends GuiTextArea implements AutoStyleHandler<TextCompon
     @Override
     public boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, TextComponentStyle.InternalStyle target) {
         if (property == EnumCssStyleProperty.WIDTH) {
-            target.getWidth().setAbsolute((int) ((getPaddingLeft() + getPaddingRight() + 5 + mc.fontRenderer.getStringWidth(getText())) * ((float) target.getFontSize() / mc.fontRenderer.FONT_HEIGHT)));
+            float width = CssFontHelper.getTextWidth(getStyle().getFontFamily(), getText()) * textScale;
+            target.getWidth().setAbsolute((int) (getPaddingLeft() + getPaddingRight() + 5 + width));
             return true;
         }
         if (property == EnumCssStyleProperty.HEIGHT) {

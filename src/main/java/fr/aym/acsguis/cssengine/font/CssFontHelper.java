@@ -89,6 +89,19 @@ public class CssFontHelper
      * Note : if pushDrawing have not been called before this, the font effects will not be taken in account
      *
      * @param font The considered font, if no font is drawing, null for default font
+     * @return The width of the given text, with the currently bind font, or with the given font
+     */
+    public static int getTextWidth(@Nullable ResourceLocation font, String text) {
+        if(drawingFont == null) {
+            return ACsGuisCssParser.getFont(font).getWidth(text);
+        }
+        return drawingFont.getWidth(text);
+    }
+
+        /**
+     * Note : if pushDrawing have not been called before this, the font effects will not be taken in account
+     *
+     * @param font The considered font, if no font is drawing, null for default font
      * @return The height of the given text, with the currently bind font, or with the given font
      */
     public static int getFontHeight(@Nullable ResourceLocation font, String text) {

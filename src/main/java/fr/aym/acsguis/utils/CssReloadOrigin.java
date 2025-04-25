@@ -24,11 +24,9 @@ import java.util.List;
  */
 public class CssReloadOrigin implements ICssFont.FontReloadOrigin {
     private final CssGuisManager manager;
-    private final boolean isHot;
 
-    public CssReloadOrigin(CssGuisManager manager, boolean isHot) {
+    public CssReloadOrigin(CssGuisManager manager) {
         this.manager = manager;
-        this.isHot = isHot;
     }
 
     public void handleException(ResourceLocation r, Exception e) {
@@ -80,10 +78,6 @@ public class CssReloadOrigin implements ICssFont.FontReloadOrigin {
         }
     }
 
-    public boolean isHot() {
-        return isHot;
-    }
-
     /**
      * Listens loading errors and allows to show them on the error gui
      */
@@ -92,7 +86,7 @@ public class CssReloadOrigin implements ICssFont.FontReloadOrigin {
         protected Exception throwE;
 
         public HotCssReloadOrigin(CssGuisManager manager, GuiFrame reloader) {
-            super(manager, true);
+            super(manager);
             this.sheets = reloader.getCssStyles();
         }
 
