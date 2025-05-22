@@ -227,7 +227,7 @@ public class ACsGuiApi implements ACsGuiApiService {
                     e.printStackTrace();
                 }
             }
-            log.debug("Font renderer wait took " + (System.currentTimeMillis() - time) + " ms");
+            log.debug("Font renderer wait took {} ms", System.currentTimeMillis() - time);
         }, () -> {
             event.getReloadOrigin().loadFonts();
             event.getReloadOrigin().postLoad();
@@ -238,6 +238,7 @@ public class ACsGuiApi implements ACsGuiApiService {
         Set<ASMDataTable.ASMData> modData = event.getASMHarvestedData().getAll(ACsGuiFrame.class.getName());
         for (ASMDataTable.ASMData data : modData) {
             String name = data.getClassName();
+            log.debug("Discovering css sheets in {}", name);
             try {
                 Class<?> classToParse = Class.forName(data.getClassName());
                 for (Field f : classToParse.getDeclaredFields()) {
