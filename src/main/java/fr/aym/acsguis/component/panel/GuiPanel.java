@@ -11,10 +11,7 @@ import fr.aym.acsguis.cssengine.style.CssPanelStyle;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.utils.ComponentRenderContext;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalComponentStyle> {
     protected List<GuiComponent> childComponents = new ArrayList<>();
@@ -144,7 +141,7 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
             GuiComponent component = queuedComponentsIterator.next();
             component.getStyle().resetCssStack();
             GuiFrame frame = getGui().getFrame();
-            if(getGui() != null) {
+            if (getGui() != null) {
                 component.resize(getGui(), frame.getResolution().getScaledWidth(), frame.getResolution().getScaledHeight());
             }
             getChildComponents().add(component);
@@ -210,11 +207,13 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
     }
 
     public List<GuiComponent> getReversedChildComponents() {
-        List<GuiComponent> components = new ArrayList<>();
-        if (getChildComponents() != null) {
-            components.addAll(getChildComponents());
-            Collections.reverse(components);
+        if (getChildComponents() == null) {
+            return Collections.emptyList();
         }
+        List<GuiComponent> components = new ArrayList<>(getChildComponents());
+        components.sort(Comparator
+                .comparingInt((GuiComponent c) -> c.getStyle().getZLevel())
+                .reversed());
         return components;
     }
 }
