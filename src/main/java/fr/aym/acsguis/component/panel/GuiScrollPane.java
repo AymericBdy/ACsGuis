@@ -5,6 +5,7 @@ import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.button.GuiSlider;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
 import fr.aym.acsguis.cssengine.style.CssPanelStyle;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.event.listeners.mouse.IMouseWheelListener;
 import fr.aym.acsguis.utils.ComponentRenderContext;
 
@@ -19,8 +20,8 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
     private boolean slidersNeedsUpdate;
 
     public GuiScrollPane() {
-        xSlider = new GuiSlider(true);
-        ySlider = new GuiSlider(false);
+        xSlider = new GuiSlider.InternalPanelSlider(true);
+        ySlider = new GuiSlider.InternalPanelSlider(false);
 
         add(xSlider);
         add(ySlider);
@@ -107,6 +108,8 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
         //    System.out.println(getWidth() + "/" + getMaxWidth() + " " + getHeight() + "/" + mxh);
         ((InternalComponentStyle) xSlider.getStyle()).setVisible(getMaxWidth() - getWidth() > 0);
         ((InternalComponentStyle) ySlider.getStyle()).setVisible(mxh - getHeight() > 0);
+        xSlider.getStyle().refreshStyle(getGui(), EnumCssStyleProperty.WIDTH);
+        ySlider.getStyle().refreshStyle(getGui(), EnumCssStyleProperty.HEIGHT);
         slidersNeedsUpdate = false;
     }
 
@@ -139,7 +142,7 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
                 }
             }
         }
-        return maxHeight + xSlider.getHeight();
+        return maxHeight;
     }
 
     @Override
@@ -153,6 +156,13 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
             ySlider.setValue(ySlider.getMax());
         }
         return true;
+    }
+
+    @Override
+    public void removeAllChildren() {
+        super.removeAllChildren();
+        add(xSlider);
+        add(ySlider);
     }
 
     public void scrollXBy(double d) {

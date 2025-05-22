@@ -121,6 +121,8 @@ slider_horizontal
 slider_horizontal>button
 {
     left: auto;
+    width: auto;
+    height: 100%;
 }
 
 slider_vertical
@@ -134,6 +136,8 @@ slider_vertical
 slider_vertical>button
 {
     top: auto;
+    width: 100%;
+    height: auto;
 }
 
 /** GuiSearchField */
@@ -197,10 +201,9 @@ combo_box>button
     left: 10px;
     background-color: rgba(0, 0, 0, 120);
     border: 3px rgba(0, 0, 0, 120);
-    width: 50%;
-    height: 60%;
+    width: 800px;
+    height: 400px;
     z-index: 500;
-    /*component-layout: row 10 0;*/
 }
 #css_debug_pane>label
 {

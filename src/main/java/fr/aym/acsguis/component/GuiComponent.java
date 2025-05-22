@@ -211,7 +211,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
             return;
         }
         bindLayerBounds(renderContext);
-        GlStateManager.translate(0, 0, getStyle().getZLevel());
+        GlStateManager.translate(0, 0, getStyle().getZLevel() * (renderContext.getGuiType() == GuiFrame.GuiType.IN_WORLD ? 0.065f : 1));
         if (!MinecraftForge.EVENT_BUS.post(new ComponentRenderEvent.ComponentRenderBackgroundEvent(this))) {
             drawBackground(mouseX, mouseY, partialTicks, renderContext);
             renderListeners.forEach(IRenderListener::onRenderBackground);
@@ -224,7 +224,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
             if (renderContext.getGuiType() == GuiFrame.GuiType.IN_WORLD)
                 GlStateManager.translate(0, 0, 0.02);
         }
-        GlStateManager.translate(0, 0, -getStyle().getZLevel());
+        GlStateManager.translate(0, 0, -getStyle().getZLevel() * (renderContext.getGuiType() == GuiFrame.GuiType.IN_WORLD ? 0.065f : 1));
         unbindLayerBounds(renderContext);
         style.update(getGui());
     }
@@ -233,18 +233,17 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
      * Draws the component background (texture, color and borders)
      */
     public void drawBackground(int mouseX, int mouseY, float partialTicks, ComponentRenderContext renderContext) {
-        if (getScaledBorderSize() > 0) {
+        if (getScaledBorderSize(renderContext) > 0) {
+            float scaledBorderSize = getScaledBorderSize(renderContext);
             if (style.getBorderPosition() == ComponentStyle.BORDER_POSITION.EXTERNAL) {
-                if (renderContext.enableScissors()) {
-                    GuiAPIClientHelper.glScissor(getGui().getFrame().getResolution().getScaleFactor(),
-                            getRenderMinX() - getScaledBorderSize(), getRenderMinY() - getScaledBorderSize(),
-                            getRenderMaxX() - getRenderMinX() + getScaledBorderSize() * 2, getRenderMaxY() - getRenderMinY() + getScaledBorderSize() * 2);
-                }
-                GuiAPIClientHelper.drawBorderedRectangle(getScreenX() - getScaledBorderSize(), getScreenY() - getScaledBorderSize(), getScreenX() + getWidth() + getScaledBorderSize(),
-                        getScreenY() + getHeight() + getScaledBorderSize(), getScaledBorderSize(), style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
+                GuiAPIClientHelper.glScissor(renderContext,
+                        getRenderMinX() - scaledBorderSize, getRenderMinY() - scaledBorderSize,
+                        getRenderMaxX() - getRenderMinX() + scaledBorderSize * 2, getRenderMaxY() - getRenderMinY() + scaledBorderSize * 2);
+                GuiAPIClientHelper.drawBorderedRectangle(getScreenX() - scaledBorderSize, getScreenY() - scaledBorderSize, getScreenX() + getWidth() + scaledBorderSize,
+                        getScreenY() + getHeight() + scaledBorderSize, scaledBorderSize, style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
             } else {
                 GuiAPIClientHelper.drawBorderedRectangle(getScreenX(), getScreenY(), getScreenX() + getWidth(),
-                        getScreenY() + getHeight(), getScaledBorderSize(), style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
+                        getScreenY() + getHeight(), scaledBorderSize, style.getBackgroundColor(), style.getBorderColor(), style.getBorderRadius());
             }
         } else {
             CircleBackground.renderBackground(style.getBorderRadius(), getScreenX(), getScreenY(), getScreenX() + getWidth(), getScreenY() + getHeight(), style.getBackgroundColor());
@@ -275,7 +274,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (isHovered() && !hoveringText.isEmpty()) {
             renderContext.getParentGui().hoveringText = hoveringText;
         }
-        if (isHovered() && !GuiFrame.hasDebugInfo) {
+        if (isHovered() && !GuiFrame.debugInfoCompiled) {
             displayComponentOnDebugPane();
         }
     }
@@ -286,25 +285,25 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     public void displayComponentOnDebugPane() {
         List<String> debug = new ArrayList<>();
         debug.add(TextFormatting.AQUA + "Element : " + getType() + " id=" + getCssId() + " class=" + getCssClasses());
-        debug.add("-------------");
+        debug.add(TextFormatting.GOLD + "-------------");
         debug.addAll(ACsGuisCssParser.getStyleFor(style).getProperties(getState(), style));
-        //debug.add("-------------");
         debug.add(TextFormatting.BLUE + "Auto styles :");
+        boolean hadAutoStyle = false;
         for (EnumCssStyleProperty property : EnumCssStyleProperty.values()) {
             List<AutoStyleHandler<?>> handlers = getStyleCustomizer().getAutoStyleHandlers(property);
-            if (handlers == null) {
+            if (handlers == null || handlers.isEmpty()) {
                 continue;
             }
             handlers.forEach(h -> {
                 AutoStyleHandler<InternalComponentStyle> hc = (AutoStyleHandler<InternalComponentStyle>) h;
                 debug.add(property + " : " + hc.getPriority(style) + " " + hc);
             });
+            hadAutoStyle = true;
+        }
+        if (!hadAutoStyle) {
+            debug.add("None");
         }
         GuiFrame.setupDebug(getStyle().getParent(), debug);
-
-        if (this instanceof GuiPanel) {
-            System.out.println("Childs " + ((GuiPanel) this).getChildComponents());
-        }
     }
 
     /**
@@ -315,7 +314,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
             return;
         }
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GuiAPIClientHelper.glScissor(renderContext.getParentGui().getResolution().getScaleFactor(),
+        GuiAPIClientHelper.glScissor(renderContext,
                 getRenderMinX(), getRenderMinY(),
                 getRenderMaxX() - getRenderMinX(), getRenderMaxY() - getRenderMinY());
     }
@@ -411,7 +410,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (!(this instanceof GuiPanel)) {
             return;
         }
-        for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+        for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
             component.keyTyped(typedChar, keyCode);
         }
     }
@@ -448,7 +447,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
             return;
         }
         boolean canBeHovered1 = canBeHovered;
-        for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+        for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
             component.mouseMoved(mouseX, mouseY, canBeHovered1);
             if (component.isHovered()) {
                 canBeHovered1 = false;
@@ -474,7 +473,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         }
         if (this instanceof GuiPanel) {
             boolean canBePressed1 = canBePressed;
-            for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+            for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
                 component.mouseClicked(mouseX, mouseY, mouseButton, canBePressed1);
                 if (component.isPressed()) {
                     canBePressed1 = false;
@@ -528,7 +527,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (!(this instanceof GuiPanel)) {
             return;
         }
-        for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+        for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
             component.mouseReleased(mouseX, mouseY, mouseButton);
         }
     }
@@ -545,7 +544,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (!(this instanceof GuiPanel)) {
             return;
         }
-        for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+        for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
             component.mouseWheel(dWheel);
         }
     }
@@ -560,7 +559,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (!(this instanceof GuiPanel)) {
             return;
         }
-        for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+        for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
             component.guiOpen();
         }
     }
@@ -575,7 +574,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         if (!(this instanceof GuiPanel)) {
             return;
         }
-        for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+        for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
             component.guiClose();
         }
     }
@@ -666,9 +665,9 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     /**
      * @return The border size scaled with the custom style manager border scale
      */
-    public float getScaledBorderSize() {
+    public float getScaledBorderSize(ComponentRenderContext renderContext) {
         if (style.shouldRescaleBorder()) {
-            return style.getBorderSize() / GuiAPIClientHelper.getCurrentScaleY();
+            return style.getBorderSize() / renderContext.getScreenScaleY();
         }
         return style.getBorderSize();
     }
@@ -820,7 +819,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     public float getMinHitboxX() {
         if (this instanceof GuiPanel) {
             float renderMinX = getRenderMinX();
-            for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+            for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
                 if (component.isVisible() && component.getMinHitboxX() < renderMinX) {
                     renderMinX = component.getMinHitboxX();
                 }
@@ -835,7 +834,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     public float getMinHitboxY() {
         if (this instanceof GuiPanel) {
             float renderMinY = getRenderMinY();
-            for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+            for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
                 if (component.isVisible() && component.getMinHitboxY() < renderMinY) {
                     renderMinY = component.getMinHitboxY();
                 }
@@ -849,7 +848,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     public float getMaxHitboxX() {
         if (this instanceof GuiPanel) {
             float renderMaxX = getRenderMaxX();
-            for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+            for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
                 if (component.isVisible() && component.getMaxHitboxX() > renderMaxX) {
                     renderMaxX = component.getMaxHitboxX();
                 }
@@ -863,7 +862,7 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
     public float getMaxHitboxY() {
         if (this instanceof GuiPanel) {
             float renderMaxY = getRenderMaxY();
-            for (GuiComponent component : ((GuiPanel) this).getReversedChildComponents()) {
+            for (GuiComponent component : ((GuiPanel) this).getOrderedChildComponents()) {
                 if (component.isVisible() && component.getMaxHitboxY() > renderMaxY) {
                     renderMaxY = component.getMaxHitboxY();
                 }
@@ -898,5 +897,9 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
             gui = parent.getGui();
         }
         return gui;
+    }
+
+    public void setGui(GuiFrame.APIGuiScreen gui) {
+        this.gui = gui;
     }
 }

@@ -101,11 +101,6 @@ public class GuiDropdownList extends GuiPanel implements IMouseClickListener {
     }
 
     @Override
-    public boolean isMouseOver(int mouseX, int mouseY) {
-        return mouseX >= getScreenX() && mouseX < getScreenX() + getWidth() && mouseY >= getScreenY() && mouseY < getScreenY() + getHeight() + (panel.isVisible() ? panel.getHeight() : 0);
-    }
-
-    @Override
     public GuiComponent setParent(GuiPanel parent) {
         if (this.parent != null && parent != this.parent) {
             this.parent.getClickListeners().remove(this);

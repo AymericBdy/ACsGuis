@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseExtraClickListener {
-    protected final List<ISliderListener> sliderListeners = new ArrayList<ISliderListener>();
+    protected final List<ISliderListener> sliderListeners = new ArrayList<>();
     protected final GuiSliderButton sliderButton;
     protected final boolean horizontal;
 
@@ -25,6 +25,7 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
 
     public GuiSlider(boolean horizontal) {
         this.horizontal = horizontal;
+
         add(sliderButton = new GuiSliderButton());
         getStyleCustomizer()
                 .withAutoStyle(EnumCssStyleProperty.BACKGROUND_COLOR, t -> t.setBackgroundColor(new Color(0, 0, 0, 0.5f).getRGB()));
@@ -92,12 +93,20 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
                     target.getXPos().setAbsolute((int) (getRelativeValue() * (GuiSlider.this.getWidth() - sliderButton.getWidth())));
                     return true;
                 }
+                if (property == EnumCssStyleProperty.WIDTH && horizontal) {
+                    target.getWidth().setAbsolute((float) Math.max(20, GuiSlider.this.getWidth() - getMax()));
+                    return true;
+                }
                 if (property == EnumCssStyleProperty.TOP && !horizontal) {
                     target.getYPos().setAbsolute((int) (getRelativeValue() * (GuiSlider.this.getHeight() - sliderButton.getHeight())));
                     return true;
                 }
+                if (property == EnumCssStyleProperty.HEIGHT && !horizontal) {
+                    target.getHeight().setAbsolute((float) Math.max(20, GuiSlider.this.getHeight() - getMax()));
+                    return true;
+                }
                 return false;
-            }, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.TOP);
+            }, EnumCssStyleProperty.LEFT, EnumCssStyleProperty.TOP, EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
         }
 
         @Override
@@ -170,4 +179,9 @@ public class GuiSlider extends GuiPanel implements IMouseClickListener, IMouseEx
         return wheelStep;
     }
 
+    public static class InternalPanelSlider extends GuiSlider {
+        public InternalPanelSlider(boolean horizontal) {
+            super(horizontal);
+        }
+    }
 }

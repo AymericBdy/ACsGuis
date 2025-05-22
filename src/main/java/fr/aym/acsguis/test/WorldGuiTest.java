@@ -19,7 +19,7 @@ public class WorldGuiTest {
             if (Keyboard.isKeyDown(Keyboard.KEY_M) && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
                 ACsGuiApi.getInWorldGuisManager().getWorldGuis().clear();
                 WorldGuiTransform transform = new WorldGuiTransform(new Vector3f(513.98f, 65, -360), 90, 0);
-                WorldGui wgui = new WorldGui(new GuiDnxDebug(), transform, 2, 1, 500, 250, true);
+                WorldGui wgui = new WorldGui(new GuiDnxDebug(), transform, 2, 1, 1000, 500, true);
                 wgui.setRenderDebug(true);
                 ACsGuiApi.getInWorldGuisManager().addWorldGui(wgui);
             }

@@ -1,6 +1,7 @@
 package fr.aym.acsguis.cssengine.selectors;
 
 import fr.aym.acsguis.component.GuiComponent;
+import fr.aym.acsguis.component.button.GuiSlider;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
 import fr.aym.acsguis.component.style.ComponentStyle;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
@@ -146,7 +147,8 @@ public class CssStackElement {
         }
         for (AutoStyleHandler.Priority p : AutoStyleHandler.Priority.values()) {
             for (AutoStyleHandler a : styleHandlers) {
-                if (a.getPriority(to) != p) {
+                // Fix: make sure layouts aren't applied to sliders (unless described as "auto" in the .css
+                if (a.getPriority(to) != p ||(p == AutoStyleHandler.Priority.LAYOUT && to.getOwner() instanceof GuiSlider.InternalPanelSlider)) {
                     continue;
                 }
                 if (a.handleProperty(property, context, to)) {
@@ -175,11 +177,6 @@ public class CssStackElement {
 
     public List<String> getProperties(EnumSelectorContext context, ComponentStyle to) {
         List<String> l = new ArrayList<>();
-        /*if(parent != null && to.getParent() != null) {
-            l.add(TextFormatting.GOLD+"Parent :");
-            l.addAll(parent.getProperties(to.getParent().getContext(), to.getParent()));
-            l.add(TextFormatting.GOLD+"========");
-        }*/
         propertyMap.forEach((sel, props) -> {
             l.add((sel.applies(to, context) ? TextFormatting.GREEN : TextFormatting.RED) + "Selector : ");
             sel.addProperties(l);
@@ -190,7 +187,7 @@ public class CssStackElement {
                 else
                     l.add(prop.key + " = " + value.getValue().toString());
             });
-            l.add("========");
+            l.add(TextFormatting.GOLD + "========");
         });
         return l;
     }

@@ -103,8 +103,9 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
      */
     public GuiPanel add(GuiComponent component) {
         component.setParent(this);
-        if (layout != null)
+        if (layout != null) {
             component.getStyleCustomizer().withAutoStyles(layout, layout.getModifiedProperties());
+        }
         queuedComponents.add(component);
         return this;
     }
@@ -118,8 +119,9 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
     }
 
     public void removeAllChildren() {
-        if (layout != null)
+        if (layout != null) {
             layout.clear();
+        }
         queuedComponents.clear();
         toRemoveComponents.addAll(childComponents);
     }
@@ -206,7 +208,7 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
         return childComponents;
     }
 
-    public List<GuiComponent> getReversedChildComponents() {
+    public List<GuiComponent> getOrderedChildComponents() {
         if (getChildComponents() == null) {
             return Collections.emptyList();
         }

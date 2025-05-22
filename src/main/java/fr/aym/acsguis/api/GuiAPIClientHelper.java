@@ -4,6 +4,7 @@ import fr.aym.acsguis.cssengine.font.ICssFont;
 import fr.aym.acsguis.cssengine.parsing.ACsGuisCssParser;
 import fr.aym.acsguis.utils.ACsScaledResolution;
 import fr.aym.acsguis.utils.CircleBackground;
+import fr.aym.acsguis.utils.ComponentRenderContext;
 import fr.aym.acsguis.utils.GuiConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -182,32 +183,17 @@ public class GuiAPIClientHelper {
         return indexes;
     }
 
-    //TODO DOC
-    private static float currentScaleX = 1, currentScaleY = 1;
-
-    public static void setCurrentScissorScaling(float scaleX, float scaleY) {
-        currentScaleX = scaleX;
-        currentScaleY = scaleY;
-    }
-
-    public static float getCurrentScaleX() {
-        return currentScaleX;
-    }
-
-    public static float getCurrentScaleY() {
-        return currentScaleY;
-    }
-
-    public static void resetScissorScaling() {
-        setCurrentScissorScaling(1, 1);
-    }
-
     /**
      * Create rendering boundaries, the elements' parts outside of them will not be rendered.
      */
-    public static void glScissor(int resolutionScaleFactor, float x, float y, float width, float height) {
-        GL11.glScissor(MathHelper.floor(x * resolutionScaleFactor * currentScaleX), MathHelper.ceil(mc.displayHeight - (y + height) * resolutionScaleFactor * currentScaleY),
-                MathHelper.clamp(MathHelper.ceil(width * resolutionScaleFactor * currentScaleX), 0, Integer.MAX_VALUE), MathHelper.clamp(MathHelper.ceil(height * resolutionScaleFactor * currentScaleY), 0, Integer.MAX_VALUE));
+    public static void glScissor(ComponentRenderContext renderContext, float x, float y, float width, float height) {
+        if (!renderContext.enableScissors()) {
+            return;
+        }
+        GL11.glScissor(MathHelper.floor(x * renderContext.getScreenScaleX()),
+                MathHelper.ceil(renderContext.getScreenHeight() - (y + height) * renderContext.getScreenScaleY()),
+                MathHelper.clamp(MathHelper.ceil(width * renderContext.getScreenScaleX()), 0, Integer.MAX_VALUE),
+                MathHelper.clamp(MathHelper.ceil(height * renderContext.getScreenScaleY()), 0, Integer.MAX_VALUE));
     }
 
     public static void drawBorderedRectangle(float left, float top, float right, float bottom, float borderSize, int backgroundColor, int borderColor, float borderRadius) {
