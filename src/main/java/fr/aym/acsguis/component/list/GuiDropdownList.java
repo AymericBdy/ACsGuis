@@ -6,7 +6,6 @@ import fr.aym.acsguis.component.button.GuiButton;
 import fr.aym.acsguis.component.layout.GridLayout;
 import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.panel.GuiScrollPane;
-import fr.aym.acsguis.component.style.ComponentStyleCustomizer;
 import fr.aym.acsguis.component.style.InternalComponentStyle;
 import fr.aym.acsguis.component.textarea.GuiLabel;
 import fr.aym.acsguis.cssengine.positionning.Size;
@@ -20,12 +19,18 @@ import java.util.function.Consumer;
 public class GuiDropdownList extends GuiPanel implements IMouseClickListener {
     private final GuiButton button;
     private final GuiPanel panel;
+    private final boolean updateLabelOnClick;
     private String selectedElement;
     @Nullable
     private Consumer<String> changeCallback;
 
     public GuiDropdownList(String label, List<String> elements) {
-        super();
+        this(label, elements, true);
+    }
+
+    public GuiDropdownList(String label, List<String> elements, boolean updateLabelOnClick) {
+        this.updateLabelOnClick = updateLabelOnClick;
+
         panel = new GuiScrollPane();
         add((button = new GuiButton(label)).addClickListener((mouseX, mouseY, mouseButton) -> ((InternalComponentStyle) panel.getStyle()).setVisible(!panel.isVisible())));
 
@@ -39,10 +44,14 @@ public class GuiDropdownList extends GuiPanel implements IMouseClickListener {
         panel.removeAllChildren();
         for (String s : elements) {
             panel.add(new GuiLabel(s).addClickListener((mouseX, mouseY, mouseButton) -> {
-                selectedElement = s;
+                setSelectedElement(s);
+                if (updateLabelOnClick) {
+                    setLabel(s);
+                }
                 ((InternalComponentStyle) panel.getStyle()).setVisible(false);
-                if (changeCallback != null)
+                if (changeCallback != null) {
                     changeCallback.accept(s);
+                }
             }));
         }
     }
