@@ -79,7 +79,7 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
         return new CssTextComponentStyle(this) {
             @Override
             public boolean updateComponentSize(int screenWidth, int screenHeight) {
-                if(super.updateComponentSize(screenWidth, screenHeight)) {
+                if (super.updateComponentSize(screenWidth, screenHeight)) {
                     clearCachedTextLines();
                     return true;
                 }
@@ -184,7 +184,8 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
             String line = lines.get(getLine(lines, cursorIndex));
             float height = scale * 9; // todo does not supports custom fonts
             float cursorPosX = mc.fontRenderer.getStringWidth(line.substring(0, getPosition(cursorIndex))) * scale - lineScrollOffsetX;
-            float cursorPosY = GuiAPIClientHelper.getRelativeTextY(getLine(lines, cursorIndex), lines.size(), getHeight() - (getPaddingTop() + getPaddingBottom()), getStyle().getVerticalTextAlignment(), height) - getLineScrollOffsetY();//(int) (getLine(cursorIndex) * 9 - lineScrollOffsetY);//+ GuiAPIClientHelper.getRelativeTextY(getLine(cursorIndex), getRenderedTextLines().size(), getHeight() - (getPaddingTop() + getPaddingBottom()), getStyle().getVerticalTextAlignment(), 9)); //todo put line height + optimize
+            float cursorPosY = GuiAPIClientHelper.getRelativeTextY(getLine(lines, cursorIndex), lines.size(), getHeight() - (getPaddingTop() + getPaddingBottom()), getStyle().getVerticalTextAlignment(), height) - getLineScrollOffsetY();
+                //(int) (getLine(cursorIndex) * 9 - lineScrollOffsetY);//+ GuiAPIClientHelper.getRelativeTextY(getLine(cursorIndex), getRenderedTextLines().size(), getHeight() - (getPaddingTop() + getPaddingBottom()), getStyle().getVerticalTextAlignment(), 9)); //todo put line height + optimize
             drawRect((int) ((getScreenX() + getPaddingLeft() + cursorPosX) / scale), (int) ((getScreenY() + getPaddingTop() + cursorPosY) / scale), (int) ((getScreenX() + getPaddingLeft() + cursorPosX) / scale + 1), (int) ((getScreenY() + getPaddingTop() + cursorPosY) / scale + 9), Color.WHITE.getRGB());
         }
     }
@@ -677,14 +678,15 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
                 }
                 break;
             default:
-                if (ChatAllowedCharacters.isAllowedCharacter(typedChar) && isEnabled() && text.length() < maxTextLength) {
-                    if (regexPattern.matcher(getRenderedText() + typedChar).matches()) {
-                        writeText(String.valueOf(typedChar));
-                        moveCursorBy(1);
-                        moveSelectionToCursor();
-                    }
+                if (!ChatAllowedCharacters.isAllowedCharacter(typedChar) || !isEnabled() || text.length() >= maxTextLength) {
+                    break;
                 }
-
+                if (!regexPattern.matcher(getText() + typedChar).matches()) {
+                    break;
+                }
+                writeText(String.valueOf(typedChar));
+                moveCursorBy(1);
+                moveSelectionToCursor();
                 break;
         }
     }
