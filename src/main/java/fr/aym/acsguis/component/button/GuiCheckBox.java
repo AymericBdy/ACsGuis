@@ -22,6 +22,8 @@ public class GuiCheckBox extends GuiPanel implements IMouseClickListener, TextCo
         add(checkButton = new GuiButton());
         setText(text);
         addClickListener(this);
+        // Fix: let the checkbox itself handle the click event
+        checkButton.getClickListeners().clear();
     }
 
     @Override
