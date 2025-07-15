@@ -28,7 +28,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'maven-publish'
 apply plugin: "com.jfrog.artifactory"
 
-version = "1.4.1-beta"
+version = "1.4.2-beta"
 group = "fr.aym.acsguis" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ACsGuis"
 
