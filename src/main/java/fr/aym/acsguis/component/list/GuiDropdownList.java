@@ -20,29 +20,38 @@ public class GuiDropdownList extends GuiPanel implements IMouseClickListener {
     private final GuiButton button;
     private final GuiPanel panel;
     private final boolean updateLabelOnClick;
+
+    private List<String> options;
+
     private String selectedElement;
     @Nullable
     private Consumer<String> changeCallback;
 
-    public GuiDropdownList(String label, List<String> elements) {
-        this(label, elements, true);
+    public GuiDropdownList(String label, List<String> options) {
+        this(label, options, true);
     }
 
-    public GuiDropdownList(String label, List<String> elements, boolean updateLabelOnClick) {
+    public GuiDropdownList(String label, List<String> options, boolean updateLabelOnClick) {
         this.updateLabelOnClick = updateLabelOnClick;
 
         panel = new GuiScrollPane();
         add((button = new GuiButton(label)).addClickListener((mouseX, mouseY, mouseButton) -> ((InternalComponentStyle) panel.getStyle()).setVisible(!panel.isVisible())));
 
         panel.setLayout(new GridLayout(new Size.SizeValue(1, GuiConstants.ENUM_SIZE.RELATIVE), new Size.SizeValue(20, GuiConstants.ENUM_SIZE.ABSOLUTE), new Size.SizeValue(1, GuiConstants.ENUM_SIZE.ABSOLUTE), GridLayout.GridDirection.HORIZONTAL, 1));
-        setElements(elements);
+        setOptions(options);
         ((InternalComponentStyle) panel.getStyle()).setVisible(false);
         add(panel);
     }
 
-    public void setElements(List<String> elements) {
+    public List<String> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<String> options) {
+        this.options = options;
+
         panel.removeAllChildren();
-        for (String s : elements) {
+        for (String s : options) {
             panel.add(new GuiLabel(s).addClickListener((mouseX, mouseY, mouseButton) -> {
                 setSelectedElement(s);
                 if (updateLabelOnClick) {

@@ -4,6 +4,7 @@ import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.button.GuiButton;
 import fr.aym.acsguis.component.button.GuiCheckBox;
 import fr.aym.acsguis.component.entity.GuiEntityRender;
+import fr.aym.acsguis.component.list.GuiDropdownList;
 import fr.aym.acsguis.component.panel.*;
 import fr.aym.acsguis.component.textarea.*;
 import fr.aym.acsguis.sqript.SqriptCompatiblity;
@@ -11,6 +12,7 @@ import fr.nico.sqript.structures.ScriptContext;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Collections;
 import java.util.concurrent.Callable;
 
 @SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
@@ -27,7 +29,7 @@ public enum ParseableComponent
     CHECKBOX(GuiCheckBox.class, "checkbox", GuiCheckBox::new, ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.CHECKED),
     BUTTON(GuiButton.class, "button", () -> new GuiButton("not set"), ComponentProperties.SET_STYLE, ComponentProperties.TEXT),
     ENTITY_RENDER(GuiEntityRender.class, "entity_render", () -> new GuiEntityRender(null), ComponentProperties.SET_STYLE, ComponentProperties.ENTITY_TO_RENDER),
-    COMBO_BOX(GuiComboBox.class, "combo_box", () -> new GuiComboBox("not set", null), ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.COMBO_CHOICES),
+    DROPDOWN_LIST(GuiDropdownList.class, "dropdown_list", () -> new GuiDropdownList("not set", Collections.emptyList()), ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.LIST_OPTIONS),
     PROGRESS_BAR(GuiProgressBar.class, "progress_bar", GuiProgressBar::new, ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.PROGRESS),
     PROGRESS_BAR_VERTICAL(GuiProgressBar.class, "progress_bar_vertical", () -> new GuiProgressBar(false), ComponentProperties.SET_STYLE, ComponentProperties.TEXT, ComponentProperties.PROGRESS);
 

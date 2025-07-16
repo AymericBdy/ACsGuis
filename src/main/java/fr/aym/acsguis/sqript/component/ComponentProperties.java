@@ -1,18 +1,16 @@
 package fr.aym.acsguis.sqript.component;
 
-import fr.aym.acsguis.api.ACsGuiBuilder;
 import fr.aym.acsguis.component.GuiComponent;
 import fr.aym.acsguis.component.button.GuiCheckBox;
 import fr.aym.acsguis.component.entity.GuiEntityRender;
 import fr.aym.acsguis.component.layout.PanelLayout;
-import fr.aym.acsguis.component.panel.GuiComboBox;
+import fr.aym.acsguis.component.list.GuiDropdownList;
 import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.panel.GuiTabbedPane;
 import fr.aym.acsguis.component.textarea.GuiProgressBar;
 import fr.aym.acsguis.component.textarea.GuiTextArea;
 import fr.aym.acsguis.component.textarea.NumericComponent;
 import fr.aym.acsguis.component.textarea.TextComponent;
-import fr.aym.acsguis.sqript.SqriptCompatiblity;
 import fr.aym.acsguis.sqript.expressions.TypePanelLayout;
 import fr.nico.sqript.structures.ScriptContext;
 import fr.nico.sqript.structures.ScriptTypeAccessor;
@@ -51,9 +49,9 @@ public class ComponentProperties<A, B> {
 
     public static final ComponentProperties<GuiEntityRender, Entity> ENTITY_TO_RENDER = new ComponentProperties<>("entity_to_render", c -> new TypeEntity(c.getEntity()), (c, s) -> c.setEntity((EntityLivingBase) s));
 
-    public static final ComponentProperties<GuiComboBox, ArrayList<ScriptType<?>>> COMBO_CHOICES = new ComponentProperties<>("combo_choices", c -> {
+    public static final ComponentProperties<GuiDropdownList, ArrayList<ScriptType<?>>> LIST_OPTIONS = new ComponentProperties<>("options", c -> {
         ArrayList<ScriptType<?>> entries = new ArrayList<>();
-        for (String s : c.getEntries()) {
+        for (String s : c.getOptions()) {
             entries.add(new TypeString(s));
         }
         return new TypeArray(entries);
@@ -62,7 +60,7 @@ public class ComponentProperties<A, B> {
         for (ScriptType<?> t : s) {
             entries.add((String) t.getObject());
         }
-        c.setEntries(entries);
+        c.setOptions(entries);
     });
 
     public static final ComponentProperties<GuiProgressBar, Double> PROGRESS = new ComponentProperties<>("bar_progress", c -> new TypeNumber(c.getProgress()), (c, s) -> c.setProgress(s.intValue()));

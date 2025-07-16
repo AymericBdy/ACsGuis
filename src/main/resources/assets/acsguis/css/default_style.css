@@ -57,14 +57,6 @@ label
     font-size: 9;
 }
 
-combo_box>button
-{
-    width: 100%;
-    height: 15px;
-    background-color: rgb(112, 112, 255);
-    color: rgba(198, 198, 198, 255);
-}
-
 panel,tabbed_pane,scroll_pane,entity_render
 {
     width: 100%;
@@ -165,17 +157,8 @@ slider_vertical>button
     background-color: gray;
     z-index: 500;
 }
-combo_box
-{
-    height: auto;
-    max-height: 100px;
-}
-combo_box>button
-{
-    width: 100%;
-}
 
-.search_bar1 .search_bar_match, combo_box .combo_button
+.search_bar1 .search_bar_match
 {
     width: 80%;
     height: auto;
@@ -190,7 +173,7 @@ combo_box>button
     left: 50%;
     right: 50%;
 }
-.search_bar1 .search_bar_match:hover, combo_box .combo_button:hover
+.search_bar1 .search_bar_match:hover
 {
     background-color: lightgray;
 }

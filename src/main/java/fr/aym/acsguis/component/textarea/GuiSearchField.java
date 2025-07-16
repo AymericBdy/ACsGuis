@@ -22,7 +22,7 @@ public abstract class GuiSearchField extends GuiPanel {
 
     private final GuiTextField field;
     private final GuiScrollPane potentialMatches;
-    private List<String> avaibleNames;
+    private List<String> availableNames;
     private boolean multiSearch;
     private boolean showPotentialMatches;
 
@@ -40,7 +40,7 @@ public abstract class GuiSearchField extends GuiPanel {
                 String[] temp = txt.split(",");
                 txt = temp[temp.length - 1];
             }
-            List<String> names = CommandBase.getListOfStringsMatchingLastWord(new String[]{txt}, getAvaibleNames());
+            List<String> names = CommandBase.getListOfStringsMatchingLastWord(new String[]{txt}, getAvailableNames());
             names.remove(txt);
 
             potentialMatches.removeAllChildren();
@@ -110,15 +110,15 @@ public abstract class GuiSearchField extends GuiPanel {
         return mouseX >= getScreenX() && mouseX < getScreenX() + getWidth() && mouseY >= getScreenY() && mouseY < getScreenY() + getHeight() + 50;
     }
 
-    public void setAvaibleNames(@Nullable List<String> avaibleNames) {
-        this.avaibleNames = avaibleNames;
+    public void setAvailableNames(@Nullable List<String> avaibleNames) {
+        this.availableNames = avaibleNames;
     }
 
-    public List<String> getAvaibleNames() {
-        if (avaibleNames == null) {
-            setAvaibleNames(generateAvailableNames());
+    public List<String> getAvailableNames() {
+        if (availableNames == null) {
+            setAvailableNames(generateAvailableNames());
         }
-        return avaibleNames;
+        return availableNames;
     }
 
     public abstract List<String> generateAvailableNames();
