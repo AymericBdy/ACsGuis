@@ -213,7 +213,10 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
             return Collections.emptyList();
         }
         List<GuiComponent> components = new ArrayList<>(getChildComponents());
-        components.sort(Comparator.reverseOrder());
+        // Sort by z index
+        Collections.sort(components);
+        // Reverse order so components added after other ones are on top of the list (even if at the same z index)
+        Collections.reverse(components);
         return components;
     }
 }
