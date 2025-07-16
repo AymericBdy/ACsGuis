@@ -260,7 +260,7 @@ public class TtfFontRenderer implements ICssFont {
     public int getHeight(String text) {
         if (uniFont == null)
             return 9; //is loading
-        return uniFont.getHeight(text);
+        return uniFont.getLineHeight();
     }
 
     @Override

@@ -48,7 +48,7 @@ public class GuiCssError extends GuiFrame {
         error.setText("Cannot display gui " + guiName + " " + "\n " + "\n" + "CSS error " + e.toString());
         while (e.getCause() != null) {
             e = e.getCause();
-            error.setText(error.getText() + " " + "\n " + "\n" + " \t Caused by : " + e.toString());
+            error.setText(error.getText() + " " + "\n " + "\n" + "      Caused by : " + e.toString());
         }
         add(error.getStyleCustomizer().setForegroundColor(0xFFAAAA).setBackgroundColor(Integer.MIN_VALUE).getOwner());
     }
@@ -93,7 +93,7 @@ public class GuiCssError extends GuiFrame {
                     text.append("====> Selector : " + TextFormatting.GOLD).append(e.getKey());
                     text.append(TextFormatting.RESET + " has ");
                     e.getValue().forEach((st, prop) -> {
-                        text.append("\n").append("\t -->" + TextFormatting.DARK_AQUA).append(st.key).append(TextFormatting.RESET + " = " + TextFormatting.AQUA);
+                        text.append("\n").append("     -->" + TextFormatting.DARK_AQUA).append(st.key).append(TextFormatting.RESET + " = " + TextFormatting.AQUA);
                         if (prop.getType().isNormal())
                             text.append(prop.getValue());
                         else

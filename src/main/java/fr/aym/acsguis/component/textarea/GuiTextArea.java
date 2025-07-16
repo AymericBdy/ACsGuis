@@ -239,8 +239,15 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
     }
 
     public void writeText(String text) {
-        String part1 = getText().substring(0, Math.min(cursorIndex, selectionEndIndex));
-        String part2 = getText().substring(Math.max(cursorIndex, selectionEndIndex));
+        String fullText = getText();
+
+        // Convert visual indexes (without \n) to real index in the text (with \n)
+        // TODO proper handling of line returns (moving the cursor or deleting chars near line returns isn't great)
+        int realCursorIndex = visualToRealIndex(fullText, cursorIndex);
+        int realSelectionEndIndex = visualToRealIndex(fullText, selectionEndIndex);
+
+        String part1 = fullText.substring(0, Math.min(realCursorIndex, realSelectionEndIndex));
+        String part2 = fullText.substring(Math.max(realCursorIndex, realSelectionEndIndex));
         setText(part1 + text + part2);
 
         if (cursorIndex < selectionEndIndex) {
@@ -248,6 +255,23 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
         } else {
             moveCursorToSelection();
         }
+    }
+
+    private int visualToRealIndex(String text, int visualIndex) {
+        int visibleCount = 0;
+
+        for (int i = 0; i < text.length(); i++) {
+            if (visibleCount == visualIndex) {
+                return i;
+            }
+
+            char c = text.charAt(i);
+            if (c != '\n') {
+                visibleCount++;
+            }
+        }
+
+        return text.length();
     }
 
     @Override
