@@ -120,7 +120,7 @@ public class GuiAPIClientHelper {
 
         while (!text.isEmpty()) {
             String rawTrim = Minecraft.getMinecraft().fontRenderer.trimStringToWidth(text, maxWidth);
-            if(rawTrim.isEmpty()) { // rawTrim can be empty if maxWidth is less than a char width
+            if (rawTrim.isEmpty()) { // rawTrim can be empty if maxWidth is less than a char width
                 rawTrim = text.substring(0, 1);
             }
 
@@ -133,10 +133,8 @@ public class GuiAPIClientHelper {
             boolean flag = lastChar == null || lastChar == ' ' || nextChar == null || nextChar == ' ' || lastSpace == 0 || lastSpace == -1;
 
             String line;
-            int off = 0;
-            if (rawTrim.contains("\n") && (rawTrim.indexOf("\n") == 0 || rawTrim.charAt(rawTrim.indexOf("\n") - 1) != '\\')) {
-                line = rawTrim.substring(0, rawTrim.indexOf("\n") + 0);
-                off = 1;
+            if (rawTrim.contains("\n") && (rawTrim.indexOf('\n') == 0 || rawTrim.charAt(rawTrim.indexOf('\n') - 1) != '\\')) {
+                line = rawTrim.substring(0, rawTrim.indexOf('\n') + 1);
             } else {
                 if (flag) {
                     line = rawTrim;
@@ -150,13 +148,16 @@ public class GuiAPIClientHelper {
                 return renderedLines;
             }
 
-            text = text.substring(line.length() + off);
-            line = line.replaceAll("\n", "").replaceAll("\t", "    ");
+            text = text.substring(line.length());
             renderedLines.add(line);
             totalHeight += fontHeight;
+
+            // If the last line ends with a line return, make sure to have a following empty line to write on
+            if (text.isEmpty() && line.endsWith("\n")) {
+                renderedLines.add("");
+            }
         }
         if (renderedLines.isEmpty()) {
-            text = text.replaceAll("\n", "").replaceAll("\t", "    ");
             renderedLines.add(text);
         }
         return renderedLines;
@@ -325,7 +326,7 @@ public class GuiAPIClientHelper {
                 lastLine += "...";
             }
             if (lines.isEmpty()) {
-                lastLine = lastLine.replaceAll("\n", "").replaceAll("\t", "    ");
+                //lastLine = lastLine.replaceAll("\n", "").replaceAll("\t", "    ");
                 lines.add(lastLine);
             } else {
                 lines.set(lines.size() - 1, lastLine);

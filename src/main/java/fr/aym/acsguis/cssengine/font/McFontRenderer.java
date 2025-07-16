@@ -39,6 +39,7 @@ public class McFontRenderer implements ICssFont
 
     @Override
     public void draw(float x, float y, String text, int color) {
+        text = text.replaceAll("\n", "").replaceAll("\t", "    ");
         renderer.drawString(text, x, y, color, shadow);
     }
 

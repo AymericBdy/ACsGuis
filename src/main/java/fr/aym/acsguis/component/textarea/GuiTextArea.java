@@ -179,11 +179,15 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
     protected void drawCursor(float scale) {
         List<String> lines = getCachedTextLines();
         if (cursorCounter / 20 % 2 == 0 && isFocused()) {
-            String line = lines.get(getLine(lines, cursorIndex));
+            int lineIndex = getLine(lines, cursorIndex);
+            String line = lines.get(lineIndex);
+
+            int positionIndex = getPosition(lineIndex, cursorIndex);
+
             float height = scale * 9; // todo does not supports custom fonts
-            float cursorPosX = mc.fontRenderer.getStringWidth(line.substring(0, getPosition(cursorIndex))) * scale - lineScrollOffsetX;
-            float cursorPosY = GuiAPIClientHelper.getRelativeTextY(getLine(lines, cursorIndex), lines.size(), getHeight() - (getPaddingTop() + getPaddingBottom()), getStyle().getVerticalTextAlignment(), height) - getLineScrollOffsetY();
-                //(int) (getLine(cursorIndex) * 9 - lineScrollOffsetY);//+ GuiAPIClientHelper.getRelativeTextY(getLine(cursorIndex), getRenderedTextLines().size(), getHeight() - (getPaddingTop() + getPaddingBottom()), getStyle().getVerticalTextAlignment(), 9)); //todo put line height + optimize
+            float cursorPosX = mc.fontRenderer.getStringWidth(line.substring(0, positionIndex)) * scale - lineScrollOffsetX;
+            float cursorPosY = GuiAPIClientHelper.getRelativeTextY(lineIndex, lines.size(), getHeight() - (getPaddingTop() + getPaddingBottom()), getStyle().getVerticalTextAlignment(), height) - getLineScrollOffsetY();
+            //(int) (getLine(cursorIndex) * 9 - lineScrollOffsetY);//+ GuiAPIClientHelper.getRelativeTextY(getLine(cursorIndex), getRenderedTextLines().size(), getHeight() - (getPaddingTop() + getPaddingBottom()), getStyle().getVerticalTextAlignment(), 9)); //todo put line height + optimize
             drawRect((int) ((getScreenX() + getPaddingLeft() + cursorPosX) / scale), (int) ((getScreenY() + getPaddingTop() + cursorPosY) / scale), (int) ((getScreenX() + getPaddingLeft() + cursorPosX) / scale + 1), (int) ((getScreenY() + getPaddingTop() + cursorPosY) / scale + 9), Color.WHITE.getRGB());
         }
     }
@@ -198,8 +202,8 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
         int cursorLine = getLine(lines, cursorIndex);
         int selectionEndLine = getLine(lines, selectionEndIndex);
 
-        int cursorPosition = getPosition(cursorIndex);
-        int selectionEndPosition = getPosition(selectionEndIndex);
+        int cursorPosition = getPosition(cursorLine, cursorIndex);
+        int selectionEndPosition = getPosition(selectionEndLine, selectionEndIndex);
 
         for (int i = Math.min(cursorLine, selectionEndLine); i <= Math.max(cursorLine, selectionEndLine); i++) {
 
@@ -241,13 +245,8 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
     public void writeText(String text) {
         String fullText = getText();
 
-        // Convert visual indexes (without \n) to real index in the text (with \n)
-        // TODO proper handling of line returns (moving the cursor or deleting chars near line returns isn't great)
-        int realCursorIndex = visualToRealIndex(fullText, cursorIndex);
-        int realSelectionEndIndex = visualToRealIndex(fullText, selectionEndIndex);
-
-        String part1 = fullText.substring(0, Math.min(realCursorIndex, realSelectionEndIndex));
-        String part2 = fullText.substring(Math.max(realCursorIndex, realSelectionEndIndex));
+        String part1 = fullText.substring(0, Math.min(cursorIndex, selectionEndIndex));
+        String part2 = fullText.substring(Math.max(cursorIndex, selectionEndIndex));
         setText(part1 + text + part2);
 
         if (cursorIndex < selectionEndIndex) {
@@ -255,23 +254,6 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
         } else {
             moveCursorToSelection();
         }
-    }
-
-    private int visualToRealIndex(String text, int visualIndex) {
-        int visibleCount = 0;
-
-        for (int i = 0; i < text.length(); i++) {
-            if (visibleCount == visualIndex) {
-                return i;
-            }
-
-            char c = text.charAt(i);
-            if (c != '\n') {
-                visibleCount++;
-            }
-        }
-
-        return text.length();
     }
 
     @Override
@@ -287,8 +269,9 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
     }
 
     protected void updateIndexes() {
-        cursorIndex = MathHelper.clamp(cursorIndex, 0, text.length());
-        selectionEndIndex = MathHelper.clamp(selectionEndIndex, 0, text.length());
+        int maxIndex = text.length();
+        cursorIndex = MathHelper.clamp(cursorIndex, 0, maxIndex);
+        selectionEndIndex = MathHelper.clamp(selectionEndIndex, 0, maxIndex);
     }
 
     protected void moveSelectionToCursor() {
@@ -321,11 +304,22 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
      */
     protected int getLine(List<String> lines, int index) {
         int k = 0;
-        int l = lines.get(k).length();
 
+        String line = lines.get(k);
+        int l = line.length();
         while (index > l && k < lines.size() - 1) {
             k++;
-            l += lines.get(k).length();
+
+            line = lines.get(k);
+            l += (line.length());
+        }
+
+        // The cursor is after the \n at the end of the current line: it should be on the line after
+        if (line.endsWith("\n") && l == index) {
+            k += 1;
+            if (k >= lines.size()) {
+                k = lines.size() - 1;
+            }
         }
 
         return k;
@@ -335,9 +329,8 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
      * @param index The absolute index
      * @return Return the relative position, k [0; line.length()]
      */
-    protected int getPosition(int index) {
+    protected int getPosition(int lineIndex, int index) {
         List<String> lines = getCachedTextLines();
-        int lineIndex = getLine(lines, index);
 
         int k = index;
 
@@ -358,7 +351,7 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
         int lineIndex = getLine(lines, index);
 
         if (lineIndex + i >= 0 && lineIndex + i < lines.size()) {
-            int relPosition = getPosition(index);
+            int relPosition = getPosition(lineIndex, index);
 
             int w = mc.fontRenderer.getStringWidth(lines.get(lineIndex).substring(0, relPosition));
             String dstLine = lines.get(lineIndex + i);
@@ -392,7 +385,7 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
     public void updateTextOffset() {
         List<String> lines = getCachedTextLines();
         int selectionEndLine = getLine(lines, this.selectionEndIndex);
-        int selectionEndPosition = getPosition(this.selectionEndIndex);
+        int selectionEndPosition = getPosition(selectionEndLine, this.selectionEndIndex);
 
         String line = lines.get(selectionEndLine).substring(0, selectionEndPosition);
 
@@ -456,6 +449,13 @@ public class GuiTextArea extends GuiComponent implements ITickListener, IKeyboar
 
         for (int i = 0; i < line; i++) {
             index += lines.get(i).length();
+        }
+
+        // Make sure that clicking at the end of a line ending with a \n puts the cursor at the end of the current line (before the \n) and not
+        // at the start of the next line
+        String curLine = lines.get(line);
+        if (position == curLine.length() && curLine.endsWith("\n")) {
+            position -= 1;
         }
 
         return index + position;
