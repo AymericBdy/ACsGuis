@@ -138,7 +138,7 @@ public class GridLayout implements PanelLayout<InternalComponentStyle> {
     }
 
     @Override
-    public void onChildSizeChange(InternalComponentStyle child) {
+    public void onChildSizeChange() {
 
     }
 

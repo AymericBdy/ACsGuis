@@ -234,7 +234,7 @@ public class CssComponentStyle implements InternalComponentStyle {
     }
 
     @Override
-    public void notifyOfChildSizeChange(InternalComponentStyle child) {
+    public void notifyOfChildSizeChange() {
         // do nothing, this is for panels
     }
 

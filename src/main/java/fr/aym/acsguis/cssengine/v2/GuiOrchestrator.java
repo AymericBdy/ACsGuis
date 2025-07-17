@@ -44,13 +44,13 @@ public class GuiOrchestrator {
             }
             componentReloadQueue.add(entry);
         }
-        for (ComponentStyle changedContainer : changedContainers) {
-            // TODO PARAM IS NOT CHILD
-            changedContainer.notifyOfChildSizeChange((InternalComponentStyle) changedContainer);
-        }
 
         while ((entry = componentReloadQueue.poll()) != null) {
             entry.style.updateComponentPosition(sx, sy);
+        }
+
+        for (ComponentStyle changedContainer : changedContainers) {
+            changedContainer.notifyOfChildSizeChange();
         }
     }
 

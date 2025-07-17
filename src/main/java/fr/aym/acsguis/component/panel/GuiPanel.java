@@ -2,6 +2,7 @@ package fr.aym.acsguis.component.panel;
 
 import fr.aym.acsguis.component.EnumComponentType;
 import fr.aym.acsguis.component.GuiComponent;
+import fr.aym.acsguis.component.button.GuiSlider;
 import fr.aym.acsguis.component.layout.FlowLayout;
 import fr.aym.acsguis.component.layout.PanelLayout;
 import fr.aym.acsguis.component.style.AutoStyleHandler;
@@ -11,7 +12,10 @@ import fr.aym.acsguis.cssengine.style.CssPanelStyle;
 import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.utils.ComponentRenderContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalComponentStyle> {
     protected List<GuiComponent> childComponents = new ArrayList<>();
@@ -80,15 +84,25 @@ public class GuiPanel extends GuiComponent implements AutoStyleHandler<InternalC
     @Override
     public boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, InternalComponentStyle target) {
         if (property == EnumCssStyleProperty.HEIGHT) {
-            float height = 0;
-            for (GuiComponent c : queuedComponents) {
-                height = Math.max(height, c.getY() + c.getStyle().getOffsetY() + c.getHeight());
-            }
-            for (GuiComponent c : childComponents) {
-                if (!toRemoveComponents.contains(c))
+            target.getHeight().setSizeFunction((style, size) -> {
+                float height = 0;
+                for (GuiComponent c : queuedComponents) {
+                    if (c instanceof GuiSlider) {
+                        continue;
+                    }
                     height = Math.max(height, c.getY() + c.getStyle().getOffsetY() + c.getHeight());
-            }
-            target.getHeight().setAbsolute(height);
+                }
+                for (GuiComponent c : childComponents) {
+                    if (c instanceof GuiSlider) {
+                        continue;
+                    }
+                    if (toRemoveComponents.contains(c)) {
+                        continue;
+                    }
+                    height = Math.max(height, c.getY() + c.getStyle().getOffsetY() + c.getHeight());
+                }
+                size.setAbsolute(height);
+            });
             return true;
         }
         return false;

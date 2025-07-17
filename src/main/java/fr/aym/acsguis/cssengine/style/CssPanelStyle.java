@@ -5,7 +5,6 @@ import fr.aym.acsguis.component.layout.PanelLayout;
 import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.panel.GuiScrollPane;
-import fr.aym.acsguis.component.style.InternalComponentStyle;
 import fr.aym.acsguis.component.style.PanelStyle;
 
 public class CssPanelStyle extends CssComponentStyle implements PanelStyle {
@@ -30,7 +29,7 @@ public class CssPanelStyle extends CssComponentStyle implements PanelStyle {
     @Override
     public void resetCssStack() {
         super.resetCssStack();
-        for(GuiComponent c : panel.getChildComponents()) {
+        for (GuiComponent c : panel.getChildComponents()) {
             c.getStyle().resetCssStack();
         }
     }
@@ -47,9 +46,9 @@ public class CssPanelStyle extends CssComponentStyle implements PanelStyle {
     }
 
     @Override
-    public void notifyOfChildSizeChange(InternalComponentStyle child) {
+    public void notifyOfChildSizeChange() {
         if (panel.getLayout() != null) {
-            ((PanelLayout<InternalComponentStyle>) panel.getLayout()).onChildSizeChange(child);
+            panel.getLayout().onChildSizeChange();
         }
         // this will update auto style for auto sized panels
         refreshStyle(getOwner().getGui(), EnumCssStyleProperty.WIDTH, EnumCssStyleProperty.HEIGHT);
@@ -70,8 +69,8 @@ public class CssPanelStyle extends CssComponentStyle implements PanelStyle {
         }
 
         @Override
-        public void notifyOfChildSizeChange(InternalComponentStyle child) {
-            super.notifyOfChildSizeChange(child);
+        public void notifyOfChildSizeChange() {
+            super.notifyOfChildSizeChange();
             ((GuiScrollPane) panel).setSlidersNeedsUpdate();
         }
     }

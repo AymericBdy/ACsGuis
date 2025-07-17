@@ -33,7 +33,9 @@ public class GuiScrollPane extends GuiPanel implements IMouseWheelListener {
 
     @Override
     protected InternalComponentStyle createStyleManager() {
-        return new CssPanelStyle.CssScrollPanelStyle(this);
+        CssPanelStyle.CssScrollPanelStyle style = new CssPanelStyle.CssScrollPanelStyle(this);
+        style.getCustomizer().withAutoStyles(this, EnumCssStyleProperty.HEIGHT);
+        return style;
     }
 
     @Override

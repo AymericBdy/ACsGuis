@@ -108,11 +108,11 @@ public class FlowLayout implements PanelLayout<InternalComponentStyle> {
     }
 
     @Override
-    public void onChildSizeChange(InternalComponentStyle child) {
+    public void onChildSizeChange() {
         if (cache.isEmpty()) {
             return;
         }
-        GuiFrame.APIGuiScreen gui = child.getOwner().getGui();
+        GuiFrame.APIGuiScreen gui = container.getGui();
         if (gui == null) {
             return;
         }

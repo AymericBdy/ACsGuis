@@ -828,7 +828,6 @@ public abstract class GuiComponent extends Gui implements Comparable<GuiComponen
         } else {
             return getRenderMinX();
         }
-
     }
 
     public float getMinHitboxY() {
