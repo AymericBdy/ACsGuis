@@ -134,49 +134,42 @@ slider_vertical>button
 
 /** GuiSearchField */
 
-.search_bar1
+search_field
 {
     background-color: translucent;
     max-height: 120px;
 }
-.search_bar1 text_field
+
+search_field text_field
 {
     background-color: rgba(255, 255, 255, 150);
     width: 100%;
     height: 20px;
 }
-.search_bar1 text_field:active
+search_field text_field:hover
 {
-    background-color: white;
-}
-.search_bar1 #search_bar_matches
-{
-    top: 20px;
-    height: auto;
-    max-height: 100px;
-    background-color: gray;
-    z-index: 500;
+    border-color: white;
 }
 
-.search_bar1 .search_bar_match
+search_field scroll_pane
 {
-    width: 80%;
-    height: auto;
-    top: auto;
+    background-color: gray;
+}
+
+search_field label
+{
     padding: 0 0 0 1px;
-    text-align-vertical: center;
-    text-shadow: none;
     color: white;
-    z-index: 500;
     background: darkgray none;
     border: 1px gray;
-    left: 50%;
-    right: 50%;
 }
-.search_bar1 .search_bar_match:hover
+search_field label:hover
 {
     background-color: lightgray;
+    border: 1px white;
 }
+
+/* Debug pane */
 
 #css_debug_pane
 {
@@ -210,7 +203,7 @@ button_with_icon
 
 /* Basic dropdown list style */
 
-dropdown_list
+dropdown_list, search_field
 {
     background-color: black;
     color: lightgray;
@@ -221,7 +214,7 @@ dropdown_list
     z-index: 500;
 }
 
-dropdown_list:hover
+dropdown_list:hover, search_field:hover
 {
     color: white;
 }
@@ -239,13 +232,15 @@ dropdown_list>button:hover
     border-color: white;
 }
 
-dropdown_list>scroll_pane
+dropdown_list>scroll_pane, search_field>scroll_pane
 {
     top: 20px;
-    height: 80px;
+    height: auto;
+    max-height: 80px;
+    z-index: 100;
 }
 
-dropdown_list label
+dropdown_list label, search_field label
 {
     background-color: translucent;
     text-align: center;
@@ -255,7 +250,7 @@ dropdown_list label
     height: auto;
 }
 
-dropdown_list label:hover
+dropdown_list label:hover, search_field label:hover
 {
     background-color: lightgray;
 }

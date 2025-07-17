@@ -21,7 +21,8 @@ public enum EnumComponentType
     PROGRESS_BAR,
     ENTITY_RENDER,
     CAMERA_VIEW,
-    DROPDOWN_LIST;
+    DROPDOWN_LIST,
+    SEARCH_FIELD;
 
     public static EnumComponentType fromString(String value) {
         for(EnumComponentType t : values())

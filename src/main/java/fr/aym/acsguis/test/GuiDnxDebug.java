@@ -11,6 +11,7 @@ import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.panel.GuiScrollPane;
 import fr.aym.acsguis.component.panel.GuiTabbedPane;
 import fr.aym.acsguis.component.textarea.GuiLabel;
+import fr.aym.acsguis.component.textarea.GuiSearchField;
 import fr.aym.acsguis.component.textarea.GuiTextField;
 import fr.aym.acsguis.utils.GuiCssError;
 import net.minecraft.client.Minecraft;
@@ -35,6 +36,7 @@ public class GuiDnxDebug extends GuiFrame {
         GuiTabbedPane pane = new GuiTabbedPane();
 
         setEnableDebugPanel(true);
+        setNeedsCssReload(true);
 
         GuiPanel general = new GuiPanel();
         general.setCssId("general");
@@ -215,6 +217,12 @@ public class GuiDnxDebug extends GuiFrame {
         pane.addTab(TextFormatting.GOLD + "Erreurs", general);
         general.setLayout(new GridLayout(-1, 20, 0, GridLayout.GridDirection.HORIZONTAL, 1));
         general.add(new GuiDropdownList("Test dropdown", Arrays.asList("t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10")).setChangeCallback((s) -> System.out.println("Tu as cliqué sur " + s)));
+        general.add(new GuiSearchField(4) {
+            @Override
+            public List<String> generateAvailableNames() {
+                return Arrays.asList("alambra", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10", "lavandou", "tropez", "caen", "amsterdam", "tum");
+            }
+        }.setChangeCallback((s) -> System.out.println("Tu as cliqué sur " + s)));
         general.add(new GuiLabel("ptdrrrrrr"));
         general.add(new GuiLabel("LOL"));
         general.add(new GuiLabel("the end"));
