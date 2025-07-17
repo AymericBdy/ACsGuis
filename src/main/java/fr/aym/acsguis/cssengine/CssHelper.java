@@ -60,8 +60,9 @@ public class CssHelper {
                     Integer.parseInt(s.replace("#", ""), 16);
             return value;
         }
-        if (s.equalsIgnoreCase("translucent") || s.equalsIgnoreCase("transparent"))
+        if (s.equalsIgnoreCase("translucent") || s.equalsIgnoreCase("transparent")) {
             return Color.TRANSLUCENT;
+        }
         throw new IllegalArgumentException("Unsupported color format : " + s);
     });
     /**

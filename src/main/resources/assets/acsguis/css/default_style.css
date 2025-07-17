@@ -1,7 +1,7 @@
 button,button_with_icon
 {
     background-image: texture("textures/gui/widgets.png", 0, 66, 200, 20);
-    background-color: translucent;
+    background-color: transparent;
     font-size: 9;
     width: 200px;
     height: 20px;
@@ -88,7 +88,7 @@ checkbox>label
     text-align-vertical: center;
     text-shadow: disable;
     color: white;
-    background-color: translucent;
+    background-color: transparent;
 }
 
 checkbox>button
@@ -136,7 +136,7 @@ slider_vertical>button
 
 search_field
 {
-    background-color: translucent;
+    background-color: transparent;
     max-height: 120px;
 }
 
@@ -162,6 +162,7 @@ search_field label
     color: white;
     background: darkgray none;
     border: 1px gray;
+    border-position: internal
 }
 search_field label:hover
 {
@@ -198,7 +199,7 @@ button_with_icon
 {
     width: 40px;
     height: 40px;
-    background-color: translucent;
+    background-color: transparent;
 }
 
 /* Basic dropdown list style */
@@ -223,8 +224,9 @@ dropdown_list>button
 {
     background: none;
     width: 100%;
+    border-width: 1px;
+    border-color: gray;
     border-position: internal;
-    border: 1px gray;
 }
 
 dropdown_list>button:hover
@@ -236,13 +238,13 @@ dropdown_list>scroll_pane, search_field>scroll_pane
 {
     top: 20px;
     height: auto;
-    max-height: 80px;
+    max-height: 84px;
     z-index: 100;
 }
 
 dropdown_list label, search_field label
 {
-    background-color: translucent;
+    background-color: transparent;
     text-align: center;
     top: auto;
     left: auto;
